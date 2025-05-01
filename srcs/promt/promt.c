@@ -29,3 +29,7 @@ char *last_dir(const char *path)
     else
         return (ft_strdup(last));
 }
+
+
+
+
