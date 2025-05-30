@@ -1,5 +1,5 @@
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -13,9 +13,25 @@
 # include <fcntl.h>
 # include <dirent.h>
 
+#ifndef PATH_MAX
 # define PATH_MAX 4096
+#endif
+
 # define ERR_COMMAND ": command not found\n"
 # define ERR_ENVP "Evironment variables not available\n"
+
+# define OPERATOR "|<>"
+# define TRUE 1
+# define FALSE 0
+
+# define REDIN     1
+# define HEREDOC   2
+# define REDOUT    3
+# define APPEND    4
+# define TEXT      0
+
+# define INIT_SIZE 64
+# define FACTOR     2
 
 typedef struct s_env
 {
@@ -29,6 +45,9 @@ typedef struct s_shell
     t_env *env;
     char **paths;
     char *username;
+    char    *trimmed_prompt;
+    int     status;
+
 }              t_shell;
 
 typedef enum e_token_type
@@ -58,6 +77,8 @@ typedef struct s_cmd
     int append;
     int heredoc;
     char **red;
+    int heredoc_expand;
+    int heredoc_fd;
     struct s_cmd *next;
     
 }               t_cmd;
@@ -68,7 +89,19 @@ typedef struct s_redir
     int     type;
 }               t_redir;
 
-
+typedef struct s_expansion
+{
+	char	*result;
+	int		size;
+	int		len;
+	int		i;
+	int		k;
+	int		in_squote;
+	int		in_dquote;
+	char	*exit_status;
+	char	*env_val;
+	char	var_name[1024];
+}	t_expansion;
 
 //init
 t_env   *add_new_node(t_env **envp, const char *key, const char *value);
@@ -83,14 +116,41 @@ void    free_paths(char **paths);
 t_shell *init_shell(char **envp);
 void    free_shell(t_shell *sh);
 t_cmd   *init_cmd(void);
+void    free_cmd_list(t_cmd *head);
+void    free_cmd(t_cmd *cmd);
+int		init_expansion(t_expansion *exp);
+void	free_expansion(t_expansion *exp);
+void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
+void rm_void_tab_cmd(t_cmd **tab_cmd);
+
 
 //promt
 char *join4str(char *s1, char *s2, char *s3, char *s4);
 char *last_dir(const char *path);
-
-
 char *ft_getcwd(char *buf, size_t size);
 
+//lexer
+int lexer(t_shell *shell);
+int is_empty_command(const char *input);
+int is_specific_case(t_shell *s);
+int check_syntax(const char *input);
+void toggle_quote(char ch, int *in_squote, int *in_dquote);
+int is_invalid_operator(const char *input, int i);
+void syntax_error(char unexpected);
+void syntax_error_pipex(char *unexpected);
+int check_quotes_closed(int in_squote, int in_dquote);
+int is_pipe_error(const char *s);
+void	syntax_error_newline(void);
+
+//tokenizer
+t_token *create_token(const char *content, t_token_type type);
+void add_token(t_token **head, t_token *new);
+t_token_type get_token_type(char *s);
+int get_operator_token(const char *line, int i, t_token **tokens);
+int get_word_token(const char *line, int i, t_token **tokens);
+t_token *tokenize_prompt(const char *line);
+void free_tokens(t_token *tok);
+int check_token_syntax(t_token *t);
 
 //parsing
 void    add_redir(t_cmd *cmd, char *op, char *target);
@@ -100,5 +160,42 @@ void    add_arg(t_cmd *cmd, const char *arg);
 void    resolve_redir(t_cmd *cmd);
 int is_cmd_valide(t_cmd *cmd);
 int check_pipe(t_token *tokens);
+
+//redirection
+int	is_red_type(t_token_type type);
+void handle_input_redir(t_cmd *cmd, char *op, char *file);
+void handle_output_redir(t_cmd *cmd, char *op, char *file);
+
+//expander
+char *expand_tilde(char *input, t_env *lst_env);
+void expand_tab(char **tab, t_env *env_head, int status);
+void expand_array(char **array, t_env *env, int status);
+void expand_all(t_cmd **cmds, t_env *env_head, int status);
+char	*expand_string(char *str, t_env *lst_env, int status);
+//expand:joint&buffer
+char *expand_buffer(char *old_buffer, int *size);
+int append_str(t_expansion *exp);
+int append_env(t_expansion *exp);
+//expand:variable
+int	handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status);
+int	handle_braces(t_expansion *exp, t_env *lst_env);
+int handle_exit_status(t_expansion *exp, int status);
+int handle_env_var(t_expansion *exp, t_env *lst_env);
+int valid_exp(int c);
+//expand:here_doc
+int check_heredoc_expand(const char *delimiter);
+char *strip_quotes_if_needed(const char *str);
+int should_expand_heredoc(const char *delimiter);
+char *expand_heredoc_line(const char *line, t_env *env);
+char	*process_heredoc_content(char *delimiter, t_env *env, int should_expand);
+int	expand_heredocs_in_cmd_list(t_cmd *cmd_list, t_env *env);
+char *expand_var_here(char *input, t_env *lst_env, int status);
+int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env, int status);
+
+
+
+//main
+void	minishell_loop(t_shell *shell);
+int	main(int argc, char **argv, char **envp);
 
 #endif

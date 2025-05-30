@@ -1,4 +1,4 @@
-#include <../minishell.h>
+#include "minishell.h"
 
 t_cmd   *init_cmd(void)
 {
@@ -13,6 +13,8 @@ t_cmd   *init_cmd(void)
     cmd->outfile = NULL;
     cmd->heredoc = 0;
     cmd->append = 0;
+    cmd->heredoc_expand = 0;
+    cmd->heredoc_fd = 0;
     cmd->red = NULL;
     cmd->next = NULL;
     return (cmd);
@@ -35,6 +37,9 @@ void    free_cmd(t_cmd *cmd)
 void    free_cmd_list(t_cmd *head)
 {
     t_cmd   *tmp;
+
+    if (!head)
+        return ;
     while (head)
     {
         tmp = head;

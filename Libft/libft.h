@@ -141,4 +141,7 @@ t_clist	*copy_tolist(t_clist **lst, const char *src, int size);
 int		lst_find_nl(t_clist *lst);
 int		lst_count_nlorend(t_clist *lst);
 
+char *ft_strjoinchr(char *s, char c);
+int	ft_isspace(char c);
+
 #endif

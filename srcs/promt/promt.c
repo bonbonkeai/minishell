@@ -1,4 +1,4 @@
-#include <../minishell.h>
+#include "minishell.h"
 
 //为了拼接4个字符串，因为readline的promt是长这样：jdu&jinhuang@minishell~/Documents$。它会由用户名+@+minishell+最后路径的目录名+$（结尾提示符），也就是4个字符串。
 char *join4str(char *s1, char *s2, char *s3, char *s4)

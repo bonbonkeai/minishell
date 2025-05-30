@@ -1,13 +1,32 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -I.
 NAME = minishell
 NAME_BONUS = 
 LIBFT = ./Libft/libft.a
 
-SRCS = ./srcs/error_check.c \
+SRCS = ./srcs/initialization/init_cmd.c \
+		./srcs/initialization/init_env.c \
+		./srcs/initialization/init_path.c \
+		./srcs/initialization/init_shell.c \
+		./srcs/lexer/lexer.c \
+		./srcs/tokenizer/tokenizer.c \
+		./srcs/redirection/red.c \
+		./srcs/redirection/red_utils.c \
+		./srcs/parser/parser.c \
+		./srcs/minishell.c \
+		# ./srcs/expand/expand.c \
+		# ./srcs/expand_joint.c \
+		# ./srcs/expand_variable.c \
+		# ./srcs/expand_heredoc.c \
+		# ./srcs/expand_heredoc_utils.c \
+		# ./srcs/executor/ \
+		# ./scrs/builtin/ \
+		# ./scrs/signal/ \
+		# ./scrs/promt/promt.c \
+		
 	
 
-SRCS_BONUS = ./srcs_bonus/checker_bonus.c \
+SRCS_BONUS = ./srcs_bonus/ \
 	
 
 OBJS = $(SRCS:.c=.o)
@@ -17,10 +36,10 @@ all: $(NAME)
 bonus: $(NAME_BONUS)
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBFT)
-	
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LIBFT) -lreadline
+
 $(NAME_BONUS): $(OBJS_BONUS) $(LIBFT)
-	$(CC) $(CFLAGS) -o $(NAME_BONUS) $(OBJS_BONUS) $(LIBFT)
+	$(CC) $(CFLAGS) -o $(NAME_BONUS) $(OBJS_BONUS) $(LIBFT) -lreadline
 
 $(LIBFT):
 			make -C ./Libft

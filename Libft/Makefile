@@ -66,6 +66,8 @@ SRCS = ft_isalpha.c \
        ft_convert_base2.c \
        ft_strcpy.c \
        ft_abs.c \
+       ft_isspace.c \
+       ft_strjoinchr.c \
 
        
 BONUS = ft_lstnew_bonus.c \

@@ -1,4 +1,4 @@
-#include <../minishell.h>
+#include "minishell.h"
 
 t_env   *add_new_node(t_env **envp, const char *key, const char *value)
 {
@@ -29,6 +29,7 @@ t_env   *add_new_node(t_env **envp, const char *key, const char *value)
             temp = temp->next;
         temp->next = new;
     }
+    return (new);
 }
 
 t_env   *init_env(char **envp)
@@ -53,7 +54,7 @@ void    parse_and_add(char *entry, t_env **env)
     char *value;
     size_t key_len;
 
-    sep = ft_strchr(entry, "=");
+    sep = ft_strchr(entry, '=');
     if (!sep)
         return ;
     key_len = sep - entry;
@@ -78,8 +79,8 @@ void    handle_empty_env(t_env **env)
 
     if (!*env)
     {
-        if (ft_getcwd(cwd, PATH_MAX));
-            add_env_node(env,  "SHLVL", "1");
+        if (getcwd(cwd, PATH_MAX))
+            add_new_node(env,  "SHLVL", "1");
         add_new_node(env, "PATH", "/usr/bin:/bin");
         add_new_node(env, "HOME", "/tmp");
     }
@@ -94,3 +95,4 @@ char *extract_username(t_env *env)
         return (ft_strdup(user));
     return (ft_strdup("guest"));
 }
+
