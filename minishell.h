@@ -89,19 +89,47 @@ typedef struct s_redir
     int     type;
 }               t_redir;
 
+// typedef struct s_expansion
+// {
+// 	char    *str;
+//     char    *buf;
+//     char	*result;
+// 	int		size;
+// 	int		len;
+// 	int		i;
+// 	int		k;
+// 	int		in_squote;
+// 	int		in_dquote;
+// 	char	*exit_status;
+// 	char	*env_val;
+// 	char	var_name[1024];
+// }	t_expansion;
 typedef struct s_expansion
 {
-	char	*result;
-	int		size;
-	int		len;
-	int		i;
-	int		k;
-	int		in_squote;
-	int		in_dquote;
-	char	*exit_status;
-	char	*env_val;
-	char	var_name[1024];
-}	t_expansion;
+    char    *str;
+    char    *buf;
+    int     size;
+    int     len;
+    int     i;
+    int     in_squote;
+    int     in_dquote;
+    char    *exit_status;
+    char    *env_val;
+    char    *var_name;
+    int     illegal_type;
+    char    *error_char;
+} t_expansion;
+
+typedef enum e_suffix_type
+{
+    SUFFIX_OK,
+    SUFFIX_PIPE,
+    SUFFIX_REDIR,
+    SUFFIX_SYNTAX_ERROR,
+    SUFFIX_HISTORY,
+    SUFFIX_BACKGROUND,
+    SUFFIX_SEMICOLON
+}   t_suffix_type;
 
 //init
 t_env   *add_new_node(t_env **envp, const char *key, const char *value);
@@ -118,7 +146,7 @@ void    free_shell(t_shell *sh);
 t_cmd   *init_cmd(void);
 void    free_cmd_list(t_cmd *head);
 void    free_cmd(t_cmd *cmd);
-int		init_expansion(t_expansion *exp);
+int		init_expand(t_expansion *exp);
 void	free_expansion(t_expansion *exp);
 void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
 void rm_void_tab_cmd(t_cmd **tab_cmd);
@@ -155,33 +183,50 @@ int check_token_syntax(t_token *t);
 //parsing
 void    add_redir(t_cmd *cmd, char *op, char *target);
 t_cmd   *parse_one_command(t_token **token_list);
+// t_cmd *parse_one_command(t_token **token_list, t_env *env);
+// t_cmd *parser(t_token *token_list, t_env *env);
 t_cmd   *parser(t_token *token_list);
 void    add_arg(t_cmd *cmd, const char *arg);
 void    resolve_redir(t_cmd *cmd);
+// void resolve_redir(t_cmd *cmd, t_env *env);
 int is_cmd_valide(t_cmd *cmd);
 int check_pipe(t_token *tokens);
+
 
 //redirection
 int	is_red_type(t_token_type type);
 void handle_input_redir(t_cmd *cmd, char *op, char *file);
 void handle_output_redir(t_cmd *cmd, char *op, char *file);
+// void process_heredoc_content(t_cmd *cmd, t_env *env);
 
 //expander
-char *expand_tilde(char *input, t_env *lst_env);
-void expand_tab(char **tab, t_env *env_head, int status);
-void expand_array(char **array, t_env *env, int status);
-void expand_all(t_cmd **cmds, t_env *env_head, int status);
-char	*expand_string(char *str, t_env *lst_env, int status);
+// void expand_tab(char **tab, t_env *env_head, int status);
+// void expand_single(char **str, t_env *env_head, int status);
+// void expand_all(t_cmd *cmds, t_env *env_head, int status);
+int expand_tab(char **tab, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+int expand_single(char **str, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+char	*expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_type, char *error_char);
+// char	*expand_string(char *str, t_env *lst_env, int status);
 //expand:joint&buffer
 char *expand_buffer(char *old_buffer, int *size);
+int     handle_buffer(t_expansion *exp);
 int append_str(t_expansion *exp);
 int append_env(t_expansion *exp);
+int     append_char(t_expansion *exp, char c);
+void    handle_single_quote(t_expansion *exp);
+void    handle_double_quote(t_expansion *exp, t_env *env, int status);
 //expand:variable
+// char *extract_var_name(const char *input, int start, t_env *env, int *matched_len);
+char *extract_var_name(const char *input, int start, int *matched_len);
 int	handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status);
 int	handle_braces(t_expansion *exp, t_env *lst_env);
 int handle_exit_status(t_expansion *exp, int status);
 int handle_env_var(t_expansion *exp, t_env *lst_env);
 int valid_exp(int c);
+int append_str_to_buffer(t_expansion *exp, const char *str);
+t_suffix_type get_suffix_type(char c);
+int has_illegal_expansion(t_suffix_type type, char ch);
 //expand:here_doc
 int check_heredoc_expand(const char *delimiter);
 char *strip_quotes_if_needed(const char *str);
@@ -191,6 +236,11 @@ char	*process_heredoc_content(char *delimiter, t_env *env, int should_expand);
 int	expand_heredocs_in_cmd_list(t_cmd *cmd_list, t_env *env);
 char *expand_var_here(char *input, t_env *lst_env, int status);
 int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env, int status);
+
+
+
+char    *expand_line(char *input, t_env *env, int status);
+int     has_quote(char *str);
 
 
 
