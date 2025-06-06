@@ -9,14 +9,18 @@ t_cmd   *init_cmd(void)
         return (NULL);
     cmd->cmd = NULL;
     cmd->args = NULL;
+    cmd->pth = NULL;
     cmd->infile = NULL;
     cmd->outfile = NULL;
+    cmd->fd_in = STDIN_FILENO;
+    cmd->fd_out = STDOUT_FILENO;
     cmd->heredoc = 0;
     cmd->append = 0;
     cmd->heredoc_expand = 0;
     cmd->heredoc_fd = 0;
     cmd->red = NULL;
     cmd->next = NULL;
+    cmd->pid = 0;
     return (cmd);
 }
 

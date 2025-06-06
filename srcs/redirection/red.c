@@ -12,6 +12,7 @@ void handle_input_redir(t_cmd *cmd, char *op, char *file)
         if (cmd->infile)
             free(cmd->infile);
         cmd->infile = tmp;
+        //cmd->fd_in = -1;
         cmd->heredoc = 0;
     }
     else if (!ft_strcmp(op, "<<"))
@@ -38,6 +39,7 @@ void handle_output_redir(t_cmd *cmd, char *op, char *file)
         if (cmd->outfile)
             free(cmd->outfile);
         cmd->outfile = tmp;
+        //cmd->fd_out = -1;
         cmd->append = 0;
     }
     else if (!ft_strcmp(op, ">>"))
