@@ -40,6 +40,7 @@ int init_expand(t_expansion *exp)
     exp->size = INIT_SIZE;
     exp->len = 0;
     exp->i = 0;
+    exp->k = 0;;
     exp->in_squote = 0;
     exp->in_dquote = 0;
     exp->exit_status = NULL;
@@ -47,6 +48,7 @@ int init_expand(t_expansion *exp)
     exp->var_name = NULL;
     exp->illegal_type = 0;
     exp->error_char = NULL;
+    exp->status = 0;
     return (1);
 }
 

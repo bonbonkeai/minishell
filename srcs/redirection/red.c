@@ -1,9 +1,38 @@
 #include "minishell.h"
 
+// void handle_input_redir(t_cmd *cmd, char *op, char *file)
+// {
+//     char    *tmp;
+
+//     tmp = ft_strdup(file);
+//     if (!tmp)
+//         return ;
+//     if (!ft_strcmp(op, "<"))
+//     {
+//         if (cmd->infile)
+//             free(cmd->infile);
+//         cmd->infile = tmp;
+//         cmd->heredoc = 0;
+//     }
+//     else if (!ft_strcmp(op, "<<"))
+//     {
+//         if (cmd->infile)
+//             free(cmd->infile);
+//         cmd->infile = tmp;
+//         cmd->heredoc = 1;
+//         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
+// 			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
+// 			cmd->heredoc_expand = 0;
+// 		else
+// 			cmd->heredoc_expand = 1;
+//     }
+// }
 void handle_input_redir(t_cmd *cmd, char *op, char *file)
 {
-    char    *tmp;
+    char *tmp;
 
+    if (!op || !file || !cmd)
+        return ;
     tmp = ft_strdup(file);
     if (!tmp)
         return ;
@@ -13,20 +42,34 @@ void handle_input_redir(t_cmd *cmd, char *op, char *file)
             free(cmd->infile);
         cmd->infile = tmp;
         cmd->heredoc = 0;
+        if (cmd->heredoc_limiter) 
+        {
+            free(cmd->heredoc_limiter);
+            cmd->heredoc_limiter = NULL;
+        }
     }
     else if (!ft_strcmp(op, "<<"))
     {
+        if (cmd->heredoc_limiter)
+            free(cmd->heredoc_limiter);
+        cmd->heredoc_limiter = tmp;
+        if (cmd->infile)
+        {
+            free(cmd->infile);
+            cmd->infile = NULL;
+        }
         if (cmd->infile)
             free(cmd->infile);
-        cmd->infile = tmp;
+        cmd->infile = ft_strdup(tmp);
         cmd->heredoc = 1;
         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
-			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
-			cmd->heredoc_expand = 0;
-		else
-			cmd->heredoc_expand = 1;
+            (file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
+            cmd->heredoc_expand = 0;
+        else
+            cmd->heredoc_expand = 1;
     }
 }
+
 
 void handle_output_redir(t_cmd *cmd, char *op, char *file)
 {

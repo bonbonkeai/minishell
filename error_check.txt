@@ -1,0 +1,343 @@
+//lexer
+        "      "
+        ~
+        ""
+        ''
+        <
+        >
+        |
+        cat <<<
+        cat >>>
+        cat > || ls
+        cat ><
+        cat <>
+        | ls
+        ls |
+        cat <
+        cat >
+        cat <| file.txt
+        echo 'unclosed
+        echo \"unclosed2
+        echo 'hello"world'hi"
+
+        echo ">>>"
+        echo "<>"
+        echo "ls |"
+        echo '">>>"'
+        echo "'h'"
+        echo >| file
+        echo hello world,
+        echo hello | grep h > out.txt
+        ls -l | grep .c >> result.txt
+
+//tokenizer
+        "      "
+        ~
+        ""
+        ''
+        <
+        >
+        |
+        cat <<<
+        cat >>>
+        cat > || ls
+        cat ><
+        cat <>
+        | ls
+        ls |
+        cat <
+        cat >
+        cat <| file.txt
+        echo 'unclosed
+        echo \"unclosed2
+        echo 'hello"world'hi"
+
+        echo ">>>"
+        echo "<>"
+        echo "ls |"
+        echo '">>>"'
+        echo "'h'"
+        echo >| file
+        echo hello world,
+    echo hello | grep h > out.txt
+    ls -l | grep .c >> result.txt
+    cat < infile
+    echo hello > outfile
+    grep hi >> log
+        cat << EOF
+    ls | wc -l
+        ls    -l     /tmp
+    cat << EOF | grep "pattern" > result.txt
+
+//parser
+        echo hello world
+	    ls -l | grep c
+	    ls\t-l
+	    < hello echo > world
+		< hello > world echo
+		>hello<world echo
+		cat < infile > outfile
+	    echo a >> file | grep a
+		echo 'hello"world'hi
+        echo ">>>"
+        echo "<>"
+        echo "ls |"
+        echo '>>>'
+        echo "'h'""
+		echo '>'",
+		echo ">""
+		echo '|'"
+		echo "|"
+		echo '<infile'"
+		echo 'a >> file'"
+		echo a | grep b | wc -l | sort > result.txt
+		ls -l | grep txt | awk '{print $1}'
+		echo "a" "b" "c" | cat -e
+		echo '>' > file"
+		echo '|' | cat"
+		echo <<EOF"
+		echo "hellonworld""
+		"echo       "
+		""echo      ""
+		"echo     a     b"
+		echo hello>file
+		cat<infile|grep
+		echo    >    outfile
+		cat < infile > | grep
+		echo hello | | grep e
+		cat < infile > outfile |
+		echo < < >>
+		echo << >>
+		echo < < hello
+
+		"      "
+        ~
+        ""
+        ''
+        <
+        >
+        |
+        cat <<<
+        cat >>>
+        cat > || ls
+        cat ><
+        cat <>
+        | ls
+        ls |
+        cat <
+        cat >
+        cat <| file.txt
+        echo 'unclosed
+        echo \"unclosed2
+        echo 'hello"world'hi"
+
+//expansion
+        echo $HOME
+        echo $USER
+        echo $SHELL
+        echo $?
+        echo ~
+        echo ${USER}
+
+        echo '$HOME'
+        echo "$HOME"
+        echo '"$HOME"'
+        echo "'$HOME'"
+
+        echo pre$USERpost
+        echo pre$USER$post
+        echo pre$USER*post
+        echo pre$USER~post
+        echo pre$USER#post
+        echo pre$USER@post
+        echo pre$USER%post
+        echo pre$USER^post
+        echo pre$USER-post
+        echo pre$USER+post
+        echo pre$USER=post
+        echo pre$USER[post
+        echo pre$USER]post
+        echo pre$USER{post
+        echo pre$USER}post
+        echo pre$USER\post
+        echo pre$USER/post
+        echo pre$USER?post
+        echo pre$USER,post
+        echo pre$USER.post
+        echo pre$USER:post
+        echo pre$USER post
+
+        echo pre$USER'post
+        echo pre$USER"post
+        echo pre$USER(post
+        echo pre$USER)post
+        echo pre$USER`post
+        echo pre$USER!post
+        echo pre$USER&post
+    echo pre$USER|post
+    echo pre$USER<post
+    echo pre$USER>post
+
+        echo $HOME$USER
+        echo $USER+$HOME
+        
+        echo $UNDEFINED
+        
+        //builtin ensemble
+            export EMPTY=
+            echo $EMPTY
+
+            export SPACES="   "
+            echo $SPCES
+
+            export NAME=BONbon
+            echo $NAME
+
+            unset NAME
+            echo $NAME
+
+            export 1A=abc
+            export =abc
+            env
+
+//expansion heredoc
+        cat << EOF
+        hello
+        EOF
+
+        cat << 'EOF'
+        hello
+        $USER is here.
+        EOF
+
+        cat << "EOF"
+        hello
+        HOME is "$HOME"
+        EOF
+
+        false
+        cat << EOF
+        $HOME
+        $USER
+        $SHELL
+        $?
+        ~
+        echo ~
+        ${USER}
+        $HOME$USER
+        $USER+$HOME
+        EOF
+
+        cat << EOF
+        '$HOME'
+        "$HOME"
+        '"$HOME"'
+        "'$HOME'"
+        This is 'quoted' and "double quoted"
+        EOF
+
+        cat << EOF
+        pre$USERpost
+        pre$USER$post
+        pre$USER*post
+        pre$USER~post
+        pre$USER#post
+        pre$USER@post
+        pre$USER%post
+        pre$USER^post
+        pre$USER-post
+        pre$USER+post
+        pre$USER=post
+        pre$USER[post
+        pre$USER]post
+        pre$USER{post
+        pre$USER}post
+        pre$USER\post
+        pre$USER/post
+        pre$USER?post
+        pre$USER,post
+        pre$USER.post
+        pre$USER:post
+        pre$USER post
+        EOF
+
+        cat << EOF[错误的情况都会发生段错误]
+        pre$USER'post
+        pre$USER"post
+        pre$USER(post
+        pre$USER)post
+        pre$USER`post
+        pre$USER!post
+        pre$USER&post
+        pre$USER|post
+        pre$USER<post
+        pre$USER>post
+        EOF
+
+        cat << EOF
+        $UNDEFINED
+        EOF
+        
+        cat << EOF > out.txt
+        heredoc with redirection.
+        EOF
+        cat out.txt
+
+        cat << EOF | grep hello
+        hello
+        world
+        hello my world, hello
+        EOF
+
+        cat << EOF | grep "bonjour" > bonjour.txt
+        bonjour le monde
+        hello world
+        bonjour encore
+        EOF
+        cat bonjour.txt
+
+        cat << EOF
+        Still typing...
+        (no EOF)  
+        # 你可以试着只输入 Ctrl+D 看是否能正确中断
+        # 你可以试着只输入 Ctrl+C 看是否能正确中断->退出minishell程序
+        # 你可以试着只输入 Ctrl+\ 看是否能正确中断->1]    29900 quit       ./minishell
+
+
+        cat << EOF > /invalid/path/out.txt
+        Should fail
+        EOF
+        # /invalid/path/out.txt: No such file or directory
+
+        cat << EOF > config.ini
+        [User]
+        Name = $USER
+        Home = $HOME
+
+        [Meta]
+        Version = 1.0
+        EOF
+        cat config.ini
+
+        //builtin ensemble
+            export EMPTY=
+            cat << EOF
+            This is $UNSET and this is $EMPTY.
+            EOF
+
+            export SPACES="   "
+            cat << EOF
+            There are $SPCES.
+            EOF
+
+            export NAME=BONbon
+            cat << EOF
+            hi, $NAME
+            EOF
+
+            export 1A=abc
+            export =abc
+            env
+
+        
+

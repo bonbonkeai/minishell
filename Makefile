@@ -13,18 +13,28 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/tokenizer/tokenizer.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
+		./srcs/redirection/handle_red.c \
 		./srcs/parser/parser.c \
+		./srcs/prompt/prompt_home.c \
+		./srcs/prompt/prompt_build.c \
 		./srcs/minishell.c \
 		./srcs/expand/expand.c \
 		./srcs/expand/expand_joint.c \
 		./srcs/expand/expand_variable.c \
 		./srcs/expand/expand_utils.c \
-		# ./srcs/expand/expand_heredoc.c \
-		# ./srcs/expand/expand_heredoc_utils.c \
-		# ./srcs/executor/ \
-		# ./scrs/builtin/ \
-		# ./scrs/signal/ \
-		# ./scrs/promt/promt.c \
+		./srcs/expand/expand_heredoc.c \
+		./srcs/expand/expand_heredoc_utils.c \
+		./srcs/executor/executor.c \
+		./srcs/executor/exec_simple.c \
+		./srcs/executor/exec_utils.c \
+		./srcs/executor/exec_handle_pipes.c \
+		./srcs/executor/exec_pipe.c \
+		./srcs/utils/utils_cmd.c \
+		./srcs/utils/utils_redir.c \
+		./srcs/utils/utils_setpath.c \
+		# ./srcs/signal/pas_sur.c \
+		#./scrs/builtin/ \
+	
 		
 	
 

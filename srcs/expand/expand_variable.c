@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status)
+int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
 {
     char *key;
     char *value;
@@ -12,8 +12,15 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status)
     value = NULL;
     matched_len = 0;
     exp->i++;
+    // if (input[exp->i] == '?')
+    //     return (handle_exit_status(exp));
     if (input[exp->i] == '?')
-        return handle_exit_status(exp, status);
+    {
+        exp->i++;
+        if (!handle_exit_status(exp))
+            return (0);
+        return (1);
+    }
     if (ft_isdigit(input[exp->i]))
     {
         exp->i++;
@@ -21,34 +28,12 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status)
     }
     if (input[exp->i] == '{')
         return (handle_braces(exp, lst_env));
-    // key = extract_var_name(input, exp->i, lst_env, &matched_len);
     key = extract_var_name(input, exp->i, &matched_len);
-    // if (key)
-    // {
-    //     value = get_env_value(lst_env, key);
-    //     exp->i += matched_len;
-    //     free(key);
-    //     if (value && !append_str_to_buffer(exp, value))
-    //         return (0);
-    //     return (1);
-    // }
     if (key)
 	{
 		value = get_env_value(lst_env, key);
 		next = input[exp->i + matched_len];
 		type = get_suffix_type(next);
-		// if (type == SUFFIX_SYNTAX_ERROR)
-		// {
-		// 	ft_fprintf(2, "minishell: syntax error near unexpected token `%c'\n", next);
-		// 	free(key);
-		// 	return (0);
-		// }
-		// else if (type == SUFFIX_HISTORY)
-		// {
-		// 	ft_fprintf(2, "minishell: !%s: event not found\n", input + exp->i + matched_len + 1);
-		// 	free(key);
-		// 	return (0);
-		// }
         if (type != SUFFIX_OK)
 		{
 			exp->illegal_type = type;
@@ -67,18 +52,6 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status)
 		free(key);
 		return (1);
 	}
-    // if (key)
-    // {
-    //     value = get_env_value(lst_env, key);
-    //     if (value && !append_str_to_buffer(exp, value))
-    //     {
-    //         free(key);
-    //         return (0);
-    //     }
-    //     exp->i += matched_len;
-    //     free(key);
-    //     return (1);
-    // }
     if (!append_char(exp, '$'))
         return (0);
     if (input[exp->i])
@@ -101,6 +74,8 @@ int	handle_braces(t_expansion *exp, t_env *lst_env)
 	end = exp->i;
 	if (exp->str[exp->i] == '}')
 		exp->i++;
+    else
+        return (1);
 	if (end > start)
 	{
 		exp->var_name = ft_substr(exp->str, start, end - start);
@@ -110,48 +85,6 @@ int	handle_braces(t_expansion *exp, t_env *lst_env)
 	}
 	return (1);
 }
-
-// char *extract_var_name(const char *input, int start, t_env *env, int *matched_len)
-// {
-//     int l;
-//     char *key;
-//     char *value;
-
-//     l = 0;
-//     key = NULL;
-//     value = NULL;
-//     if (!ft_isalpha(input[start]) && input[start] != '_')
-//     {
-//         *matched_len = 0;
-//         return (NULL);
-//     }
-//     while (ft_isalnum(input[start + l]) || input[start + l] == '_')
-//         l++;
-//     while (l > 0)
-//     {
-//         key = ft_substr(input, start, l);
-//         if (!key)
-//             return (NULL);
-//         value = get_env_value(env, key);
-//         if (value)
-//         {
-//             *matched_len = l;
-//             return (key);
-//         }
-//         free(key);
-//         l--;
-//     }
-//     l = 0;
-//     while (ft_isalnum(input[start + l]) || input[start + l] == '_')
-//         l++;
-//     if (l > 0)
-//     {
-//         *matched_len = l;
-//         return (ft_substr(input, start, l));
-//     }
-//     *matched_len = 0;
-//     return (NULL);
-// }
 
 char *extract_var_name(const char *input, int start, int *matched_len)
 {
@@ -200,3 +133,22 @@ t_suffix_type get_suffix_type(char c)
     else
         return (SUFFIX_OK);
 }
+
+// int	handle_variable(char *input, t_expansion *exp, t_env *lst_env)
+// {
+// 	exp->k = 0;
+// 	if (!ft_isalpha(input[exp->i]) && input[exp->i] != '_')
+// 		return (1);
+// 	while (ft_isalnum(input[exp->i]) || input[exp->i] == '_')
+// 	{
+// 		if (exp->k >= MAX_VAR_NAME_LEN - 1)
+// 			break ;
+// 		exp->var_name[exp->k++] = input[exp->i++];
+// 	}
+// 	exp->var_name[exp->k] = '\0';
+// 	if (exp->k == 0)
+// 		return (1);
+// 	if (!handle_env_var(exp, lst_env))
+// 		return (0);
+// 	return (1);
+// }

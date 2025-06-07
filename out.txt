@@ -1,0 +1,1 @@
+heredoc with redirection.

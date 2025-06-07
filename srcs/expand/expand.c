@@ -85,7 +85,21 @@ int expand_single(char **str, t_env *env_head, int status, t_suffix_type *out_ty
 //     }
 // }
 
-int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char)
+// int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char)
+// {
+//     while (cmds)
+//     {
+//         if (!expand_tab(cmds->args, env_head, status, out_type, error_char))
+//             return (0);
+//         if (!expand_single(&cmds->cmd, env_head, status, out_type, error_char))
+//             return (0);
+//         if (!expand_tab(cmds->red, env_head, status, out_type, error_char))
+//             return (0);
+//         cmds = cmds->next;
+//     }
+//     return (1);
+// }
+int expand_vars(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char)
 {
     while (cmds)
     {
@@ -99,6 +113,16 @@ int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type
     }
     return (1);
 }
+
+int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char)
+{
+    if (!expand_vars(cmds, env_head, status, out_type, error_char))
+        return (0);
+    if (expand_heredoc_in_cmd_list(cmds, env_head, status))
+        return (0);
+    return (1);
+}
+
 
 // char *expand_string(char *str, t_env *lst_env, int status)
 // {
@@ -180,6 +204,7 @@ char *expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_ty
     if (!init_expand(&exp))
         return (NULL);
     exp.str = str;
+    exp.status = status;
     exp.exit_status = ft_itoa(status);
     exp.illegal_type = SUFFIX_OK;
     while (exp.str[exp.i])
@@ -187,10 +212,10 @@ char *expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_ty
         if (exp.str[exp.i] == '\'')
             handle_single_quote(&exp);
         else if (exp.str[exp.i] == '\"')
-            handle_double_quote(&exp, lst_env, status);
+            handle_double_quote(&exp, lst_env);
         else if (exp.str[exp.i] == '$' && !exp.in_dquote)
         {
-            if (!handle_dollar(exp.str, &exp, lst_env, status))
+            if (!handle_dollar(exp.str, &exp, lst_env))
             {
                 if (out_type)
                     *out_type = exp.illegal_type;
@@ -202,6 +227,7 @@ char *expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_ty
                     *error_char = '\0';
                 free(exp.buf);
                 free(exp.exit_status);
+                free(exp.error_char);
                 return (NULL);
             }
         }
