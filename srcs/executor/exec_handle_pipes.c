@@ -12,12 +12,40 @@
 
 #include "minishell.h"
 
-void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe)
+/* void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe)
 {
 	if (old_pipe->fd[0] != -1)
 		dup2(old_pipe->fd[0], STDIN_FILENO);
 	if (new_pipe->fd[1] != -1)
 		dup2(new_pipe->fd[1], STDOUT_FILENO);
+	if (old_pipe->fd[0] != -1)
+		close(old_pipe->fd[0]);
+	if (old_pipe->fd[1] != -1)
+		close(old_pipe->fd[1]);
+	if (new_pipe->fd[0] != -1)
+		close(new_pipe->fd[0]);
+	if (new_pipe->fd[1] != -1)
+		close(new_pipe->fd[1]);
+} */
+
+void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe)
+{
+	if (old_pipe->fd[0] != -1)
+	{
+		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
+		{
+			perror("dup2 old_pipe->fd[0]");
+			exit(EXIT_FAILURE);
+		}
+	}
+	if (new_pipe->fd[1] != -1)
+	{
+		if (dup2(new_pipe->fd[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2 new_pipe->fd[1]");
+			exit(EXIT_FAILURE);
+		}
+	}
 	if (old_pipe->fd[0] != -1)
 		close(old_pipe->fd[0]);
 	if (old_pipe->fd[1] != -1)

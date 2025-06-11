@@ -122,6 +122,7 @@ typedef struct s_expansion
 	char	*exit_status;
 	char	*env_val;
 	char	var_name[1024];
+    char    *str;
 }	t_expansion;
 
 //init
@@ -141,8 +142,8 @@ void    free_cmd_list(t_cmd *head);
 void    free_cmd(t_cmd *cmd);
 int		init_expansion(t_expansion *exp);
 void	free_expansion(t_expansion *exp);
-void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
-void rm_void_tab_cmd(t_cmd **tab_cmd);
+//void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
+//void rm_void_tab_cmd(t_cmd **tab_cmd);
 
 //signal
 void	signal_hiding(void);
@@ -199,7 +200,10 @@ int check_pipe(t_token *tokens);
 int	is_red_type(t_token_type type);
 void handle_input_redir(t_cmd *cmd, char *op, char *file);
 void handle_output_redir(t_cmd *cmd, char *op, char *file);
-void	apply_red(t_cmd *cmd);
+void	apply_heredoc_red(t_cmd *cmd, t_env *env);
+void	apply_red(t_cmd *cmd, t_env *env);
+int	read_heredoc(char *end_word, char *outfile, int exp, t_env *env, int s);
+char	*generate_filename(void);
 
 //expander
 char *expand_tilde(char *input, t_env *lst_env);

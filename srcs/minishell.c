@@ -1,16 +1,16 @@
 #include "minishell.h"
-
+/* 
 static void print_cmd_list(t_cmd *cmd_list)
 {
     while (cmd_list)
     {
-        if (cmd_list->infile)
-            printf("cmd IN FILE: %s\n", cmd_list->infile);
+        if (cmd_list->cmd)
+            printf("cmd is: %s\n", cmd_list->cmd);
         else
             printf("no cmd infile: (null)\n");
         cmd_list = cmd_list->next;
     }
-}
+} */
 
 void	process_input(t_shell *shell, char *input)
 {
@@ -34,7 +34,7 @@ void	process_input(t_shell *shell, char *input)
 	cmd_list = parser(tokens);
 	if (cmd_list)
 	{
-		print_cmd_list(cmd_list);
+		//print_cmd_list(cmd_list);
 		executor(cmd_list, shell);
 		//exec_simple(cmd_list, shell->env);
 		free_cmd_list(cmd_list);

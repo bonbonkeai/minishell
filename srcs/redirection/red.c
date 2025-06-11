@@ -5,6 +5,7 @@ void handle_input_redir(t_cmd *cmd, char *op, char *file)
     char    *tmp;
 
     tmp = ft_strdup(file);
+    //printf("HEYY HEREDOC tmp IS %s: \n", tmp);
     if (!tmp)
         return ;
     if (!ft_strcmp(op, "<"))
@@ -20,6 +21,7 @@ void handle_input_redir(t_cmd *cmd, char *op, char *file)
         if (cmd->infile)
             free(cmd->infile);
         cmd->infile = tmp;
+        //printf("HEYY HEREDOC INFILE IS %s: \n", cmd->infile);
         cmd->heredoc = 1;
         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
 			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
@@ -64,6 +66,7 @@ void resolve_redir(t_cmd *cmd)
         return ;
     while (cmd->red[i] && cmd->red[i + 1])
     {
+        //printf("%d file is %s :\n", i, cmd->red[i]);
         op = cmd->red[i];
         file = cmd->red[i + 1];
         handle_input_redir(cmd, op, file);

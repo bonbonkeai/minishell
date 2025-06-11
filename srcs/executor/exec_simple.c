@@ -49,14 +49,14 @@ int	execve_bin(t_cmd *cmd, t_env *env)
 	path = get_path(cmd, env);
 	arg = get_args(cmd);
 	vars = get_env_variables(env);
-	//printf("HEYYY SIMPLE\n");
+	//printf("HEYYY SIMPLE, cmd is %s \n", cmd->cmd);
 	if (check_cmd_standard(cmd))
 	{
 		//printf("HEREEEEE\n");
 		int i = 0;
 		while (arg && arg[i]) {
-    		//printf("arg[%d] = %s\n", i, arg[i]);
-			//printf("path = %s \n", path);
+    		printf("arg[%d] = %s\n", i, arg[i]);
+			printf("path = %s \n", path);
     		i++;
 		}
 		if (access(path, X_OK) == -1) 
@@ -71,7 +71,7 @@ int	execve_bin(t_cmd *cmd, t_env *env)
 	else
 	{
 		//printf("HEYYYYY\n");
-		apply_red(cmd);
+		apply_red(cmd, env);
 		printf("HEYYYYY2222\n");
 		//if (arg[1] == "\"Fri\"")
 		//arg[1] = "Fri";	

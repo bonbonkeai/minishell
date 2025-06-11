@@ -51,16 +51,17 @@ static int	wait_for_allpid(pid_t last_pid)
 
 static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 {
+	//printf("here i am 4545, cmd is %s \n", cmd->cmd);
 	if ((if_cmd_start(cmd)) == 1 || (if_cmd_simple(cmd)) != 2)
 	{
 		if (if_cmd_start(cmd) == 1)
 		{
-			//printf("here i am WRONG!\n");
+			printf("here i am WRONG!\n");
 			return ;
 		}
 		else
 		{
-			//printf("here i am 4545\n");
+			//printf("here i am 4545, cmd is %s \n", cmd->cmd);
 			exec_simple(cmd, shell->env);
 		}
 			//pipe_for_parent(&shell->new_pipe, &shell->old_pipe);
@@ -73,30 +74,54 @@ static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 	//wait_for_all(shell);
 }
 
+bool prepare_all_heredocs(t_cmd *cmd, t_env *env)
+{
+	while (cmd)
+	{
+		if (cmd->heredoc)
+		{
+			char *tmpfile = generate_filename();
+			read_heredoc(cmd->infile, tmpfile, cmd->heredoc_expand, env, 0);
+			free(cmd->infile);
+			cmd->infile = tmpfile;
+		}
+		cmd = cmd->next;
+	}
+	return (true);
+}
+
+
 int	exec_pipe(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
 	int	i;
 
 	i = 0;
+	if (!prepare_all_heredocs(cmd, shell->env))
+        return (-1);
 	initialize_pipe(shell);
 	while (cmd)
 	{
+		//printf("here i am 7676, cmd is %s \n", cmd->cmd);
 		if (create_pipes(cmd, shell) == -1)
+		{
+			//printf("here i am 4t43, cmd is %s \n", cmd->cmd);
 			return (-1);
+		}
 		pid = fork();
 		if (pid == -1)
 		{
 			safe_close_all_pipes(shell);
 			break;
 		}
-		else if (pid == 0)
+		if (pid == 0)
 		{
-			//signal_handle_fork();
-			//printf("here i am 3323\n");
+			//printf("[child %d] before pipe_fork_child, cmd=%s\n", getpid(), cmd->cmd);
+			//apply_red(cmd, shell->env);
 			pipe_fork_child(&shell->new_pipe, &shell->old_pipe);
-			//printf("here i am 678\n");
+			//printf("[child %d] after pipe_fork_child, cmd=%s\n", getpid(), cmd->cmd);
 			iteration_pipe(cmd, shell);
+			//printf("[child %d] after iteration_pipe\n", getpid());
 			exit(EXIT_SUCCESS);
 		}
 		else

@@ -36,7 +36,7 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 		status = exec_simple(cmd_tmp, shell->env);
 	else if (if_cmd_simple(cmd_tmp) == 0)
 	{
-		//printf("here i am \n");
+		//printf("here i am IN EXECUTOR , cmd is %s \n", cmd_tmp->cmd);
 		status = exec_pipe(cmd_tmp, shell);
 	}
 	else

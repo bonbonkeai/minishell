@@ -6,6 +6,7 @@ LIBFT = ./Libft/libft.a
 
 SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/initialization/init_env.c \
+		./srcs/initialization/init_expan.c \
 		./srcs/initialization/init_path.c \
 		./srcs/initialization/init_shell.c \
 		./srcs/signal/pas_sur.c \
@@ -14,6 +15,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
+		./srcs/redirection/handle_heredoc.c \
 		./srcs/parser/parser.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
@@ -25,10 +27,10 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/executor/exec_pipe.c \
 		./srcs/utils/utils_cmd.c \
 		./srcs/utils/utils_redir.c \
-		./srcs/utils/utils_setpath.c
-		# ./srcs/expand/expand.c \
-		# ./srcs/expand_joint.c \
-		# ./srcs/expand_variable.c \
+		./srcs/utils/utils_setpath.c 
+		# ./srcs/expand/expand_joint.c \
+		# ./srcs/expand/expand_variable.c \
+		# ./srcs/expand/expander.c \
 		# ./srcs/expand_heredoc.c \
 		# ./srcs/expand_heredoc_utils.c \
 		# ./srcs/executor/ \

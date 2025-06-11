@@ -15,6 +15,7 @@ int init_expansion(t_expansion *exp)
     exp->in_dquote = 0;
     exp->exit_status = NULL;
     exp->env_val = NULL;
+    exp->str = NULL;
     return (1);
 }
 
@@ -30,7 +31,7 @@ void	free_expansion(t_expansion *exp)
 		free(exp->env_val);
 }
 
-void rm_void_from_cmd(t_cmd *command, int i, int j, int num)
+/* void rm_void_from_cmd(t_cmd *command, int i, int j, int num)
 {
     char **tmp_tab;
 
@@ -73,4 +74,4 @@ void rm_void_tab_cmd(t_cmd **tab_cmd)
         rm_void_from_cmd(tab_cmd[i], 0, 0, num);
         i++;
     }
-}
+} */
