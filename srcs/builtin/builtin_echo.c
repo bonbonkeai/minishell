@@ -107,7 +107,7 @@ int	exec_echo(char *args[])
 	else
 		end = true;
 	str  = join_args(args + i, end);
-	if (!str->builtin)
+	if (!str)
 		return (1);
 	ft_printf("%s", str);
 	//free(str);

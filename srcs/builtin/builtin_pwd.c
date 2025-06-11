@@ -20,7 +20,7 @@ int	exec_pwd(int argc __attribute((unused)))
 		perror("pwd:");
 		return (EXIT_FAILURE);
 	}
-	ft_printf("%s\n", str);
+	ft_printf("%s\n", pth);
 	//free(str);
 	return (EXIT_SUCCESS);
 }
