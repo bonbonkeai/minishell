@@ -23,7 +23,7 @@ static bool	is_newline_option(char *args[], int *i)
 		return (false);
 	while (args[*i])
 	{	
-		*arg = args[*i];
+		arg = args[*i];
 		if (arg[0] != '-' || arg[1] != 'n')
 			break;
 		j = 2;
@@ -73,14 +73,14 @@ static char	*join_args(char *args[], bool end)
 	int	j;
 	char	*str;
 	
-	total_len = get_args_len(args, end);
+	total_len = count_args_len(args, end);
 	str = (char *)malloc(total_len + 1);
 	if (!str)
 		return (NULL);
 	ft_memset(str, 0, total_len + 1);
 	i = 0;
 	j = 0;
-	while (args[i]);
+	while (args[i])
 	{
 		if (i > 0)
 		{
@@ -91,11 +91,11 @@ static char	*join_args(char *args[], bool end)
 		j += ft_strlen(args[i]);
 		i++;
 	}
-	str = join_end(str, j, end);
+	str = join_end(str, end, j);
 	return (str);
 }
 
-int	exec_echo(char *args[])
+int	builtin_echo(char *args[])
 {
 	int	i;
 	bool	end;

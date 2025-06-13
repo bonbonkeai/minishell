@@ -82,7 +82,7 @@ void	apply_heredoc_red(t_cmd *cmd, t_env *env)
 		//printf("heredoc process infile is %s, \n", cmd->infile);
 	}
 	fd = open(cmd->infile, O_RDONLY);
-	printf("infile is %s \n; ",cmd->infile);
+	//printf("infile is %s \n; ",cmd->infile);
 	if (fd < 0)
 	{
 		perror("heredoc:");

@@ -11,18 +11,18 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-int	exec_simple(t_cmd *cmd, t_env *env)
+int	exec_simple(t_cmd *cmd, t_shell *shell)
 {
 	int		pid;
 	int		status;
 
 	if (if_cmd_builtin(cmd) == 1)
-		return (0);
+		return (exec_builtin_main(cmd, shell));
 	status = 0;
 	pid = fork();
 	if (pid == 0)
 	{
-		status = execve_bin(cmd, env);
+		status = execve_bin(cmd, shell->env);
 		exec_simple_exit(cmd);
 	}
 	else if (pid > 0)

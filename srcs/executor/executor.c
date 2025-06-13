@@ -33,7 +33,7 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 
 	cmd_tmp = cmd;
 	if (if_cmd_simple(cmd_tmp) == 1)
-		status = exec_simple(cmd_tmp, shell->env);
+		status = exec_simple(cmd_tmp, shell);
 	else if (if_cmd_simple(cmd_tmp) == 0)
 	{
 		//printf("here i am IN EXECUTOR , cmd is %s \n", cmd_tmp->cmd);
@@ -42,6 +42,7 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 	else
 		status = -1;
 	exec_exit_status(1, status);
+	shell->status = exec_exit_status(0, 0); 
 	//cmd_tmp = cmd_tmp->next;
 	//while (cmd_tmp != data->cmd)
 	//{
@@ -50,6 +51,6 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 		//if (cmd_tmp)
 			//exec_set(exec(data, cmd_tmp));
 	//}
-	return (exec_exit_status(0, 0) == 0);
+	return (shell->status == 0);
 }
 

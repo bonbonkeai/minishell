@@ -1,28 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*   utils_io.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/07 18:32:17 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/07 18:36:18 by jinhuang         ###   ########.fr       */
+/*   Created: 2025/06/07 21:10:36 by jinhuang          #+#    #+#             */
+/*   Updated: 2025/06/07 21:30:31 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin_pwd(void)
+bool	save_std_io(int storage[2])
 {
-	char	*pth;
-
-	pth = getcwd(NULL, 0);
-	if (!pth)
+	storage[0] = dup(STDIN_FILENO);
+	if (storage[0] == -1)
+		return (false);
+	storage[1] = dup(STDOUT_FILENO);
+	if (storage[1] == -1)
 	{
-		perror("pwd:");
-		return (EXIT_FAILURE);
+		close(storage[0]);
+		return (false);
 	}
-	ft_printf("%s\n", pth);
-	//free(str);
-	return (EXIT_SUCCESS);
+	return (true);
+}
+
+bool	restore_std_io(int storage[2])
+{
+	bool	res;
+	
+	res = true;
+	if (dup2(storage[0], STDIN_FILENO) == -1)
+		res = false;
+	if (dup2(storage[1], STDOUT_FILENO) == -1)
+		res = false;
+	return (res);
 }

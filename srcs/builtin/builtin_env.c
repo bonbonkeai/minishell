@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_pwd.c                                      :+:      :+:    :+:   */
+/*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/07 18:32:17 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/07 18:36:18 by jinhuang         ###   ########.fr       */
+/*   Created: 2025/06/12 18:44:52 by jinhuang          #+#    #+#             */
+/*   Updated: 2025/06/12 18:47:11 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	builtin_pwd(void)
+int	builtin_env(t_env *env)
 {
-	char	*pth;
+	t_env	*cur;
 
-	pth = getcwd(NULL, 0);
-	if (!pth)
+	cur = env;
+	while (cur)
 	{
-		perror("pwd:");
-		return (EXIT_FAILURE);
+		if (cur->value && cur->value[0] != '\0')
+			ft_printf("%s=%s\n", cur->key, cur->value);
+		cur = cur->next;
 	}
-	ft_printf("%s\n", pth);
-	//free(str);
-	return (EXIT_SUCCESS);
+	return (0);
 }

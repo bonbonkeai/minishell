@@ -62,7 +62,7 @@ static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 		else
 		{
 			//printf("here i am 4545, cmd is %s \n", cmd->cmd);
-			exec_simple(cmd, shell->env);
+			exec_simple(cmd, shell);
 		}
 			//pipe_for_parent(&shell->new_pipe, &shell->old_pipe);
 	}

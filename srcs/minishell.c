@@ -1,6 +1,6 @@
 #include "minishell.h"
-/* 
-static void print_cmd_list(t_cmd *cmd_list)
+
+/* static void print_cmd_list(t_cmd *cmd_list)
 {
     while (cmd_list)
     {
@@ -58,11 +58,11 @@ void minishell_loop(t_shell *shell)
 			break;
 		if (line[0])
 			add_history(line);
-		if (ft_strcmp(line, "exit") == 0)
+/* 		if (ft_strcmp(line, "exit") == 0)
 		{
 			free(line);
 			break ;
-		}
+		} */
 		process_input(shell, line);
 		free(line);
 		free(shell->trimmed_prompt);

@@ -23,11 +23,20 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/executor/executor.c \
 		./srcs/executor/exec_simple.c \
 		./srcs/executor/exec_utils.c \
+		./srcs/executor/exec_builtin.c \
 		./srcs/executor/exec_handle_pipes.c \
 		./srcs/executor/exec_pipe.c \
+		./srcs/builtin/builtin_cd.c \
+		./srcs/builtin/builtin_echo.c \
+		./srcs/builtin/builtin_env.c \
+		./srcs/builtin/builtin_exit.c \
+		./srcs/builtin/builtin_export.c \
+		./srcs/builtin/builtin_pwd.c \
+		./srcs/builtin/builtin_unset.c \
 		./srcs/utils/utils_cmd.c \
 		./srcs/utils/utils_redir.c \
-		./srcs/utils/utils_setpath.c 
+		./srcs/utils/utils_setpath.c \
+		./srcs/utils/utils_io.c
 		# ./srcs/expand/expand_joint.c \
 		# ./srcs/expand/expand_variable.c \
 		# ./srcs/expand/expander.c \

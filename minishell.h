@@ -231,8 +231,20 @@ int	expand_heredocs_in_cmd_list(t_cmd *cmd_list, t_env *env);
 char *expand_var_here(char *input, t_env *lst_env, int status);
 int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env, int status);
 
+//builtin
+void	env_set_var(char *key, char *value, t_env **env);
+int	is_valid_var_name(char *var);
+int	builtin_unset(t_env *env, char **argv);
+int	builtin_cd(t_shell *shell, char **argv);
+int	builtin_echo(char *args[]);
+int	builtin_env(t_env *env);
+int	builtin_exit(char **argv);
+int	builtin_export(char **argv, t_env **env);
+int	builtin_pwd(void);
+
 //executor
-int	exec_simple(t_cmd *cmd, t_env *env);
+int	exec_builtin_main(t_cmd *cmd, t_shell *shell);
+int	exec_simple(t_cmd *cmd, t_shell *shell);
 int	execve_bin(t_cmd *cmd, t_env *env);
 int	if_cmd_builtin(t_cmd *cmd);
 int	if_cmd_start(t_cmd *cmd);
@@ -256,6 +268,9 @@ int	check_cmd_standard(t_cmd *cmd);
 int	if_bin_access(char **bins, t_cmd *cmd);
 int	if_abs_bin_access(char *command);
 char	*get_env_var_value(t_env *env, char *name);
+bool	save_std_io(int storage[2]);
+bool	restore_std_io(int storage[2]);
+
 
 //main
 void	minishell_loop(t_shell *shell);
