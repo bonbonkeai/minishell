@@ -42,6 +42,7 @@ void    process_input(t_shell *shell, char *input)
         shell->status = 2;
         return ;
     }
+    // cmd_list = parser(tokens, shell);
     cmd_list = parser(tokens);
     if (!cmd_list)
     {
@@ -78,10 +79,8 @@ void    process_input(t_shell *shell, char *input)
     }
     if (cmd_list)
 	{
-		// print_cmd_list(cmd_list);
 		status = executor(cmd_list, shell);
         shell->status = status;
-		//exec_simple(cmd_list, shell->env);
 	}
     free_cmd_list(cmd_list);
     free_tokens(tokens);

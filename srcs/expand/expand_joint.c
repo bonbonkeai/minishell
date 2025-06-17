@@ -62,3 +62,37 @@ int handle_env_var(t_expansion *exp, t_env *lst_env)
         return (0);
     return (1);
 }
+
+// char **merge_args(char **args)
+// {
+// 	int		i;
+// 	char	*merged;
+// 	char	*tmp;
+// 	char	**new_args;
+
+// 	if (!args)
+// 		return (NULL);
+// 	merged = ft_strdup("");
+// 	if (!merged)
+// 		return (NULL);
+// 	i = 0;
+// 	while (args[i])
+// 	{
+// 		tmp = ft_strjoin(merged, args[i]);
+// 		free(merged);
+// 		if (!tmp)
+// 			return (NULL);
+// 		merged = tmp;
+// 		i++;
+// 	}
+// 	new_args = (char **)malloc(sizeof(char *) * 2);
+// 	if (!new_args)
+// 	{
+// 		free(merged);
+// 		return (NULL);
+// 	}
+// 	new_args[0] = merged;
+// 	new_args[1] = NULL;
+// 	return (new_args);
+// }
+

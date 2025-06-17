@@ -1,29 +1,73 @@
 #include "minishell.h"
 
+// void handle_single_quote(t_expansion *exp)
+// {
+//     exp->i++;
+//     while (exp->str[exp->i] && exp->str[exp->i] != '\'')
+//         append_char(exp, exp->str[exp->i++]);
+//     if (exp->str[exp->i] == '\'')
+//         exp->i++;
+// }
 void handle_single_quote(t_expansion *exp)
 {
     exp->i++;
+    exp->in_squote = 1;
     while (exp->str[exp->i] && exp->str[exp->i] != '\'')
         append_char(exp, exp->str[exp->i++]);
     if (exp->str[exp->i] == '\'')
         exp->i++;
+    exp->in_squote = 0;
 }
+
+// void handle_double_quote(t_expansion *exp, t_env *env)
+// {
+//     exp->i++;
+//     while (exp->str[exp->i] && exp->str[exp->i] != '\"')
+//     {
+//         if (exp->str[exp->i] == '$')
+//         {
+//             if (!handle_dollar(exp->str, exp, env))
+//                 return;
+//         }
+//         else
+//         {
+//             if (!append_char(exp, exp->str[exp->i]))
+//                 return;
+//             exp->i++;
+//         }
+//         // if (exp->str[exp->i] == '$' && valid_exp(exp->str[exp->i + 1]))
+//         // {
+//         //     if (!handle_dollar(exp->str, exp, env))
+//         //         return ;
+//         // }
+//         // else
+//         //     append_char(exp, exp->str[exp->i++]);
+//     }
+//     if (exp->str[exp->i] == '\"')
+//         exp->i++;
+// }
 
 void handle_double_quote(t_expansion *exp, t_env *env)
 {
     exp->i++;
+    exp->in_dquote = 1;
     while (exp->str[exp->i] && exp->str[exp->i] != '\"')
     {
-        if (exp->str[exp->i] == '$' && valid_exp(exp->str[exp->i + 1]))
+        if (exp->str[exp->i] == '$')
         {
             if (!handle_dollar(exp->str, exp, env))
-                return ;
+                return;
         }
         else
-            append_char(exp, exp->str[exp->i++]);
+        {
+            if (!append_char(exp, exp->str[exp->i]))
+                return;
+            exp->i++;
+        }
     }
     if (exp->str[exp->i] == '\"')
         exp->i++;
+    exp->in_dquote = 0;
 }
 
 int append_char(t_expansion *exp, char c)

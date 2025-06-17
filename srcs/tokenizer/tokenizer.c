@@ -15,6 +15,22 @@ t_token *create_token(const char *content, t_token_type type)
 	new->next = NULL;
 	return (new);
 }
+// t_token *create_token(const char *content, t_token_type type, t_quote_type quote)
+// {
+// 	t_token *new;
+
+// 	new = malloc(sizeof(t_token));
+// 	if (!new)
+// 		return (NULL);
+// 	new->content = ft_strdup(content);
+// 	if (!new->content)
+// 		return (free(new), NULL);
+// 	new->type = type;
+// 	new->quote_type = quote;
+// 	new->next = NULL;
+// 	return (new);
+// }
+
 
 void add_token(t_token **head, t_token *new)
 {
@@ -80,7 +96,38 @@ int get_operator_token(const char *line, int i, t_token **tokens)
 	}
 	return (0);
 }
+// int get_operator_token(const char *line, int i, t_token **tokens)
+// {
+// 	char	op[3];
+// 	char	op2[2];
 
+// 	if (!line[i])
+// 		return (0);
+// 	if (line[i] == '>' || line[i] == '<')
+// 	{
+// 		if (line[i] == line[i + 1])
+//         {
+// 			op[0] = line[i];
+//             op[1] = line[i];
+//             op[2] = '\0';
+// 			add_token(tokens, create_token(op, get_token_type(op), QUOTE_NONE));
+// 			return (2);
+// 		}
+// 		else
+// 		{
+// 			op2[0] = line[i];
+//             op2[1] = '\0';
+// 			add_token(tokens, create_token(op2, get_token_type(op2), QUOTE_NONE));
+// 			return (1);
+// 		}
+// 	}
+// 	if (line[i] == '|')
+// 	{
+// 		add_token(tokens, create_token("|", T_PIPE, QUOTE_NONE));
+// 		return (1);
+// 	}
+// 	return (0);
+// }
 int get_word_token(const char *line, int i, t_token **tokens)
 {
 	int j;
@@ -98,7 +145,7 @@ int get_word_token(const char *line, int i, t_token **tokens)
 		else if (line[i + j] == '\"' && !in_squote)
 			in_dquote = !in_dquote;
 		else if (!in_squote && !in_dquote && (ft_isspace(line[i + j]) || ft_strchr("<>|", line[i + j])))
-			break;
+			break ;
 		j++;
 	}
 	if (j == 0)
@@ -111,15 +158,45 @@ int get_word_token(const char *line, int i, t_token **tokens)
 		free(word);
 		return (j);
 	}
-	// if (!word || word[0] == '\0')
-	// {
-	// 	free(word);
-	// 	return (j);
-	// }
 	add_token(tokens, create_token(word, T_WORD));
 	free(word);
 	return (j);
 }
+
+
+// int get_word_token(const char *line, int i, t_token **tokens)
+// {
+//     int j = 0;
+//     int in_squote = 0;
+//     int in_dquote = 0;
+//     t_quote_type quote_type = QUOTE_NONE;
+
+//     while (line[i + j])
+//     {
+//         if (line[i + j] == '\'' && !in_dquote)
+//         {
+//             in_squote = !in_squote;
+//             quote_type = QUOTE_SINGLE;
+//         }
+//         else if (line[i + j] == '"' && !in_squote)
+//         {
+//             in_dquote = !in_dquote;
+//             quote_type = QUOTE_DOUBLE;
+//         }
+//         else if (!in_squote && !in_dquote && (ft_isspace(line[i + j]) || ft_strchr("<>|", line[i + j])))
+//             break;
+//         j++;
+//     }
+//     if (j == 0)
+//         return (0);
+//     char *word = ft_substr(line, i, j);
+//     if (!word)
+//         return (0);
+// 	add_token(tokens, create_token(word, T_WORD, quote_type));
+//     free(word);
+//     return (j);
+// }
+
 
 t_token *tokenize_prompt(const char *line)
 {

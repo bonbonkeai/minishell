@@ -33,16 +33,16 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 
 	cmd_tmp = cmd;
 	if (if_cmd_simple(cmd_tmp) == 1)
-		status = exec_simple(cmd_tmp, shell->env);
+		status = exec_simple(cmd_tmp, shell);
 	else if (if_cmd_simple(cmd_tmp) == 0)
 	{
-		//printf("here i am \n");
+		//printf("here i am IN EXECUTOR , cmd is %s \n", cmd_tmp->cmd);
 		status = exec_pipe(cmd_tmp, shell);
 	}
 	else
 		status = -1;
 	exec_exit_status(1, status);
-	shell->status = status;
+	shell->status = exec_exit_status(0, 0); 
 	//cmd_tmp = cmd_tmp->next;
 	//while (cmd_tmp != data->cmd)
 	//{
@@ -51,6 +51,25 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 		//if (cmd_tmp)
 			//exec_set(exec(data, cmd_tmp));
 	//}
-	return (exec_exit_status(0, 0) == 0);
+	return (shell->status == 0);
 }
 
+int	is_directory(const char *path)
+{
+	struct stat st;
+
+	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+		return (1);
+	return (0);
+}
+
+void	print_cmd_error(char *cmd, char *msg)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (cmd && cmd[0] != '\0')
+		ft_putstr_fd(cmd, 2);
+	else
+		ft_putstr_fd(":", 2);
+	ft_putstr_fd(": ", 2);
+	ft_putendl_fd(msg, 2);
+}

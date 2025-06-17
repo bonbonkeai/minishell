@@ -1,5 +1,18 @@
 #include "minishell.h"
 
+int handle_illegal_dollar(char *input, t_expansion *exp)
+{
+    if (!append_char(exp, '$'))
+        return (0);
+    if (input[exp->i])
+    {
+        if (!append_char(exp, input[exp->i]))
+            return (0);
+        exp->i++;
+    }
+    return (1);
+}
+
 int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
 {
     char *key;
@@ -12,8 +25,6 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
     value = NULL;
     matched_len = 0;
     exp->i++;
-    // if (input[exp->i] == '?')
-    //     return (handle_exit_status(exp));
     if (input[exp->i] == '?')
     {
         exp->i++;
@@ -28,6 +39,8 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
     }
     if (input[exp->i] == '{')
         return (handle_braces(exp, lst_env));
+    if (!ft_isalpha(input[exp->i]) && input[exp->i] != '_' && input[exp->i] != '\0')
+        return (handle_illegal_dollar(input, exp));
     key = extract_var_name(input, exp->i, &matched_len);
     if (key)
 	{
@@ -60,6 +73,7 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
             return (0);
         exp->i++;
     }
+    // return (handle_illegal_dollar(input, exp));
     return (1);
 }
 

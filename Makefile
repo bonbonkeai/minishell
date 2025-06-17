@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I.
+CFLAGS = -Wall -Wextra -Werror -I. -fsanitize=address -g
 NAME = minishell
 NAME_BONUS = 
 LIBFT = ./Libft/libft.a
@@ -14,6 +14,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
+		./srcs/redirection/handle_heredoc.c \
 		./srcs/parser/parser.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
@@ -24,16 +25,23 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/expand/expand_utils.c \
 		./srcs/expand/expand_heredoc.c \
 		./srcs/expand/expand_heredoc_utils.c \
+		./srcs/builtin/builtin_cd.c \
+		./srcs/builtin/builtin_echo.c \
+		./srcs/builtin/builtin_env.c \
+		./srcs/builtin/builtin_exit.c \
+		./srcs/builtin/builtin_export.c \
+		./srcs/builtin/builtin_pwd.c \
+		./srcs/builtin/builtin_unset.c \
 		./srcs/executor/executor.c \
 		./srcs/executor/exec_simple.c \
 		./srcs/executor/exec_utils.c \
 		./srcs/executor/exec_handle_pipes.c \
 		./srcs/executor/exec_pipe.c \
+		./srcs/executor/exec_builtin.c \
 		./srcs/utils/utils_cmd.c \
 		./srcs/utils/utils_redir.c \
 		./srcs/utils/utils_setpath.c \
-		# ./srcs/signal/pas_sur.c \
-		#./scrs/builtin/ \
+		./srcs/utils/utils_io.c \
 	
 		
 	

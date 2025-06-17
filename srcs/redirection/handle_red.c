@@ -47,6 +47,7 @@ static void	apply_output_red(t_cmd *cmd)
 	else
 		flags |= O_TRUNC;
 	fd = open(cmd->outfile, flags, 0644);
+	ft_putstr_fd("debug1\n", 1);
 	if (fd < 0)
 	{
 		perror(cmd->outfile);
@@ -59,6 +60,7 @@ static void	apply_output_red(t_cmd *cmd)
 		exit(EXIT_FAILURE);
 	}
 	close(fd);
+	ft_putstr_fd("debug2\n", 1);
 }
 
 // static void	apply_heredoc_red(t_cmd *cmd)
@@ -82,19 +84,54 @@ static void	apply_output_red(t_cmd *cmd)
 // 	}
 // 	close(fd);
 // }
-
-// void	apply_red(t_cmd *cmd)
-// {
-// 	if (cmd->heredoc)
-// 		apply_heredoc_red(cmd);
-// 	else
-// 		apply_input_red(cmd);
-// 	apply_output_red(cmd);
-// }
-
-void	apply_red(t_cmd *cmd)
+void	apply_heredoc_red(t_cmd *cmd, t_env *env)
 {
-	if (!cmd->heredoc && cmd->infile)
+	int	fd;
+	int g_exit_status = 0;
+	char	*tmpfile;
+
+	if (!cmd->heredoc)
+		return ;
+	if (ft_strcmp(cmd->infile, "EOF") == 0)
+	{
+		//fd = heredoc_open(cmd->infile);
+		tmpfile = generate_filename();
+		//printf("tmp SUCinfile is %s, \n", cmd->infile);
+		read_heredoc(cmd->infile, tmpfile, 0, env, g_exit_status);
+		//printf("readdoc SUC\n");
+		//read_heredoc(cmd->infile, tmpfile, cmd->heredoc_expand, env, g_exit_status);
+		free(cmd->infile);
+    	cmd->infile = tmpfile; 
+		//printf("heredoc process infile is %s, \n", cmd->infile);
+	}
+	fd = open(cmd->infile, O_RDONLY);
+	//printf("infile is %s \n; ",cmd->infile);
+	if (fd < 0)
+	{
+		perror("heredoc:");
+		exit(EXIT_FAILURE);
+	}
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("dup2 heredoc");
+		close(fd);
+		exit(EXIT_FAILURE);
+	}
+	close(fd);
+}
+
+void	apply_red(t_cmd *cmd, t_env *env)
+{
+	if (cmd->heredoc)
+		apply_heredoc_red(cmd, env);
+	else
 		apply_input_red(cmd);
 	apply_output_red(cmd);
 }
+
+// void	apply_red(t_cmd *cmd)
+// {
+// 	if (!cmd->heredoc && cmd->infile)
+// 		apply_input_red(cmd);
+// 	apply_output_red(cmd);
+// }

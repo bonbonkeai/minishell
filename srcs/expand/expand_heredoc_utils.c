@@ -9,7 +9,6 @@ int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status)
 
 	while (cmd_list)
 	{
-		// if (cmd_list->heredoc && cmd_list->infile)
         if (cmd_list->heredoc && cmd_list->heredoc_limiter)
 		{
 			if (pipe(fd) == -1)
@@ -17,7 +16,6 @@ int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status)
 				perror("pipe");
 				return (1);
 			}
-			// should_expand = !has_quote(cmd_list->infile);
             should_expand = !has_quote(cmd_list->heredoc_limiter);
             lim = remove_quotes(cmd_list->heredoc_limiter);
 			heredoc_content = process_heredoc_content(lim, env, should_expand, status);

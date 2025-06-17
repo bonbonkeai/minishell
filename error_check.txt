@@ -189,6 +189,7 @@
 
             export SPACES="   "
             echo $SPCES
+            
 
             export NAME=BONbon
             echo $NAME
