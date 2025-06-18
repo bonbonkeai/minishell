@@ -1,15 +1,14 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I.
+CFLAGS = -Wall -Wextra -Werror -I. -fsanitize=address -g
 NAME = minishell
 NAME_BONUS = 
 LIBFT = ./Libft/libft.a
 
 SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/initialization/init_env.c \
-		./srcs/initialization/init_expan.c \
 		./srcs/initialization/init_path.c \
 		./srcs/initialization/init_shell.c \
-		./srcs/signal/pas_sur.c \
+		./srcs/initialization/init_expan.c \
 		./srcs/lexer/lexer.c \
 		./srcs/tokenizer/tokenizer.c \
 		./srcs/redirection/red.c \
@@ -20,12 +19,12 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
 		./srcs/minishell.c \
-		./srcs/executor/executor.c \
-		./srcs/executor/exec_simple.c \
-		./srcs/executor/exec_utils.c \
-		./srcs/executor/exec_builtin.c \
-		./srcs/executor/exec_handle_pipes.c \
-		./srcs/executor/exec_pipe.c \
+		./srcs/expand/expand.c \
+		./srcs/expand/expand_joint.c \
+		./srcs/expand/expand_variable.c \
+		./srcs/expand/expand_utils.c \
+		./srcs/expand/expand_heredoc.c \
+		./srcs/expand/expand_heredoc_utils.c \
 		./srcs/builtin/builtin_cd.c \
 		./srcs/builtin/builtin_echo.c \
 		./srcs/builtin/builtin_env.c \
@@ -33,17 +32,17 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/builtin/builtin_export.c \
 		./srcs/builtin/builtin_pwd.c \
 		./srcs/builtin/builtin_unset.c \
+		./srcs/executor/executor.c \
+		./srcs/executor/exec_simple.c \
+		./srcs/executor/exec_utils.c \
+		./srcs/executor/exec_handle_pipes.c \
+		./srcs/executor/exec_pipe.c \
+		./srcs/executor/exec_builtin.c \
 		./srcs/utils/utils_cmd.c \
 		./srcs/utils/utils_redir.c \
 		./srcs/utils/utils_setpath.c \
-		./srcs/utils/utils_io.c
-		# ./srcs/expand/expand_joint.c \
-		# ./srcs/expand/expand_variable.c \
-		# ./srcs/expand/expander.c \
-		# ./srcs/expand_heredoc.c \
-		# ./srcs/expand_heredoc_utils.c \
-		# ./srcs/executor/ \
-		# ./srcs/builtin/ 
+		./srcs/utils/utils_io.c \
+	
 		
 	
 

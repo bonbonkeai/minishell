@@ -45,13 +45,13 @@ int	read_heredoc(char *end_word, char *outfile, int exp, t_env *env, int s)
 {
 	int	fd;
 	char	*line;
-	size_t	len;
+	// size_t	len;
 
 	(void)s;
 	(void)env;
 	(void)exp;
 	line = NULL;
-	len = 0;
+	// len = 0;
 	fd = open_heredoc_file(outfile);
 	if (fd < 0)
 		return (-1);

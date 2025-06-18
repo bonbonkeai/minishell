@@ -36,8 +36,6 @@ char	*get_path(t_cmd *cmd, t_env *env)
 			bins = ft_split(pathlist, ':');
 			if (if_bin_access(bins, cmd) == 1)
 				path = cmd->pth;
-			else
-				perror("Command not found:");
 		}
 	}
 	return (path);

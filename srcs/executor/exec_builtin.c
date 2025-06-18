@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	allocate_builtin(t_cmd *cmd, t_shell *shell)
+int	allocate_builtin(t_cmd *cmd, t_shell *shell)
 {
 	if (ft_strcmp(cmd->cmd, "cd") == 0)
 		return (builtin_cd(shell, cmd->args));
@@ -30,7 +30,7 @@ static int	allocate_builtin(t_cmd *cmd, t_shell *shell)
 		return (1);
 }
 
-static int	apply_store_and_red(t_cmd *cmd, int storage[2], t_env *env)
+int	apply_store_and_red(t_cmd *cmd, int storage[2])
 {
 	if (ft_strcmp(cmd->cmd, "exit") != 0)
 	{
@@ -39,7 +39,8 @@ static int	apply_store_and_red(t_cmd *cmd, int storage[2], t_env *env)
     			perror("Failed to save std IO");
     			return(1);
 		}
-		apply_red(cmd, env);
+		ft_putstr_fd("debug3\n", 1);
+		apply_red(cmd);
 	}
 	else
 	{
@@ -49,7 +50,7 @@ static int	apply_store_and_red(t_cmd *cmd, int storage[2], t_env *env)
 	return (0);
 }
 
-static void	recover_io_and_close(int storage[2])
+void	recover_io_and_close(int storage[2])
 {
 	bool	res;
 
@@ -79,7 +80,8 @@ int	exec_builtin_main(t_cmd *cmd, t_shell *shell)
 
 	//if (check_cmd_standard(cmd))
 		//status = allocate_builtin(cmd, env);
-	ret = apply_store_and_red(cmd, storage, shell->env);
+	ft_putstr_fd("debug4\n", 1);
+	ret = apply_store_and_red(cmd, storage);
 	if (ret == -1)
 		return (0);
 	status = allocate_builtin(cmd, shell);

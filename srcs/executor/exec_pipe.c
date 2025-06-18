@@ -51,7 +51,6 @@ static int	wait_for_allpid(pid_t last_pid)
 
 static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 {
-	//printf("here i am 4545, cmd is %s \n", cmd->cmd);
 	if ((if_cmd_start(cmd)) == 1 || (if_cmd_simple(cmd)) != 2)
 	{
 		if (if_cmd_start(cmd) == 1)
@@ -61,7 +60,7 @@ static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 		}
 		else
 		{
-			//printf("here i am 4545, cmd is %s \n", cmd->cmd);
+			//printf("here i am 4545\n");
 			exec_simple(cmd, shell);
 		}
 			//pipe_for_parent(&shell->new_pipe, &shell->old_pipe);
@@ -74,7 +73,7 @@ static void	iteration_pipe(t_cmd *cmd, t_shell *shell)
 	//wait_for_all(shell);
 }
 
-bool prepare_all_heredocs(t_cmd *cmd, t_env *env)
+/* bool prepare_all_heredocs(t_cmd *cmd, t_env *env)
 {
 	while (cmd)
 	{
@@ -88,18 +87,50 @@ bool prepare_all_heredocs(t_cmd *cmd, t_env *env)
 		cmd = cmd->next;
 	}
 	return (true);
-}
+} */
 
+// int	exec_pipe(t_cmd *cmd, t_shell *shell)
+// {
+// 	pid_t	pid;
+// 	// int	i;
+
+// 	// i = 0;
+// 	// initialize_pipe(shell);
+// 	while (cmd)
+// 	{
+// 		if (create_pipes(cmd, shell) == -1)
+// 			return (-1);
+// 		pid = fork();
+// 		if (pid == -1)
+// 		{
+// 			safe_close_all_pipes(shell);
+// 			break;
+// 		}
+// 		else if (pid == 0)
+// 		{
+// 			//signal_handle_fork();
+// 			//printf("here i am 3323\n");
+// 			pipe_fork_child(&shell->new_pipe, &shell->old_pipe);
+// 			//printf("here i am 678\n");
+// 			iteration_pipe(cmd, shell);
+// 			exit(EXIT_SUCCESS);
+// 		}
+// 		else
+// 		{
+// 			pipe_for_parent(&shell->new_pipe, &shell->old_pipe);
+// 		}
+// 		//pipes_fork_parent_end(shell, cmd);
+// 		cmd = cmd->next;
+// 	}
+// 	return (wait_for_allpid(pid));
+// }
 
 int	exec_pipe(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
-	int	i;
 
-	i = 0;
-	if (!prepare_all_heredocs(cmd, shell->env))
-        return (-1);
-	initialize_pipe(shell);
+	//if (!prepare_all_heredocs(cmd, shell->env))
+        //return (-1);
 	while (cmd)
 	{
 		//printf("here i am 7676, cmd is %s \n", cmd->cmd);
@@ -112,7 +143,7 @@ int	exec_pipe(t_cmd *cmd, t_shell *shell)
 		if (pid == -1)
 		{
 			safe_close_all_pipes(shell);
-			break;
+			break ;
 		}
 		if (pid == 0)
 		{

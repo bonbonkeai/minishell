@@ -1,11 +1,39 @@
 #include "minishell.h"
 
+// void handle_input_redir(t_cmd *cmd, char *op, char *file)
+// {
+//     char    *tmp;
+
+//     tmp = ft_strdup(file);
+//     if (!tmp)
+//         return ;
+//     if (!ft_strcmp(op, "<"))
+//     {
+//         if (cmd->infile)
+//             free(cmd->infile);
+//         cmd->infile = tmp;
+//         cmd->heredoc = 0;
+//     }
+//     else if (!ft_strcmp(op, "<<"))
+//     {
+//         if (cmd->infile)
+//             free(cmd->infile);
+//         cmd->infile = tmp;
+//         cmd->heredoc = 1;
+//         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
+// 			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
+// 			cmd->heredoc_expand = 0;
+// 		else
+// 			cmd->heredoc_expand = 1;
+//     }
+// }
 void handle_input_redir(t_cmd *cmd, char *op, char *file)
 {
-    char    *tmp;
+    char *tmp;
 
+    if (!op || !file || !cmd)
+        return ;
     tmp = ft_strdup(file);
-    //printf("HEYY HEREDOC tmp IS %s: \n", tmp);
     if (!tmp)
         return ;
     if (!ft_strcmp(op, "<"))
@@ -13,23 +41,35 @@ void handle_input_redir(t_cmd *cmd, char *op, char *file)
         if (cmd->infile)
             free(cmd->infile);
         cmd->infile = tmp;
-        //cmd->fd_in = -1;
         cmd->heredoc = 0;
+        if (cmd->heredoc_limiter) 
+        {
+            free(cmd->heredoc_limiter);
+            cmd->heredoc_limiter = NULL;
+        }
     }
     else if (!ft_strcmp(op, "<<"))
     {
+        if (cmd->heredoc_limiter)
+            free(cmd->heredoc_limiter);
+        cmd->heredoc_limiter = tmp;
+        if (cmd->infile)
+        {
+            free(cmd->infile);
+            cmd->infile = NULL;
+        }
         if (cmd->infile)
             free(cmd->infile);
-        cmd->infile = tmp;
-        //printf("HEYY HEREDOC INFILE IS %s: \n", cmd->infile);
+        cmd->infile = ft_strdup(tmp);
         cmd->heredoc = 1;
         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
-			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
-			cmd->heredoc_expand = 0;
-		else
-			cmd->heredoc_expand = 1;
+            (file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
+            cmd->heredoc_expand = 0;
+        else
+            cmd->heredoc_expand = 1;
     }
 }
+
 
 void handle_output_redir(t_cmd *cmd, char *op, char *file)
 {
@@ -41,7 +81,6 @@ void handle_output_redir(t_cmd *cmd, char *op, char *file)
         if (cmd->outfile)
             free(cmd->outfile);
         cmd->outfile = tmp;
-        //cmd->fd_out = -1;
         cmd->append = 0;
     }
     else if (!ft_strcmp(op, ">>"))
@@ -66,7 +105,6 @@ void resolve_redir(t_cmd *cmd)
         return ;
     while (cmd->red[i] && cmd->red[i + 1])
     {
-        //printf("%d file is %s :\n", i, cmd->red[i]);
         op = cmd->red[i];
         file = cmd->red[i + 1];
         handle_input_redir(cmd, op, file);

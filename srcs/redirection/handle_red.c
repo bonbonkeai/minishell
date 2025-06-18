@@ -47,6 +47,7 @@ static void	apply_output_red(t_cmd *cmd)
 	else
 		flags |= O_TRUNC;
 	fd = open(cmd->outfile, flags, 0644);
+	ft_putstr_fd("debug1\n", 1);
 	if (fd < 0)
 	{
 		perror(cmd->outfile);
@@ -59,8 +60,30 @@ static void	apply_output_red(t_cmd *cmd)
 		exit(EXIT_FAILURE);
 	}
 	close(fd);
+	ft_putstr_fd("debug2\n", 1);
 }
 
+// static void	apply_heredoc_red(t_cmd *cmd)
+// {
+// 	int	fd;
+
+// 	if (!cmd->heredoc)
+// 		return ;
+// 	//fd = heredoc_open(cmd->infile);
+// 	fd = open(cmd->infile, O_RDONLY);
+// 	if (fd < 0)
+// 	{
+// 		perror("heredoc");
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	if (dup2(fd, STDIN_FILENO) == -1)
+// 	{
+// 		perror("dup2 heredoc");
+// 		close(fd);
+// 		exit(EXIT_FAILURE);
+// 	}
+// 	close(fd);
+// }
 void	apply_heredoc_red(t_cmd *cmd, t_env *env)
 {
 	int	fd;
@@ -97,12 +120,35 @@ void	apply_heredoc_red(t_cmd *cmd, t_env *env)
 	close(fd);
 }
 
-void	apply_red(t_cmd *cmd, t_env *env)
+/* void	apply_red(t_cmd *cmd, t_env *env)
 {
 	if (cmd->heredoc)
 		apply_heredoc_red(cmd, env);
 	else
 		apply_input_red(cmd);
 	apply_output_red(cmd);
-}
+} */
 
+void	apply_red(t_cmd *cmd)
+{
+	//printf(" infile is : %d \n", cmd->heredoc);
+	if (!cmd->heredoc && cmd->infile)
+		apply_input_red(cmd);
+	if (cmd->heredoc >= 0)
+	{
+		if (cmd->heredoc < 0)
+		{
+			perror("heredoc:");
+			exit(EXIT_FAILURE);
+		}
+		if (dup2(cmd->heredoc, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc");
+			close(cmd->heredoc);
+			exit(EXIT_FAILURE);
+		}
+		close(cmd->heredoc);
+		//dup2(cmd->heredoc, STDIN_FILENO);
+	}
+	apply_output_red(cmd);
+}

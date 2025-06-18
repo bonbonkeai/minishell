@@ -60,24 +60,180 @@ void toggle_quote(char ch, int *in_squote, int *in_dquote)
         *in_dquote = !(*in_dquote);
 }
 
+int is_too_many_char(const char *input, int i, char c)
+{
+    int count;
+    
+    count = 0;
+    while (input[i] == c)
+    {
+        count++;
+        i++;
+    }
+    if (count > 2)
+        return (1);
+    return (0);
+}
+
+// int is_invalid_operator(const char *input, int i)
+// {
+//     if ((input[i] == '>' || input[i] == '<' ) && input[i + 1] == '\0')
+//         return (syntax_error_newline(), TRUE);
+//     if (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>')
+//         return (syntax_error('>'), TRUE);
+//     if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<')
+//         return (syntax_error_newline(), TRUE);
+//     if (input[i] == '|' && input[i + 1] == '|')
+//         return (syntax_error_pipex("||"), TRUE);
+//     if (input[i] == '>' && input[i + 1] == '<')
+//         return (syntax_error('<'), TRUE);
+//     if (input[i] == '<' && input[i + 1] == '>')
+//         return (syntax_error_newline(), TRUE);
+//     if (input[i] == '<' && input[i + 1] == '|')
+//         return (syntax_error('|'), TRUE);
+//     return (FALSE);
+// }
+
+char next_non_space(const char *input, int i)
+{
+    i++;
+    while (input[i] && ft_isspace(input[i]))
+        i++;
+    return (input[i]);
+}
+
 int is_invalid_operator(const char *input, int i)
 {
-    if ((input[i] == '>' || input[i] == '<' ) && input[i + 1] == '\0')
+    // case: >>|><
+    if ((input[i] == '>' || input[i] == '<') && input[i + 1] == input[i] && input[i + 1] == '|')
+        return (syntax_error_pipex("|"), TRUE);
+
+    if ((input[i] == '>' || input[i] == '<') &&
+		input[i + 1] == '|')
+		return (syntax_error_pipex("|"), TRUE);
+ 
+    // case: end with redirection without file
+    if ((input[i] == '>' || input[i] == '<') && input[i + 1] == '\0')
         return (syntax_error_newline(), TRUE);
+
+    // case: too many '>' or '<<'
+    // if (is_too_many_char(input, i, '>'))
+    //     return (syntax_error_pipex(">>"), TRUE);
+    // if (is_too_many_char(input, i, '<'))
+    //     return (syntax_error_pipex("<<"), TRUE);
     if (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>')
-        return (syntax_error('>'), TRUE);
+        return (syntax_error_pipex(">>"), TRUE);
     if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<')
-        return (syntax_error_newline(), TRUE);
+        return (syntax_error_pipex("<<"), TRUE);
+
+    // case: '>> >>' → token '>>'
+    if (input[i] == '>' && input[i + 1] == '>' &&
+        next_non_space(input, i + 1) == '>')
+        return (syntax_error_pipex(">>"), TRUE);
+    // case: '> >' → token '>'
+    if (input[i] == '>' && input[i + 1] != '>' &&
+        next_non_space(input, i) == '>')
+    {
+        syntax_error_pipex(">");
+        return (TRUE);
+    }
+
+    // case: '< <' → token '<'
+    if (input[i] == '<' && input[i + 1] != '<' && next_non_space(input, i) == '<')
+        return (syntax_error_pipex("<"), TRUE);
+
+    // case: echo > < → token '<'
+    if ((input[i] == '>' || input[i] == '<') &&
+        next_non_space(input, i) == '<' &&
+        !(input[i] == '<' && input[i + 1] == '<'))
+        return (syntax_error_pipex("<"), TRUE);
+
+    // case: echo | | → token '|'
+    if (input[i] == '|' && next_non_space(input, i) == '|')
+        return (syntax_error_pipex("|"), TRUE);
+
+    // case: mixed invalid combos
+    if (input[i] == '>' && input[i + 1] == '<')
+        return (syntax_error_pipex("<"), TRUE);
+
+    if (input[i] == '<' && input[i + 1] == '>')
+        return (syntax_error_pipex(">"), TRUE);
+
+    // case: double pipes (||)
     if (input[i] == '|' && input[i + 1] == '|')
         return (syntax_error_pipex("||"), TRUE);
-    if (input[i] == '>' && input[i + 1] == '<')
-        return (syntax_error('<'), TRUE);
-    if (input[i] == '<' && input[i + 1] == '>')
+
+    // case: | at the end of input
+    if (input[i] == '|' && input[i + 1] == '\0')
         return (syntax_error_newline(), TRUE);
-    if (input[i] == '<' && input[i + 1] == '|')
-        return (syntax_error('|'), TRUE);
+
+    if (input[i] == '|' && input[i + 1] == '\0')
+        return (syntax_error_newline(), TRUE);
     return (FALSE);
 }
+
+// int is_invalid_operator(const char *input, int i)
+// {
+//     char next;
+
+//     next = next_non_space(input, i);
+
+//     // case 1: end with redirection → error
+//     if ((input[i] == '<' || input[i] == '>') && input[i + 1] == '\0')
+//         return (syntax_error_newline(), TRUE);
+
+//     // case 2: <<< → illegal (only allow up to <<)
+//     if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<')
+//         return (syntax_error_pipex("<<"), TRUE);
+
+//     if (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>')
+//         return (syntax_error_pipex(">>"), TRUE);
+
+//     // case: '>> >>' → token '>>'
+//     if (input[i] == '>' && input[i + 1] == '>' &&
+//         next_non_space(input, i + 1) == '>')
+//         return (syntax_error_pipex(">>"), TRUE);
+    
+//     // case: echo | | → token '|'
+//     if (input[i] == '|' && next_non_space(input, i) == '|')
+//         return (syntax_error_pipex("|"), TRUE);
+
+//     // case: echo > < → token '<'
+//     if ((input[i] == '>' || input[i] == '<'))
+//         return (syntax_error_pipex("<"), TRUE);
+    
+//     // case 3: < < or > > separated by space
+//     if (input[i] == '<' && input[i + 1] != '<' && next == '<')
+//         return (syntax_error_pipex("<"), TRUE);
+//     if (input[i] == '>' && input[i + 1] != '>' && next == '>')
+//         return (syntax_error_pipex(">"), TRUE);
+
+//     // case 4: > < or < > (mixed)
+//     if (input[i] == '>' && input[i + 1] == '<')
+//     {
+//         syntax_error_pipex("<");
+//         return (TRUE);
+//     }
+//     if (input[i] == '<' && input[i + 1] == '>')
+//     {
+//         syntax_error_pipex(">");
+//         return (TRUE);
+//     }
+
+//     // case 5: redirection followed by pipe
+//     if ((input[i] == '>' || input[i] == '<') && next == '|')
+//         return (syntax_error_pipex("|"), TRUE);
+
+//     // case 6: || (invalid pipe)
+//     if (input[i] == '|' && next == '|')
+//         return (syntax_error_pipex("||"), TRUE);
+
+//     // case 7: pipe ends input
+//     if (input[i] == '|' && input[i + 1] == '\0')
+//         return (syntax_error_newline(), TRUE);
+
+//     return (FALSE);
+// }
 
 void syntax_error(char unexpected)
 {

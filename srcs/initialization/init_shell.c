@@ -13,6 +13,10 @@ t_shell *init_shell(char **envp)
     sh->paths = init_path_array(sh->env);
     sh->trimmed_prompt = NULL;
     sh->status = 0;
+    sh->old_pipe.fd[0] = -1;
+    sh->old_pipe.fd[1] = -1;
+    sh->new_pipe.fd[0] = -1;
+    sh->new_pipe.fd[1] = -1;
     return (sh);
 }
 

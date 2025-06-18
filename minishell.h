@@ -17,9 +17,9 @@
 # include <stdbool.h>
 # include <termios.h>
 
-#ifndef PATH_MAX
-# define PATH_MAX 4096
-#endif
+# ifndef PATH_MAX
+#  define PATH_MAX 4096
+# endif
 
 # define GREEN  "\001\033[0;32m\002"
 # define BLUE   "\001\033[0;34m\002"
@@ -77,10 +77,18 @@ typedef enum e_token_type
     T_HEREDOC,
 }               t_token_type;
 
+typedef enum e_quote_type
+{
+    QUOTE_NONE,
+    QUOTE_SINGLE,
+    QUOTE_DOUBLE
+} t_quote_type;
+
 typedef struct s_token
 {
     char *content;
     t_token_type type;
+    // t_quote_type  quote_type;
     struct s_token *next;
     
 }                   t_token;
@@ -92,6 +100,7 @@ typedef struct s_cmd
     char **args;
     char *infile;
     char *outfile;
+    char *heredoc_limiter;
     int fd_in;
     int fd_out;
     int append;
@@ -110,20 +119,49 @@ typedef struct s_redir
     int     type;
 }               t_redir;
 
+// typedef struct s_expansion
+// {
+// 	char    *str;
+//     char    *buf;
+//     char	*result;
+// 	int		size;
+// 	int		len;
+// 	int		i;
+// 	int		k;
+// 	int		in_squote;
+// 	int		in_dquote;
+// 	char	*exit_status;
+// 	char	*env_val;
+// 	char	var_name[1024];
+// }	t_expansion;
 typedef struct s_expansion
 {
-	char	*result;
-	int		size;
-	int		len;
-	int		i;
-	int		k;
-	int		in_squote;
-	int		in_dquote;
-	char	*exit_status;
-	char	*env_val;
-	char	var_name[1024];
     char    *str;
-}	t_expansion;
+    char    *buf;
+    int     size;
+    int     len;
+    int     i;
+    int     k;
+    int     in_squote;
+    int     in_dquote;
+    char    *exit_status;
+    char    *env_val;
+    char    *var_name;
+    int     illegal_type;
+    char    *error_char;
+    int		status;
+} t_expansion;
+
+typedef enum e_suffix_type
+{
+    SUFFIX_OK,
+    SUFFIX_PIPE,
+    SUFFIX_REDIR,
+    SUFFIX_SYNTAX_ERROR,
+    SUFFIX_HISTORY,
+    SUFFIX_BACKGROUND,
+    SUFFIX_SEMICOLON
+}   t_suffix_type;
 
 //init
 t_env   *add_new_node(t_env **envp, const char *key, const char *value);
@@ -140,10 +178,10 @@ void    free_shell(t_shell *sh);
 t_cmd   *init_cmd(void);
 void    free_cmd_list(t_cmd *head);
 void    free_cmd(t_cmd *cmd);
-int		init_expansion(t_expansion *exp);
+int		init_expand(t_expansion *exp);
 void	free_expansion(t_expansion *exp);
-//void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
-//void rm_void_tab_cmd(t_cmd **tab_cmd);
+void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
+void rm_void_tab_cmd(t_cmd **tab_cmd);
 
 //signal
 void	signal_hiding(void);
@@ -158,13 +196,13 @@ void	sigint_hl_heredoc(int sig);
 void	check_fork_signal(int statloc);
 
 //promt
-//char *join4str(char *s1, char *s2, char *s3, char *s4);
-//char *last_dir(const char *path);
 char *ft_getcwd(char *buf, size_t size);
 char *build_home(t_shell *shell);
 char *build_prompt(t_shell *shell);
 
 //lexer
+int is_too_many_char(const char *input, int i, char c);
+char next_non_space(const char *input, int i);
 int lexer(t_shell *shell);
 int is_empty_command(const char *input);
 int is_specific_case(t_shell *s);
@@ -179,6 +217,7 @@ void	syntax_error_newline(void);
 
 //tokenizer
 t_token *create_token(const char *content, t_token_type type);
+// t_token *create_token(const char *content, t_token_type type, t_quote_type quote);
 void add_token(t_token **head, t_token *new);
 t_token_type get_token_type(char *s);
 int get_operator_token(const char *line, int i, t_token **tokens);
@@ -191,45 +230,67 @@ int check_token_syntax(t_token *t);
 void    add_redir(t_cmd *cmd, char *op, char *target);
 t_cmd   *parse_one_command(t_token **token_list);
 t_cmd   *parser(t_token *token_list);
+// t_cmd *parser(t_token *token_list, t_shell *shell);
+// t_cmd *parse_one_command(t_token **token_list, t_shell *shell);
 void    add_arg(t_cmd *cmd, const char *arg);
+// void add_arg(t_cmd *cmd, const char *arg, t_quote_type quote);
 void    resolve_redir(t_cmd *cmd);
 int is_cmd_valide(t_cmd *cmd);
 int check_pipe(t_token *tokens);
+char *remove_quotes(const char *str);
 
 //redirection
 int	is_red_type(t_token_type type);
 void handle_input_redir(t_cmd *cmd, char *op, char *file);
 void handle_output_redir(t_cmd *cmd, char *op, char *file);
-void	apply_heredoc_red(t_cmd *cmd, t_env *env);
-void	apply_red(t_cmd *cmd, t_env *env);
+//void	apply_red(t_cmd *cmd, t_env *env);
+void	apply_red(t_cmd *cmd);
 int	read_heredoc(char *end_word, char *outfile, int exp, t_env *env, int s);
 char	*generate_filename(void);
 
 //expander
-char *expand_tilde(char *input, t_env *lst_env);
-void expand_tab(char **tab, t_env *env_head, int status);
-void expand_array(char **array, t_env *env, int status);
-void expand_all(t_cmd **cmds, t_env *env_head, int status);
-char	*expand_string(char *str, t_env *lst_env, int status);
+// void expand_tab(char **tab, t_env *env_head, int status);
+// void expand_single(char **str, t_env *env_head, int status);
+// void expand_all(t_cmd *cmds, t_env *env_head, int status);
+char **merge_args(char **args);
+int expand_tab(char **tab, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+int expand_single(char **str, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+int expand_all(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+char	*expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_type, char *error_char);
+int expand_vars(t_cmd *cmds, t_env *env_head, int status, t_suffix_type *out_type, char *error_char);
+// char	*expand_string(char *str, t_env *lst_env, int status);
 //expand:joint&buffer
 char *expand_buffer(char *old_buffer, int *size);
+int     handle_buffer(t_expansion *exp);
 int append_str(t_expansion *exp);
 int append_env(t_expansion *exp);
+int     append_char(t_expansion *exp, char c);
+void    handle_single_quote(t_expansion *exp);
+// void    handle_double_quote(t_expansion *exp, t_env *env, int status);
+void    handle_double_quote(t_expansion *exp, t_env *env);
+// int	handle_variable(char *input, t_expansion *exp, t_env *lst_env);
 //expand:variable
-int	handle_dollar(char *input, t_expansion *exp, t_env *lst_env, int status);
+char *extract_var_name(const char *input, int start, int *matched_len);
+int	handle_dollar(char *input, t_expansion *exp, t_env *lst_env);
+int handle_illegal_dollar(char *input, t_expansion *exp);
 int	handle_braces(t_expansion *exp, t_env *lst_env);
-int handle_exit_status(t_expansion *exp, int status);
+int handle_exit_status(t_expansion *exp);
 int handle_env_var(t_expansion *exp, t_env *lst_env);
 int valid_exp(int c);
+int append_str_to_buffer(t_expansion *exp, const char *str);
+t_suffix_type get_suffix_type(char c);
+int has_illegal_expansion(t_suffix_type type, char ch);
 //expand:here_doc
-int check_heredoc_expand(const char *delimiter);
-char *strip_quotes_if_needed(const char *str);
-int should_expand_heredoc(const char *delimiter);
-char *expand_heredoc_line(const char *line, t_env *env);
-char	*process_heredoc_content(char *delimiter, t_env *env, int should_expand);
-int	expand_heredocs_in_cmd_list(t_cmd *cmd_list, t_env *env);
+// int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env);
+int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status);
+int has_quote(const char *str);
+// char	*process_heredoc_content(char *delimiter, t_env *env, int should_expand);
+char	*process_heredoc_content(char *delimiter, t_env *env, int should_expand, int status);
+char *expand_heredoc_line(char *line, t_env *env, int status);
 char *expand_var_here(char *input, t_env *lst_env, int status);
-int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env, int status);
+int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env);
+int should_heredoc_expand(const char *delimiter);
+char *strip_quotes_if_needed(const char *str);
 
 //builtin
 void	env_set_var(char *key, char *value, t_env **env);
@@ -244,6 +305,9 @@ int	builtin_pwd(void);
 
 //executor
 int	exec_builtin_main(t_cmd *cmd, t_shell *shell);
+int	allocate_builtin(t_cmd *cmd, t_shell *shell);
+int	apply_store_and_red(t_cmd *cmd, int storage[2]);
+void	recover_io_and_close(int storage[2]);
 int	exec_simple(t_cmd *cmd, t_shell *shell);
 int	execve_bin(t_cmd *cmd, t_env *env);
 int	if_cmd_builtin(t_cmd *cmd);
@@ -256,8 +320,13 @@ void	exec_simple_exit(t_cmd *cmd);
 char *join_path_cmd(char *path, char *cmd);
 void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe);
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
-void	initialize_pipe(t_shell *shell);
 void	safe_close_all_pipes(t_shell *shell);
+
+
+//add by jingyi
+int	is_directory(const char *path);
+void	print_cmd_error(char *cmd, char *msg);
+
 
 //utils
 char	**get_args(t_cmd *cmd);
@@ -271,9 +340,11 @@ char	*get_env_var_value(t_env *env, char *name);
 bool	save_std_io(int storage[2]);
 bool	restore_std_io(int storage[2]);
 
-
 //main
 void	minishell_loop(t_shell *shell);
 int	main(int argc, char **argv, char **envp);
+
+
+
 
 #endif
