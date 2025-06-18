@@ -22,6 +22,7 @@ t_cmd   *init_cmd(void)
     cmd->red = NULL;
     cmd->next = NULL;
     cmd->pid = 0;
+    // cmd->quote_flag = 0;
     return (cmd);
 }
 

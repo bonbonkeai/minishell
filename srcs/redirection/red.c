@@ -98,6 +98,24 @@ void    add_redir(t_cmd *cmd, char *op, char *target)
         ft_fprintf(2, "minishell: syntax error near unexpected token\n");
         return ;
     }
+
+
+    // if (ft_strcmp(op, "<<") == 0)
+	// {
+	// 	cmd->heredoc = 1;
+	// 	cmd->heredoc_limiter = ft_strdup(target);
+	// 	if (!cmd->heredoc_limiter)
+	// 		return ;
+	// 	if (target[0] == '\'' && target[ft_strlen(target) - 1] == '\'')
+	// 		cmd->quote_flag = 1; // 单引号，不展开
+	// 	else if (target[0] == '"' && target[ft_strlen(target) - 1] == '"')
+	// 		cmd->quote_flag = 2; // 双引号，可展开
+	// 	else
+	// 		cmd->quote_flag = 0; // 无引号，默认展开
+	// }
+
+
+
     len = 0;
     while (cmd->red && cmd->red[len])
         len++;

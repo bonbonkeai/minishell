@@ -31,7 +31,6 @@ void    process_input(t_shell *shell, char *input)
         shell->status = 2;
         return ;
     }
-    // cmd_list = parser(tokens, shell);
     cmd_list = parser(tokens);
     if (!cmd_list)
     {
@@ -54,6 +53,7 @@ void    process_input(t_shell *shell, char *input)
     while (tmp)
     {
         printf("Command %d: %s\n", i, tmp->cmd ? tmp->cmd : "(null)");
+
         if (tmp->args)
         {
             int j = 0;

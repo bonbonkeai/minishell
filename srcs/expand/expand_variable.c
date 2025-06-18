@@ -73,7 +73,6 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
             return (0);
         exp->i++;
     }
-    // return (handle_illegal_dollar(input, exp));
     return (1);
 }
 

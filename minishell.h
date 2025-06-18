@@ -75,6 +75,8 @@ typedef enum e_token_type
     T_OUTPUT,
     T_APPEND,
     T_HEREDOC,
+    T_SINGLE_QUOTED,
+    T_DOUBLE_QUOTED,
 }               t_token_type;
 
 typedef struct s_token
@@ -101,6 +103,10 @@ typedef struct s_cmd
     int heredoc_expand;
     int heredoc_fd;
     int pid;
+
+    
+    // int quote_flag;  // 0: no quote, 1: single, 2: double
+
     struct s_cmd *next;
     
 }               t_cmd;
@@ -202,6 +208,7 @@ t_token *tokenize_prompt(const char *line);
 void free_tokens(t_token *tok);
 int check_token_syntax(t_token *t);
 
+
 //parsing
 void    add_redir(t_cmd *cmd, char *op, char *target);
 t_cmd   *parse_one_command(t_token **token_list);
@@ -211,6 +218,12 @@ void    resolve_redir(t_cmd *cmd);
 int is_cmd_valide(t_cmd *cmd);
 int check_pipe(t_token *tokens);
 char *remove_quotes(const char *str);
+
+int is_quote(char c);
+char *extract_single_quoted(const char *input, int *i, char quote);
+char *merge_quoted_tokens(const char *input);
+char *ft_strjoin_free(char *s1, const char *s2);
+void merge_adjacent_quoted_tokens(t_token **head);
 
 //redirection
 int	is_red_type(t_token_type type);
@@ -263,7 +276,11 @@ char *expand_heredoc_line(char *line, t_env *env, int status);
 char *expand_var_here(char *input, t_env *lst_env, int status);
 int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env);
 int should_heredoc_expand(const char *delimiter);
-char *strip_quotes_if_needed(const char *str);
+char	*merge_quoted_string(const char *limiter);
+// char *strip_quotes_if_needed(const char *str);
+int is_fully_quoted(const char *s);
+
+
 
 //builtin
 void	env_set_var(char *key, char *value, t_env **env);
@@ -301,7 +318,6 @@ void	apply_output_red(t_cmd *cmd);
 //add by jingyi
 int	is_directory(const char *path);
 void	print_cmd_error(char *cmd, char *msg);
-void read_heredoc(char *limiter, char *outfile, int should_expand, t_env *env, int status);
 
 
 //utils

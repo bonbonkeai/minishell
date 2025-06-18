@@ -13,6 +13,7 @@ t_token *create_token(const char *content, t_token_type type)
 		return (free(new), NULL);
 	new->type = type;
 	new->next = NULL;
+	// new->consecutive_quote = 0;
 	return (new);
 }
 
@@ -81,12 +82,73 @@ int get_operator_token(const char *line, int i, t_token **tokens)
 	return (0);
 }
 
+// int get_word_token(const char *line, int i, t_token **tokens)
+// {
+// 	int j;
+// 	int in_squote;
+// 	int in_dquote;
+// 	char *word;
+// 	char *cleaned;
+// 	t_token_type type;
+// 	int quote_flag;
+
+// 	j = 0;
+// 	in_squote = 0;
+// 	in_dquote = 0;
+
+// 	while (line[i + j])
+// 	{
+// 		if (line[i + j] == '\'' && !in_dquote)
+// 			in_squote = !in_squote;
+// 		else if (line[i + j] == '\"' && !in_squote)
+// 			in_dquote = !in_dquote;
+// 		else if (!in_squote && !in_dquote && (ft_isspace(line[i + j]) || ft_strchr("<>|", line[i + j])))
+// 			break ;
+// 		j++;
+// 	}
+// 	if (j == 0)
+// 		return (0);
+
+// 	word = ft_substr(line, i, j);
+// 	if (!word)
+// 		return (0);
+// 	type = T_WORD;
+// 	quote_flag = 0;
+// 	if (word[0] == '"' && word[ft_strlen(word) - 1] == '"')
+// 	{
+// 		type = T_DOUBLE_QUOTED;
+// 		quote_flag = 2;
+// 	}
+// 	else if (word[0] == '\'' && word[ft_strlen(word) - 1] == '\'')
+// 	{
+// 		type = T_SINGLE_QUOTED;
+// 		quote_flag = 1;
+// 	}
+// 	if (quote_flag != 0)
+// 		cleaned = ft_substr(word, 1, ft_strlen(word) - 2);
+// 	else
+// 		cleaned = ft_strdup(word);
+// 	free(word);
+// 	if (!cleaned)
+// 		return (0);
+// 	t_token *token = create_token(cleaned, type);
+// 	free(cleaned);
+// 	if (!token)
+// 		return (0);
+// 	token->consecutive_quote = quote_flag;
+// 	add_token(tokens, token);
+
+// 	return (j);
+// }
+
+
 int get_word_token(const char *line, int i, t_token **tokens)
 {
 	int j;
 	int in_squote;
 	int in_dquote;
 	char *word;
+	// t_token_type type;
 
     j = 0;
     in_squote = 0;
@@ -105,16 +167,59 @@ int get_word_token(const char *line, int i, t_token **tokens)
 		return (0);
 	word = ft_substr(line, i, j);
 	if (!word)
-		return (free(word), 0);
+		return (0);
+
+	// type = T_WORD;
+	// if (word[0] == '"' && word[ft_strlen(word) - 1] == '"')
+	// 	type = T_DOUBLE_QUOTED;
+	// else if (word[0] == '\'' && word[ft_strlen(word) - 1] == '\'')
+	// 	type = T_SINGLE_QUOTED;
+	
+
 	if (word[0] == '\0')
 	{
 		free(word);
 		return (j);
 	}
 	add_token(tokens, create_token(word, T_WORD));
+	// add_token(tokens, create_token(word, type));
 	free(word);
 	return (j);
 }
+
+
+
+
+// const char *token_type_str(t_token_type type)
+// {
+// 	switch (type)
+// 	{
+// 		case T_WORD: return "WORD";
+// 		case T_SINGLE_QUOTED: return "SINGLE";
+// 		case T_DOUBLE_QUOTED: return "DOUBLE";
+// 		case T_PIPE: return "PIPE";
+// 		case T_INPUT: return "INPUT";
+// 		case T_OUTPUT: return "OUTPUT";
+// 		case T_APPEND: return "APPEND";
+// 		case T_HEREDOC: return "HEREDOC";
+// 		default: return "UNKNOWN";
+// 	}
+// }
+
+// void print_token_list(t_token *tok)
+// {
+// 	printf("=== Token List ===\n");
+// 	while (tok)
+// 	{
+// 		printf("Content: [%s]  Type: %s\n", tok->content, token_type_str(tok->type));
+// 		tok = tok->next;
+// 	}
+// 	printf("==================\n");
+// }
+
+
+
+
 
 t_token *tokenize_prompt(const char *line)
 {
@@ -133,6 +238,13 @@ t_token *tokenize_prompt(const char *line)
 		else
 			i += get_word_token(line, i, &tokens);
 	}
+
+	// merge_adjacent_quoted_tokens(&tokens);
+
+	// print_token_list(tokens);
+	// merge_adjacent_quoted_tokens(&tokens);
+	// print_token_list(tokens); 
+
 	return (tokens);
 }
 
@@ -168,6 +280,7 @@ int check_token_syntax(t_token *t)
 			if (!t->next)
 				return (ft_fprintf(2, "minishell: syntax error near unexpected token `newline'\n"), 1);
 			if (t->next->type != T_WORD)
+			// if (t->next->type != T_WORD && t->next->type != T_SINGLE_QUOTED && t->next->type != T_DOUBLE_QUOTED)
 			{
 				ft_fprintf(2, "minishell: syntax error near unexpected token `%s'\n", t->next->content);
 				return (1);
@@ -177,3 +290,4 @@ int check_token_syntax(t_token *t)
 	}
 	return (0);   
 }
+

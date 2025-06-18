@@ -11,6 +11,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/initialization/init_expan.c \
 		./srcs/lexer/lexer.c \
 		./srcs/tokenizer/tokenizer.c \
+		./srcs/tokenizer/token_utils.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
