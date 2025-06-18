@@ -14,7 +14,6 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
-		./srcs/redirection/handle_heredoc.c \
 		./srcs/parser/parser.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \

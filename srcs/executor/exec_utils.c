@@ -60,42 +60,6 @@ void	exec_simple_exit(t_cmd *cmd)
 		free_cmd_list(cmd);
 }
 
-
-// char	*join_path_cmd(char *path, char *cmd) 
-// {
-//     int i = 0, j = 0;
-//     // 计算 path 长度
-//     while (path[i] != '\0') i++;
-//     // 计算 cmd 长度
-//     while (cmd[j] != '\0') j++;
-
-//     // 额外 +1 是加中间的 '/'，再 +1 是结尾 '\0'
-//     char *result = malloc(i + 1 + j + 1);
-//     if (!result)
-//         return NULL;
-
-//     int k = 0;
-//     int p = 0;
-//     // 复制 path
-//     while (p < i) {
-//         result[k++] = path[p++];
-//     }
-
-//     // 如果 path 末尾不是 '/'，就加一个 '/'
-//     if (i > 0 && path[i - 1] != '/') {
-//         result[k++] = '/';
-//     }
-
-//     // 复制 cmd
-//     p = 0;
-//     while (p < j) {
-//         result[k++] = cmd[p++];
-//     }
-
-//     result[k] = '\0';
-//     return result;
-// }
-
 int	exec_wait_pid(pid_t pid)
 {
 	int	status;

@@ -16,7 +16,6 @@ static char	*get_user(t_shell *shell)
 	char	*user_env;
 
 	user_env = ft_strjoin(get_env_var_value(shell->env, "USER"), " ");
-	//exec_custom(user, "/usr/bin/", prompt.envp);
 	if (!user_env)
 		user_env = ft_strdup("guest");
 	return (user_env);

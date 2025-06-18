@@ -1,16 +1,5 @@
 #include "minishell.h"
 
-// static void print_cmd_list(t_cmd *cmd_list)
-// {
-//     while (cmd_list)
-//     {
-//         if (cmd_list->infile)
-//             printf("cmd IN FILE: %s\n", cmd_list->infile);
-//         else
-//             printf("no cmd infile: (null)\n");
-//         cmd_list = cmd_list->next;
-//     }
-// }
 
 void    process_input(t_shell *shell, char *input)
 {
@@ -93,9 +82,7 @@ void minishell_loop(t_shell *shell)
 
 	while (1)
 	{
-        //signal_hiding();
 		prompt = build_prompt(shell);
-		// line = readline("minishell$ ");
         line = readline(prompt);
 		if (!line)
         {
@@ -104,7 +91,6 @@ void minishell_loop(t_shell *shell)
             break ;
         }
         free(prompt);
-			// break ;
 		if (line[0])
 			add_history(line);
         if (ft_strncmp(line, "exit", 4) == 0 && (line[4] == '\0' || ft_isspace(line[4])))

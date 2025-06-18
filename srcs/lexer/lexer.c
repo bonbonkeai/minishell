@@ -172,69 +172,6 @@ int is_invalid_operator(const char *input, int i)
     return (FALSE);
 }
 
-// int is_invalid_operator(const char *input, int i)
-// {
-//     char next;
-
-//     next = next_non_space(input, i);
-
-//     // case 1: end with redirection → error
-//     if ((input[i] == '<' || input[i] == '>') && input[i + 1] == '\0')
-//         return (syntax_error_newline(), TRUE);
-
-//     // case 2: <<< → illegal (only allow up to <<)
-//     if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<')
-//         return (syntax_error_pipex("<<"), TRUE);
-
-//     if (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>')
-//         return (syntax_error_pipex(">>"), TRUE);
-
-//     // case: '>> >>' → token '>>'
-//     if (input[i] == '>' && input[i + 1] == '>' &&
-//         next_non_space(input, i + 1) == '>')
-//         return (syntax_error_pipex(">>"), TRUE);
-    
-//     // case: echo | | → token '|'
-//     if (input[i] == '|' && next_non_space(input, i) == '|')
-//         return (syntax_error_pipex("|"), TRUE);
-
-//     // case: echo > < → token '<'
-//     if ((input[i] == '>' || input[i] == '<'))
-//         return (syntax_error_pipex("<"), TRUE);
-    
-//     // case 3: < < or > > separated by space
-//     if (input[i] == '<' && input[i + 1] != '<' && next == '<')
-//         return (syntax_error_pipex("<"), TRUE);
-//     if (input[i] == '>' && input[i + 1] != '>' && next == '>')
-//         return (syntax_error_pipex(">"), TRUE);
-
-//     // case 4: > < or < > (mixed)
-//     if (input[i] == '>' && input[i + 1] == '<')
-//     {
-//         syntax_error_pipex("<");
-//         return (TRUE);
-//     }
-//     if (input[i] == '<' && input[i + 1] == '>')
-//     {
-//         syntax_error_pipex(">");
-//         return (TRUE);
-//     }
-
-//     // case 5: redirection followed by pipe
-//     if ((input[i] == '>' || input[i] == '<') && next == '|')
-//         return (syntax_error_pipex("|"), TRUE);
-
-//     // case 6: || (invalid pipe)
-//     if (input[i] == '|' && next == '|')
-//         return (syntax_error_pipex("||"), TRUE);
-
-//     // case 7: pipe ends input
-//     if (input[i] == '|' && input[i + 1] == '\0')
-//         return (syntax_error_newline(), TRUE);
-
-//     return (FALSE);
-// }
-
 void syntax_error(char unexpected)
 {
 	write(2, "minishell: syntax error near unexpected token `", 47);
