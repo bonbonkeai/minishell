@@ -41,9 +41,9 @@ static void	update_pwd_vars(char *oldpwd, t_shell *shell)
 {
 	char	cwd[PATH_MAX];
 
-	env_set_var("OLDPWD", oldpwd, &(shell->env));
+	env_set_var("OLDPWD", oldpwd, &(shell->env), 0);
 	if (getcwd(cwd, sizeof(cwd)))
-		env_set_var("PWD", cwd, &(shell->env));
+		env_set_var("PWD", cwd, &(shell->env), 0);
 }
 
 int	builtin_cd(t_shell *shell, char **argv)

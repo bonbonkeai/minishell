@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_variable.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:46:44 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:46:45 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int handle_illegal_dollar(char *input, t_expansion *exp)
@@ -73,7 +85,6 @@ int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
             return (0);
         exp->i++;
     }
-    // return (handle_illegal_dollar(input, exp));
     return (1);
 }
 

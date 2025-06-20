@@ -12,22 +12,6 @@
 
 #include "minishell.h"
 
-/* void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe)
-{
-	if (old_pipe->fd[0] != -1)
-		dup2(old_pipe->fd[0], STDIN_FILENO);
-	if (new_pipe->fd[1] != -1)
-		dup2(new_pipe->fd[1], STDOUT_FILENO);
-	if (old_pipe->fd[0] != -1)
-		close(old_pipe->fd[0]);
-	if (old_pipe->fd[1] != -1)
-		close(old_pipe->fd[1]);
-	if (new_pipe->fd[0] != -1)
-		close(new_pipe->fd[0]);
-	if (new_pipe->fd[1] != -1)
-		close(new_pipe->fd[1]);
-} */
-
 void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe)
 {
 	if (old_pipe->fd[0] != -1)
@@ -64,17 +48,9 @@ void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe)
 		close(old_pipe->fd[1]);
 	old_pipe->fd[0] = new_pipe->fd[0];
 	old_pipe->fd[1] = new_pipe->fd[1];
-	new_pipe->fd[1] = -1;
 	new_pipe->fd[0] = -1;
+	new_pipe->fd[1] = -1;
 }
-
-// void	initialize_pipe(t_shell *shell)
-// {
-// 	shell->old_pipe.fd[0] = -1;
-// 	shell->old_pipe.fd[1] = -1;
-// 	shell->new_pipe.fd[0] = -1;
-// 	shell->new_pipe.fd[1] = -1;
-// }
 
 void	safe_close_all_pipes(t_shell *shell)
 {

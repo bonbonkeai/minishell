@@ -75,20 +75,14 @@ typedef enum e_token_type
     T_OUTPUT,
     T_APPEND,
     T_HEREDOC,
+    T_SINGLE_QUOTED,
+    T_DOUBLE_QUOTED,
 }               t_token_type;
-
-typedef enum e_quote_type
-{
-    QUOTE_NONE,
-    QUOTE_SINGLE,
-    QUOTE_DOUBLE
-} t_quote_type;
 
 typedef struct s_token
 {
     char *content;
     t_token_type type;
-    // t_quote_type  quote_type;
     struct s_token *next;
     
 }                   t_token;
@@ -109,6 +103,10 @@ typedef struct s_cmd
     int heredoc_expand;
     int heredoc_fd;
     int pid;
+
+    
+    // int quote_flag;  // 0: no quote, 1: single, 2: double
+
     struct s_cmd *next;
     
 }               t_cmd;
@@ -119,21 +117,6 @@ typedef struct s_redir
     int     type;
 }               t_redir;
 
-// typedef struct s_expansion
-// {
-// 	char    *str;
-//     char    *buf;
-//     char	*result;
-// 	int		size;
-// 	int		len;
-// 	int		i;
-// 	int		k;
-// 	int		in_squote;
-// 	int		in_dquote;
-// 	char	*exit_status;
-// 	char	*env_val;
-// 	char	var_name[1024];
-// }	t_expansion;
 typedef struct s_expansion
 {
     char    *str;
@@ -217,7 +200,6 @@ void	syntax_error_newline(void);
 
 //tokenizer
 t_token *create_token(const char *content, t_token_type type);
-// t_token *create_token(const char *content, t_token_type type, t_quote_type quote);
 void add_token(t_token **head, t_token *new);
 t_token_type get_token_type(char *s);
 int get_operator_token(const char *line, int i, t_token **tokens);
@@ -226,26 +208,30 @@ t_token *tokenize_prompt(const char *line);
 void free_tokens(t_token *tok);
 int check_token_syntax(t_token *t);
 
+
 //parsing
 void    add_redir(t_cmd *cmd, char *op, char *target);
 t_cmd   *parse_one_command(t_token **token_list);
 t_cmd   *parser(t_token *token_list);
-// t_cmd *parser(t_token *token_list, t_shell *shell);
-// t_cmd *parse_one_command(t_token **token_list, t_shell *shell);
 void    add_arg(t_cmd *cmd, const char *arg);
-// void add_arg(t_cmd *cmd, const char *arg, t_quote_type quote);
 void    resolve_redir(t_cmd *cmd);
 int is_cmd_valide(t_cmd *cmd);
 int check_pipe(t_token *tokens);
 char *remove_quotes(const char *str);
 
+int is_quote(char c);
+char *extract_single_quoted(const char *input, int *i, char quote);
+char *merge_quoted_tokens(const char *input);
+char *ft_strjoin_free(char *s1, const char *s2);
+void merge_adjacent_quoted_tokens(t_token **head);
+
 //redirection
 int	is_red_type(t_token_type type);
 void handle_input_redir(t_cmd *cmd, char *op, char *file);
 void handle_output_redir(t_cmd *cmd, char *op, char *file);
-//void	apply_red(t_cmd *cmd, t_env *env);
+// void	apply_red(t_cmd *cmd, t_env *env);
 void	apply_red(t_cmd *cmd);
-int	read_heredoc(char *end_word, char *outfile, int exp, t_env *env, int s);
+// int	read_heredoc(char *end_word, char *outfile, int exp, t_env *env, int s);
 char	*generate_filename(void);
 
 //expander
@@ -290,12 +276,16 @@ char *expand_heredoc_line(char *line, t_env *env, int status);
 char *expand_var_here(char *input, t_env *lst_env, int status);
 int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env);
 int should_heredoc_expand(const char *delimiter);
-char *strip_quotes_if_needed(const char *str);
+char	*merge_quoted_string(const char *limiter);
+// char *strip_quotes_if_needed(const char *str);
+int is_fully_quoted(const char *s);
+
+
 
 //builtin
-void	env_set_var(char *key, char *value, t_env **env);
+void	env_set_var(char *key, char *value, t_env **env, int append);
 int	is_valid_var_name(char *var);
-int	builtin_unset(t_env *env, char **argv);
+int	builtin_unset(t_env **env, char **argv);
 int	builtin_cd(t_shell *shell, char **argv);
 int	builtin_echo(char *args[]);
 int	builtin_env(t_env *env);
@@ -306,6 +296,7 @@ int	builtin_pwd(void);
 //executor
 int	exec_builtin_main(t_cmd *cmd, t_shell *shell);
 int	allocate_builtin(t_cmd *cmd, t_shell *shell);
+// int	apply_store_and_red(t_cmd *cmd, int storage[2], t_env *env);
 int	apply_store_and_red(t_cmd *cmd, int storage[2]);
 void	recover_io_and_close(int storage[2]);
 int	exec_simple(t_cmd *cmd, t_shell *shell);
@@ -321,7 +312,8 @@ char *join_path_cmd(char *path, char *cmd);
 void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe);
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
 void	safe_close_all_pipes(t_shell *shell);
-
+void	apply_input_red(t_cmd *cmd);
+void	apply_output_red(t_cmd *cmd);
 
 //add by jingyi
 int	is_directory(const char *path);
@@ -339,6 +331,8 @@ int	if_abs_bin_access(char *command);
 char	*get_env_var_value(t_env *env, char *name);
 bool	save_std_io(int storage[2]);
 bool	restore_std_io(int storage[2]);
+void    bubble_sort_env(t_env **arr, int size);
+void	ft_perror_export(char *arg);
 
 //main
 void	minishell_loop(t_shell *shell);

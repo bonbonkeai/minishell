@@ -1,24 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_cmd.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:42:40 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:42:44 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-// t_cmd   *init_cmd(void)
-// {
-//     t_cmd   *cmd;
-
-//     cmd = malloc(sizeof(t_cmd));
-//     if (!cmd)
-//         return (NULL);
-//     cmd->cmd = NULL;
-//     cmd->args = NULL;
-//     cmd->infile = NULL;
-//     cmd->outfile = NULL;
-//     cmd->heredoc = 0;
-//     cmd->append = 0;
-//     cmd->heredoc_expand = 0;
-//     cmd->heredoc_fd = 0;
-//     cmd->red = NULL;
-//     cmd->next = NULL;
-//     return (cmd);
-// }
 t_cmd   *init_cmd(void)
 {
     t_cmd   *cmd;
@@ -41,6 +34,7 @@ t_cmd   *init_cmd(void)
     cmd->red = NULL;
     cmd->next = NULL;
     cmd->pid = 0;
+    // cmd->quote_flag = 0;
     return (cmd);
 }
 

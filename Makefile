@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I. -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -I.
 NAME = minishell
 NAME_BONUS = 
 LIBFT = ./Libft/libft.a
@@ -11,10 +11,10 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/initialization/init_expan.c \
 		./srcs/lexer/lexer.c \
 		./srcs/tokenizer/tokenizer.c \
+		./srcs/tokenizer/token_utils.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
-		./srcs/redirection/handle_heredoc.c \
 		./srcs/parser/parser.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
@@ -38,6 +38,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/executor/exec_handle_pipes.c \
 		./srcs/executor/exec_pipe.c \
 		./srcs/executor/exec_builtin.c \
+		./srcs/utils/utils_builtin.c \
 		./srcs/utils/utils_cmd.c \
 		./srcs/utils/utils_redir.c \
 		./srcs/utils/utils_setpath.c \

@@ -19,8 +19,10 @@ int	builtin_env(t_env *env)
 	cur = env;
 	while (cur)
 	{
-		if (cur->value && cur->value[0] != '\0')
+		if (cur->value)
 			ft_printf("%s=%s\n", cur->key, cur->value);
+		else
+			ft_printf("%s=\n", cur->key);
 		cur = cur->next;
 	}
 	return (0);

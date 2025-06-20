@@ -1,32 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   red.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:44:57 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:44:58 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-// void handle_input_redir(t_cmd *cmd, char *op, char *file)
-// {
-//     char    *tmp;
-
-//     tmp = ft_strdup(file);
-//     if (!tmp)
-//         return ;
-//     if (!ft_strcmp(op, "<"))
-//     {
-//         if (cmd->infile)
-//             free(cmd->infile);
-//         cmd->infile = tmp;
-//         cmd->heredoc = 0;
-//     }
-//     else if (!ft_strcmp(op, "<<"))
-//     {
-//         if (cmd->infile)
-//             free(cmd->infile);
-//         cmd->infile = tmp;
-//         cmd->heredoc = 1;
-//         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
-// 			(file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
-// 			cmd->heredoc_expand = 0;
-// 		else
-// 			cmd->heredoc_expand = 1;
-//     }
-// }
 void handle_input_redir(t_cmd *cmd, char *op, char *file)
 {
     char *tmp;
@@ -125,6 +110,24 @@ void    add_redir(t_cmd *cmd, char *op, char *target)
         ft_fprintf(2, "minishell: syntax error near unexpected token\n");
         return ;
     }
+
+
+    // if (ft_strcmp(op, "<<") == 0)
+	// {
+	// 	cmd->heredoc = 1;
+	// 	cmd->heredoc_limiter = ft_strdup(target);
+	// 	if (!cmd->heredoc_limiter)
+	// 		return ;
+	// 	if (target[0] == '\'' && target[ft_strlen(target) - 1] == '\'')
+	// 		cmd->quote_flag = 1; // 单引号，不展开
+	// 	else if (target[0] == '"' && target[ft_strlen(target) - 1] == '"')
+	// 		cmd->quote_flag = 2; // 双引号，可展开
+	// 	else
+	// 		cmd->quote_flag = 0; // 无引号，默认展开
+	// }
+
+
+
     len = 0;
     while (cmd->red && cmd->red[len])
         len++;

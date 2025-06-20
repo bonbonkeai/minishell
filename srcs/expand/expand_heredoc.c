@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_heredoc.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:46:55 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:46:56 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int has_quote(const char *str)
@@ -27,30 +39,30 @@ int should_heredoc_expand(const char *delimiter)
     return (1);
 }
 
-char *strip_quotes_if_needed(const char *str)
-{
-    char *res;
-    int len;
-    int i;
-    int j;
+// char *strip_quotes_if_needed(const char *str)
+// {
+//     char *res;
+//     int len;
+//     int i;
+//     int j;
 
-    if (!str)
-        return (NULL);
-    len = ft_strlen(str);
-    res = malloc(len + 1);
-    if (!res)
-        return (NULL);
-    i = 0;
-    j = 0;
-    while (str[i])
-    {
-        if (str[i] != '\'' && str[i] != '\"')
-            res[j++] = str[i];
-        i++;
-    }
-    res[j] = '\0';
-    return (res);
-}
+//     if (!str)
+//         return (NULL);
+//     len = ft_strlen(str);
+//     res = malloc(len + 1);
+//     if (!res)
+//         return (NULL);
+//     i = 0;
+//     j = 0;
+//     while (str[i])
+//     {
+//         if (str[i] != '\'' && str[i] != '\"')
+//             res[j++] = str[i];
+//         i++;
+//     }
+//     res[j] = '\0';
+//     return (res);
+// }
 
 char *expand_heredoc_line(char *line, t_env *env, int status)
 {

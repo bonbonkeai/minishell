@@ -1,4 +1,51 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_heredoc_utils.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:47:07 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:47:08 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
+
+char	*merge_quoted_string(const char *limiter)
+{
+	int		i = 0;
+	int		j = 0;
+	char	*merged;
+
+	if (!limiter)
+		return (NULL);
+	merged = malloc(sizeof(char) * (ft_strlen(limiter) + 1));
+	if (!merged)
+		return (NULL);
+	while (limiter[i])
+	{
+		if (!is_quote(limiter[i]))
+			merged[j++] = limiter[i];
+		i++;
+	}
+	merged[j] = '\0';
+	return (merged);
+}
+
+int is_fully_quoted(const char *s)
+{
+    int len;
+
+    if (!s)
+        return 0;
+    len = ft_strlen(s);
+    if (len < 2)
+        return 0;
+    return ((s[0] == '\'' && s[len - 1] == '\'') ||
+            (s[0] == '"' && s[len - 1] == '"'));
+}
+
 
 int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status)
 {
@@ -16,8 +63,12 @@ int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status)
 				perror("pipe");
 				return (1);
 			}
+            // should_expand = !is_fully_quoted(cmd_list->heredoc_limiter);
+                        // lim = merge_quoted_tokens(cmd_list->heredoc_limiter);
             should_expand = !has_quote(cmd_list->heredoc_limiter);
-            lim = remove_quotes(cmd_list->heredoc_limiter);
+            lim = merge_quoted_string(cmd_list->heredoc_limiter);
+            // should_expand = (cmd_list->quote_flag != 1);
+			// lim = merge_quoted_tokens(cmd_list->heredoc_limiter);
 			heredoc_content = process_heredoc_content(lim, env, should_expand, status);
             free(lim);
 			if (!heredoc_content)
@@ -31,7 +82,7 @@ int	expand_heredoc_in_cmd_list(t_cmd *cmd_list, t_env *env, int status)
 			free(heredoc_content);
             free(cmd_list->heredoc_limiter);
 			cmd_list->heredoc_limiter = NULL;
-			cmd_list->heredoc = fd[0];
+			cmd_list->heredoc_fd = fd[0];
 		}
 		cmd_list = cmd_list->next;
 	}
@@ -61,11 +112,6 @@ char *expand_var_here(char *input, t_env *lst_env, int status)
 
 int expand_var_here_check(char *input, t_expansion *exp, t_env *lst_env)
 {
-    // if (input[exp->i] == '\'' && !exp->in_dquote)
-    // {
-    //     exp->in_squote = !exp->in_squote;
-    //     exp->i++;
-    // }
     if (input[exp->i] == '\'' && !exp->in_dquote)
     {
         exp->i++;

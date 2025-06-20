@@ -11,60 +11,6 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-// int	exec_simple(t_cmd *cmd, t_env *env)
-// {
-// 	int		pid;
-// 	int		status;
-
-// 	if (if_cmd_builtin(cmd) == 1)
-// 		return (exec_builtin_main(cmd, shell));
-// 	status = 0;
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		status = execve_bin(cmd, env);
-// 		exec_simple_exit(cmd);
-// 	}
-// 	else if (pid > 0)
-// 	{
-// 		cmd->pid = pid;
-// 		return (exec_wait_pid(pid));
-// 	}
-// 	else
-// 	{
-// 		perror("fork failed");
-// 		return (1);
-// 	}
-// 	return (status);
-// }
-
-// int	exec_simple(t_cmd *cmd, t_shell *shell)
-// {
-// 	int		pid;
-// 	int		status;
-
-// 	if (if_cmd_builtin(cmd) == 1)
-// 		return (exec_builtin_main(cmd, shell));
-// 	status = 0;
-// 	pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		status = execve_bin(cmd, shell->env);
-// 		exec_simple_exit(cmd);
-// 	}
-// 	else if (pid > 0)
-// 	{
-// 		cmd->pid = pid;
-// 		return (exec_wait_pid(pid));
-// 	}
-// 	else
-// 	{
-// 		perror("fork failed");
-// 		return (1);
-// 	}
-// 	return (status);
-// }
-
 int	exec_simple(t_cmd *cmd, t_shell *shell)
 {
 	int		pid;
@@ -82,16 +28,26 @@ int	exec_simple(t_cmd *cmd, t_shell *shell)
 	}
 	if (if_cmd_builtin(cmd) == 1)
 		return (exec_builtin_main(cmd, shell));
+
 	status = 0;
 	pid = fork();
 	if (pid == 0)
 	{
-		//printf("before exec \n");
-		// apply_red(cmd, shell->env);
+		if (cmd->heredoc_fd != -1)
+		{
+			if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
+			{
+				perror("dup2 heredoc_fd");
+				exit(EXIT_FAILURE);
+			}
+			close(cmd->heredoc_fd);
+		}
+		else
+			apply_input_red(cmd); 
+
+		apply_output_red(cmd);
 		status = execve_bin(cmd, shell->env);
-		printf("fini exec \n");
 		exit(status);
-		// exec_simple_exit(cmd);
 	}
 	else if (pid > 0)
 	{
@@ -106,41 +62,12 @@ int	exec_simple(t_cmd *cmd, t_shell *shell)
 	return (status);
 }
 
-// int	execve_bin(t_cmd *cmd, t_env *env)
-// {
-// 	char	*path;
-// 	char	**arg;
-// 	char	**vars;
-
-// 	path = get_path(cmd, env);
-// 	arg = get_args(cmd);
-// 	vars = get_env_variables(env);
-
-// 	if (!path || access(path, X_OK) == -1)
-// 	{
-// 		if (is_directory(cmd->cmd))
-// 			print_cmd_error(cmd->cmd, "Is a directory");
-// 		else
-// 			print_cmd_error(cmd->cmd, "command not found");
-// 		return ((path == NULL) ? 127 : 126);
-// 	}
-// 	execve(path, arg, vars);
-// 	if (is_directory(path))
-// 		print_cmd_error(path, "Is a directory");
-// 	else
-// 		print_cmd_error(cmd->cmd, "command not found");
-// 	return (127);
-// }
-
-
 int	execve_bin(t_cmd *cmd, t_env *env)
 {
 	char	*path;
 	char	**arg;
 	char	**vars;
-	int		re;
 
-	re = 0;
 	path = get_path(cmd, env);
 	arg = get_args(cmd);
 	vars = get_env_variables(env);
@@ -157,26 +84,19 @@ int	execve_bin(t_cmd *cmd, t_env *env)
 	}
 	if (check_cmd_standard(cmd))
 	{
-		if (access(path, X_OK) == -1) 
+		if (access(path, X_OK) == -1)
 		{
-    		perror("Permission denied or command not executable");
-    		return (2);
+			perror("Permission denied or command not executable");
+			return (2);
 		}
 		execve(path, arg, vars);
 		perror("Command execution failed");
-		re = 1;
+		return (1);
 	}
 	else
 	{
-		//printf("heyi am before applyred \n");
-		apply_red(cmd);
 		execve(path, arg, vars);
-		// perror("Command execution failed");
-		if (is_directory(path))
-			print_cmd_error(path, "Is a directory");
-		else
-			print_cmd_error(cmd->cmd, "command not found");
-		re = 1;
+		perror("Command execution failed");
+		return (1);
 	}
-	return (re);
 }

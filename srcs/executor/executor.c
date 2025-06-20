@@ -35,22 +35,11 @@ bool	executor(t_cmd *cmd, t_shell *shell)
 	if (if_cmd_simple(cmd_tmp) == 1)
 		status = exec_simple(cmd_tmp, shell);
 	else if (if_cmd_simple(cmd_tmp) == 0)
-	{
-		//printf("here i am IN EXECUTOR\n");
 		status = exec_pipe(cmd_tmp, shell);
-	}
 	else
 		status = -1;
 	exec_exit_status(1, status);
 	shell->status = exec_exit_status(0, 0); 
-	//cmd_tmp = cmd_tmp->next;
-	//while (cmd_tmp != data->cmd)
-	//{
-		//while (cmp_tmp && exec_skip(cmd_tmp))
-			//cmd_tmp = cmd_tmp->next;
-		//if (cmd_tmp)
-			//exec_set(exec(data, cmd_tmp));
-	//}
 	return (shell->status == 0);
 }
 

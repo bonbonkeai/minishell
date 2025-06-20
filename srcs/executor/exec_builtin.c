@@ -23,7 +23,7 @@ int	allocate_builtin(t_cmd *cmd, t_shell *shell)
 	else if (ft_strcmp(cmd->cmd, "export") == 0)
 		return (builtin_export(cmd->args, &shell->env));
 	else if (ft_strcmp(cmd->cmd, "unset") == 0)
-		return (builtin_unset(shell->env, cmd->args));
+		return (builtin_unset(&shell->env, cmd->args));
 	else if (ft_strcmp(cmd->cmd, "env") == 0)
 		return (builtin_env(shell->env));
 	else
@@ -39,7 +39,6 @@ int	apply_store_and_red(t_cmd *cmd, int storage[2])
     			perror("Failed to save std IO");
     			return(1);
 		}
-		ft_putstr_fd("debug3\n", 1);
 		apply_red(cmd);
 	}
 	else
@@ -78,9 +77,6 @@ int	exec_builtin_main(t_cmd *cmd, t_shell *shell)
 	int	ret;
 	int	storage[2] = {-1, -1};
 
-	//if (check_cmd_standard(cmd))
-		//status = allocate_builtin(cmd, env);
-	ft_putstr_fd("debug4\n", 1);
 	ret = apply_store_and_red(cmd, storage);
 	if (ret == -1)
 		return (0);

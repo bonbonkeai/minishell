@@ -28,7 +28,13 @@ int	is_valid_var_name(char *var)
 
 	if (!var || var[0] == '\0')
 		return (0);
-	i = 0;
+	if (!((var[0] >= 'A' && var[0] <= 'Z') || \
+		(var[0] >= 'a' && var[0] <= 'z') || \
+			var[0] == '_'))
+		return (0);
+	if (!var || var[0] == '\0')
+		return (0);
+	i = 1;
 	while (var[i])
 	{
 		if (!is_var_char(var[i]))
@@ -38,13 +44,13 @@ int	is_valid_var_name(char *var)
 	return (1);
 }
 
-static void	env_unset_var(char *var, t_env *env)
+static void	env_unset_var(char *var, t_env **env)
 {
 	t_env	*prev;
 	t_env	*curr;
 	t_env	*temp;
 
-	curr = env;
+	curr = *env;
 	prev = NULL;
 	while (curr)
 	{
@@ -53,7 +59,7 @@ static void	env_unset_var(char *var, t_env *env)
 			if (prev)
 				prev->next = curr->next;
 			else
-				env = curr->next;
+				*env = curr->next;
 			free(curr->key);
 			free(curr->value);
 			temp = curr;
@@ -65,15 +71,14 @@ static void	env_unset_var(char *var, t_env *env)
 	}
 }
 
-int	builtin_unset(t_env *env, char **argv)
+int	builtin_unset(t_env **env, char **argv)
 {
 	int	i;
 	int	status;
 	char	*var;
 
-	i = 0;
+	i = 1;
 	status = EXIT_SUCCESS;
-
 	while (argv[i])
 	{
 		var = argv[i];

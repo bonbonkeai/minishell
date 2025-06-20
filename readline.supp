@@ -1,0 +1,18 @@
+{
+   <Readline>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:readline
+   ...
+}
+{
+   <Readline/AddHistory>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:add_history
+   ...
+}
+
+valgrind --leak-check=yes --show-reachable=yes --suppressions=readline.supp ./minishell

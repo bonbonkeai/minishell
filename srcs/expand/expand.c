@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/19 13:46:02 by jdu               #+#    #+#             */
+/*   Updated: 2025/06/19 13:46:04 by jdu              ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // void expand_tab(char **tab, t_env *env_head, int status)
@@ -49,12 +61,17 @@ int expand_tab(char **tab, t_env *env_head, int status, t_suffix_type *out_type,
 int expand_single(char **str, t_env *env_head, int status, t_suffix_type *out_type, char *error_char)
 {
     char *tmp[2];
+    int expand_status;
 
     if (!str || !*str)
         return (1);
     tmp[0] = *str;
     tmp[1] = NULL;
-    return (expand_tab(tmp, env_head, status, out_type, error_char));
+    expand_status = expand_tab(tmp, env_head, status, out_type, error_char);
+    *str = ft_strdup(tmp[0]);
+    if (!*str)
+        return (1);
+    return (expand_status);
 }
 
 
@@ -170,8 +187,6 @@ char *expand_string(char *str, t_env *lst_env, int status, t_suffix_type *out_ty
 
     if (!str)
         return (NULL);
-    // if (quote_type == QUOTE_SINGLE)
-    //     return (ft_strdup(str));
     if (str[0] == '~' && (!str[1] || str[1] == '/'))
     {
         home = get_env_value(lst_env, "HOME");
