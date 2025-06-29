@@ -16,6 +16,7 @@
 # include <errno.h>
 # include <stdbool.h>
 # include <termios.h>
+# include <signal.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
@@ -26,7 +27,6 @@
 # define DEFAULT "\001\033[0m\002"
 
 # define ERR_COMMAND ": command not found\n"
-# define ERR_ENVP "Evironment variables not available\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -51,21 +51,7 @@ typedef struct s_env
 typedef struct s_pipe
 {
     int   fd[2];
-    int fd_in;
-    int fd_out;
 }               t_pipe;
-
-// typedef struct s_shell
-// {
-//     t_env *env;
-//     char **paths;
-//     char *username;
-//     char    *trimmed_prompt;
-//     int     status;
-//     t_pipe  old_pipe;
-//     t_pipe  new_pipe;
-
-// }              t_shell;
 
 typedef enum e_token_type
 {
@@ -170,7 +156,6 @@ void    free_shell(t_shell *sh);
 t_cmd   *init_cmd(void);
 void    free_cmd_list(t_cmd *head);
 void    free_cmd(t_cmd *cmd);
-// int		init_expand(t_expansion *exp);
 int init_expand(t_expansion *exp, char *input, int status);
 void	free_expansion(t_expansion *exp);
 void rm_void_from_cmd(t_cmd *command, int i, int j, int num);
@@ -196,12 +181,21 @@ char *build_prompt(t_shell *shell);
 //lexer
 int is_too_many_char(const char *input, int i, char c);
 char next_non_space(const char *input, int i);
+int check_heredoc_redir_conflict(const char *input, int i);
+int check_long_redir_sequence(const char *input, int i);
+int check_pipe_conflict(const char *input, int i);
+int check_redir_newline_end(const char *input, int i);
+int check_triple_redir(const char *input, int i);
+int check_too_many_redir(const char *input, int i);
+int check_spacing_errors(const char *input, int i);
+int check_double_pipe(const char *input, int i);
+int check_mixed_combos(const char *input, int i);
+int is_invalid_operator(const char *input, int i);
 int lexer(t_shell *shell);
 int is_empty_command(const char *input);
 int is_specific_case(t_shell *s);
 int check_syntax(const char *input);
 void toggle_quote(char ch, int *in_squote, int *in_dquote);
-int is_invalid_operator(const char *input, int i);
 void syntax_error(char unexpected);
 void syntax_error_pipex(char *unexpected);
 int check_quotes_closed(int in_squote, int in_dquote);
@@ -214,20 +208,21 @@ void add_token(t_token **head, t_token *new);
 t_token_type get_token_type(char *s);
 int get_operator_token(const char *line, int i, t_token **tokens);
 int consume_word(const char *line, int i);
-// int get_word_token(const char *line, int i, t_token **tokens);
 int get_word_token(const char *line, int i, t_shell *sh);
-// t_token *tokenize_prompt(const char *line);
 void tokenize_prompt(t_shell *sh, const char *line);
 void free_tokens(t_token *tok);
 int check_token_syntax(t_token *t);
 
 //parsing
-// t_cmd *parser(t_token *token_list);
 t_cmd *parser(t_shell *sh);
 int check_pipe(t_token *tokens);
 t_cmd *parse_one_command(t_token **token_list);
 void add_arg(t_cmd *cmd, const char *arg);
 int is_cmd_valide(t_cmd *cmd);
+t_cmd *build_cmd_list(t_token *token_list);
+bool handle_token(t_cmd *cmd, t_token **token_list);
+int copy_old_args(char **dest, char **src, int len);
+char **duplicate_args(char **old_args, int len, const char *arg);
 
 //redirection
 void handle_input_redir(t_cmd *cmd, char *op, char *file);
@@ -238,6 +233,11 @@ int	is_red_type(t_token_type type);
 void	apply_input_red(t_shell *sh);
 void	apply_output_red(t_shell *sh);
 void	apply_red(t_shell *sh);
+void touch_all_output_files(t_cmd *cmd);
+void touch_all_output_files_in_list(t_cmd *cmd_list);
+int append_op_and_target(char **new_red, int len, char *op, char *target);
+char **init_new_redir_array(t_cmd *cmd, int len);
+int count_redirs(char **red);
 
 //expander
 int expand_tab(char **tab, t_shell *sh, t_suffix_type *out_type, char *error_char);
@@ -246,7 +246,7 @@ int expand_vars(t_shell *sh, t_suffix_type *out_type, char *error_char);
 int expand_all(t_shell *sh, t_suffix_type *out_type, char *error_char);
 char *expand_string(char *str, t_shell *sh, t_suffix_type *out_type, char *error_char);
 int has_illegal_expansion(t_suffix_type type, char ch);
-int handle_illegal_dollar(char *input, t_expansion *exp);
+int handle_illegal_dollar(const char *input, t_expansion *exp);
 int handle_dollar(char *input, t_expansion *exp, t_env *lst_env);
 int	handle_braces(t_expansion *exp, t_env *lst_env);
 char *extract_var_name(const char *input, int start, int *matched_len);
@@ -256,6 +256,7 @@ void handle_single_quote(t_expansion *exp);
 int handle_double_quote(t_expansion *exp, t_env *env);
 int append_char(t_expansion *exp, char c);
 int valid_exp(int c);
+int is_quote(char c);
 int handle_buffer(t_expansion *exp);
 int handle_exit_status(t_expansion *exp);
 int append_str(t_expansion *exp);
@@ -266,17 +267,19 @@ int has_quote(const char *str);
 int should_heredoc_expand(const char *delimiter);
 char *expand_heredoc_line(char *line, t_shell *sh);
 char	*process_heredoc_content(char *delimiter, t_shell *sh, int should_expand);
-int is_quote(char c);
 char	*merge_quoted_string(const char *limiter);
 int	expand_heredoc_in_cmd_list(t_shell *sh);
 char *expand_var_here(char *input, t_shell *sh);
 int expand_var_here_check(char *input, t_expansion *exp, t_shell *sh);
 char *remove_quotes(const char *str);
 void cleanup_current_cmd(t_shell *sh);
-
 char *expand_home(char *str, t_shell *sh);
 char *handle_expand_error(t_expansion *exp, t_suffix_type *out_type, char *error_char);
-
+int handle_question_mark(t_expansion *exp);
+int handle_digit_after_dollar(const char *input, t_expansion *exp);
+int handle_illegal_or_braces(const char *input, t_expansion *exp, t_env *lst_env);
+int check_and_handle_suffix(const char *input, t_expansion *exp, int matched_len);
+int expand_and_append_value(t_expansion *exp, const char *value, int matched_len);
 //builtin
 int	is_valid_var_name(char *var);
 int	builtin_unset(t_shell *sh, char **argv);
@@ -302,8 +305,8 @@ int	exec_wait_pid(pid_t pid);
 int	exec_simple(t_shell *sh);
 int	execve_bin(t_shell *sh);
 int	exec_pipe(t_shell *sh);
-// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe);
-void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
+void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last, t_cmd *curr_cmd);
+// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
 void	safe_close_all_pipes(t_shell *shell);
 int	allocate_builtin(t_shell *shell);

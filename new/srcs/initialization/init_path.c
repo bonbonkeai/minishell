@@ -33,21 +33,15 @@ void    free_env(t_env *env)
     {
         tmp = env->next;
         free(env->key);
+        env->key = NULL;
         free(env->value);
+        env->value = NULL;
         free(env);
         env = tmp;
     }
 }
 
-// char    **init_path_array(t_env *env)
-// {
-//     char *path;
 
-//     path = get_env_value(env, "PATH");
-//     if (!path)
-//         return (NULL);
-//     return (ft_split(path, ':'));
-// }
 char **init_path_array(t_env *env)
 {
     char *path;
@@ -62,7 +56,6 @@ char **init_path_array(t_env *env)
     return (split);
 }
 
-
 void    free_paths(char **paths)
 {
     int i;
@@ -73,4 +66,14 @@ void    free_paths(char **paths)
     while (paths[i])
         free(paths[i++]);
     free(paths);
+}
+
+char *extract_username(t_env *env)
+{
+    char *user;
+
+    user = get_env_value(env, "USER");
+    if (user)
+        return (ft_strdup(user));
+    return (ft_strdup("guest"));
 }

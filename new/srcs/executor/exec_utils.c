@@ -82,6 +82,8 @@ int	if_cmd_start(t_cmd *cmd)
 
 int	if_cmd_simple(t_cmd *cmd)
 {
+	if (!cmd || !cmd->cmd)
+		return (0);
 	if (ft_strcmp(cmd->cmd, "(") != 0)
 	{
 		if (cmd->next == NULL)
@@ -106,6 +108,7 @@ int	exec_wait_pid(pid_t pid)
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
 	{
+		// sleep 10 ^\Quit (core dumped)//
 		if (WTERMSIG(status) == 3)
 			ft_putendl_fd("Quit: 3", STDERR_FILENO);
 		else if (WTERMSIG(status) == 2)

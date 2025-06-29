@@ -136,13 +136,19 @@ char	*get_env_var_value(t_shell *sh, char *name)
 {
 	t_env	*cur;
 
+	if (!sh || !sh->env)
+		return (NULL);
 	cur = sh->env;
 	if (!name)
 		return (NULL);
 	while (cur)
 	{
-		if (ft_strcmp(cur->key, name) == 0)
-			return (cur->value);
+		// ft_printf("currkey %s\n", cur->key);
+		if (cur->key)
+		{
+			if (ft_strcmp(cur->key, name) == 0)
+				return (cur->value);
+		}
 		cur = cur->next;
 	}
 	return (NULL);

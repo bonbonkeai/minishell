@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I.
+CFLAGS = -Wall -Wextra -Werror -I. -g
 #CFLAGS = -Wall -Wextra -Werror -I.
 NAME = minishell
 NAME_BONUS = 
@@ -7,25 +7,40 @@ LIBFT = ./Libft/libft.a
 
 SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/initialization/init_env.c \
+		./srcs/initialization/init_env_util.c \
 		./srcs/initialization/init_path.c \
 		./srcs/initialization/init_shell.c \
 		./srcs/initialization/init_expan.c \
 		./srcs/lexer/lexer.c \
+		./srcs/lexer/lexer_util.c \
+		./srcs/lexer/lexer_util2.c \
+		./srcs/lexer/lexer_error.c \
+		./srcs/lexer/lexer_error2.c \
 		./srcs/tokenizer/tokenizer.c \
-		./srcs/tokenizer/token_utils.c \
+		./srcs/tokenizer/token_create.c \
+		./srcs/tokenizer/token_words.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/handle_red.c \
 		./srcs/parser/parser.c \
+		./srcs/parser/parser_args.c \
+		./srcs/signal/pas_sur.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
-		./srcs/minishell.c \
+		./srcs/minishell/minishell.c \
+		./srcs/minishell/minishell_loop.c \
+		./srcs/minishell/minishell_process.c \
 		./srcs/expand/expand.c \
-		./srcs/expand/expand_joint.c \
+		./srcs/expand/expand_string.c \
+		./srcs/expand/expand_string_util.c \
 		./srcs/expand/expand_variable.c \
-		./srcs/expand/expand_utils.c \
+		./srcs/expand/expand_variable_util.c \
+		./srcs/expand/expand_variable_util2.c \
+		./srcs/expand/expand_util.c \
 		./srcs/expand/expand_heredoc.c \
-		./srcs/expand/expand_heredoc_utils.c \
+		./srcs/expand/expand_heredoc_content.c \
+		./srcs/expand/expand_heredoc_util.c \
+		./srcs/expand/expand_rest.c \
 		./srcs/builtin/builtin_cd.c \
 		./srcs/builtin/builtin_echo.c \
 		./srcs/builtin/builtin_env.c \

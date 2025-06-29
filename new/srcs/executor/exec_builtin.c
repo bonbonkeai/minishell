@@ -74,14 +74,9 @@ int	apply_store_and_red(t_shell *sh, int storage[2])
 		if (!save_std_io(storage)) 
 		{
     			perror("Failed to save std IO");
-    			return(1);
+    			return (1);
 		}
 		apply_red(sh);
-	// 	if (sh->curr_cmd->heredoc_fd != -1)
-	// 		ft_fprintf(2, "[DEBUG] builtin apply_store_and_red: heredoc_fd = %d\n", sh->curr_cmd->heredoc_fd);
-	// 	else
-	// 		ft_fprintf(2, "[DEBUG] builtin apply_store_and_red: no heredoc\n");
-	// 	apply_red(sh);
 	}
 	else
 	{
@@ -128,5 +123,6 @@ int	exec_builtin_main(t_shell *sh)
 		return (0);
 	status = allocate_builtin(sh);
 	recover_io_and_close(storage);
+	// free_shell(sh);
 	return (status);
 }

@@ -39,8 +39,18 @@
 // 	if (new_pipe->fd[1] != -1)
 // 		close(new_pipe->fd[1]);
 // }
-void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
+
+void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last, t_cmd *curr_cmd)
 {
+	if (curr_cmd && curr_cmd->heredoc_fd != -1)
+	{
+		if (dup2(curr_cmd->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc_fd");
+			exit(EXIT_FAILURE);
+		}
+		close(curr_cmd->heredoc_fd);
+	}
 	if (old_pipe->fd[0] != -1)
 	{
 		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
@@ -66,6 +76,35 @@ void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
 	if (new_pipe->fd[1] != -1)
 		close(new_pipe->fd[1]);
 }
+
+
+// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
+// {
+// 	if (old_pipe->fd[0] != -1)
+// 	{
+// 		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
+// 		{
+// 			perror("dup2 old_pipe->fd[0]");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	if (!last && new_pipe->fd[1] != -1)
+// 	{
+// 		if (dup2(new_pipe->fd[1], STDOUT_FILENO) == -1)
+// 		{
+// 			perror("dup2 new_pipe->fd[1]");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	if (old_pipe->fd[0] != -1)
+// 		close(old_pipe->fd[0]);
+// 	if (old_pipe->fd[1] != -1)
+// 		close(old_pipe->fd[1]);
+// 	if (new_pipe->fd[0] != -1)
+// 		close(new_pipe->fd[0]);
+// 	if (new_pipe->fd[1] != -1)
+// 		close(new_pipe->fd[1]);
+// }
 
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe)
 {
@@ -118,3 +157,5 @@ void	safe_close_all_pipes(t_shell *shell)
 		shell->old_pipe.fd[1] = -1;
 	}
 }
+
+

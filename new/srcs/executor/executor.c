@@ -27,19 +27,34 @@ static int	exec_exit_status(int mode, int new_status)
 }
 
 
+// bool	executor(t_shell *shell)
+// {
+// 	int	status;
+
+// 	shell->curr_cmd = shell->cmd;
+// 	if (if_cmd_simple(shell->cmd) == 1)
+// 		status = exec_simple(shell);
+// 	else if (if_cmd_simple(shell->cmd) == 0)
+// 		status = exec_pipe(shell);
+// 	else
+// 		status = -1;
+// 	exec_exit_status(1, status);
+// 	shell->status = exec_exit_status(0, 0); 
+// 	return (shell->status == 0);
+// }
+
 bool	executor(t_shell *shell)
 {
 	int	status;
 
 	shell->curr_cmd = shell->cmd;
-	ft_fprintf(2, "[DEBUG] cmd->cmd = %s\n", shell->curr_cmd->cmd);
-	// if (if_cmd_simple(shell->cmd) == 1)
-	// 	status = exec_simple(shell);
-	if (if_cmd_simple(shell->cmd) == 1)
+	if (!shell->cmd || (!shell->cmd->cmd && !shell->cmd->args &&
+		(shell->cmd->heredoc || shell->cmd->infile || shell->cmd->outfile)))
 	{
-		ft_fprintf(2, "[DEBUG] enter exec_simple\n");
-		status = exec_simple(shell);
+		return (true);
 	}
+	if (if_cmd_simple(shell->cmd) == 1)
+		status = exec_simple(shell);
 	else if (if_cmd_simple(shell->cmd) == 0)
 		status = exec_pipe(shell);
 	else

@@ -24,6 +24,8 @@ static char	*get_user(t_shell *shell)
 {
 	char	*user_env;
 
+	if (!shell->env || !shell)
+		return (NULL);
 	user_env = ft_strjoin(get_env_var_value(shell, "USER"), " ");
 	if (!user_env)
 		user_env = ft_strdup("guest");
@@ -58,6 +60,8 @@ char	*build_prompt(t_shell *shell)
 	char	*res;
 	char	*home;
 
+	if (!shell)
+		return (NULL);
 	tmp = get_user(shell);
 	res = ft_strjoin(tmp, "@minishell");
 	if (!res)

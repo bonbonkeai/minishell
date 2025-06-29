@@ -63,6 +63,7 @@ int	if_bin_access(char **bins, t_shell *sh)
 	command = sh->current_cmd->cmd;
 	if (!bins || !command)
 		return (0);
+	
 	i = 0;
 	while (bins[i])
 	{

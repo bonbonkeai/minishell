@@ -12,54 +12,89 @@
 
 #include "minishell.h"
 
-t_env   *add_new_node(t_env **envp, const char *key, const char *value)
-{
-    t_env *new;
-    t_env *temp;
+// t_env   *add_new_node(t_env **envp, const char *key, const char *value)
+// {
+//     t_env *new;
+//     t_env *temp;
 
-    new = malloc(sizeof(t_env));
-    if (!new)
-        return (NULL);
-    if (!envp)
-        return (free(new), NULL);
-    new->key = ft_strdup(key);
-    if (!new->key)
-        return (free(new), NULL);
-    if (value)
-    {    
-        new->value = ft_strdup(value);
-        if (!new->value)
-            return (free(new->key), free(new), NULL);
-    }
-    else
-        new->value = NULL;
-    new->next = NULL;
-    if (!*envp)
-        *envp = new;
-    else
-    {
-        temp = *envp;
-        while (temp->next)
-            temp = temp->next;
-        temp->next = new;
-    }
-    return (new);
+//     new = malloc(sizeof(t_env));
+//     if (!new)
+//         return (NULL);
+//     if (!envp)
+//         return (free(new), NULL);
+//     new->key = ft_strdup(key);
+//     if (!new->key)
+//         return (free(new), NULL);
+//     if (value)
+//     {    
+//         new->value = ft_strdup(value);
+//         if (!new->value)
+//             return (free(new->key), free(new), NULL);
+//     }
+//     else
+//         new->value = NULL;
+//     new->next = NULL;
+//     if (!*envp)
+//         *envp = new;
+//     else
+//     {
+//         temp = *envp;
+//         while (temp->next)
+//             temp = temp->next;
+//         temp->next = new;
+//     }
+//     return (new);
+// }
+
+static t_env	*create_node(const char *key, const char *value)
+{
+	t_env	*node;
+
+	node = malloc(sizeof(t_env));
+	if (!node)
+		return (NULL);
+	node->key = ft_strdup(key);
+	if (!node->key)
+		return (free(node), NULL);
+	if (value)
+	{
+		node->value = ft_strdup(value);
+		if (!node->value)
+			return (free(node->key), free(node), NULL);
+	}
+	else
+		node->value = NULL;
+	node->next = NULL;
+	return (node);
 }
 
-// t_env   *init_env(char **envp)
-// {
-//     t_env *env;
-//     int i;
+static void	append_node(t_env **envp, t_env *new)
+{
+	t_env	*temp;
 
-//     i = 0;
-//     env = NULL;
-//     while (envp[i])
-//     {
-//         parse_and_add(envp[i], &env);
-//         i++;   
-//     }
-//     return (env);
-// }
+	if (!*envp)
+		*envp = new;
+	else
+	{
+		temp = *envp;
+		while (temp->next)
+			temp = temp->next;
+		temp->next = new;
+	}
+}
+
+t_env	*add_new_node(t_env **envp, const char *key, const char *value)
+{
+	t_env	*new;
+
+	if (!envp)
+		return (NULL);
+	new = create_node(key, value);
+	if (!new)
+		return (NULL);
+	append_node(envp, new);
+	return (new);
+}
 
 static int	env_list_length(t_env *env)
 {
@@ -77,8 +112,8 @@ static int	env_list_length(t_env *env)
 
 t_env *init_env(char **envp)
 {
-    t_env *env = NULL;
-    int i = 0;
+    t_env *env;
+    int i;
     size_t before;
     size_t after;
 
@@ -90,100 +125,12 @@ t_env *init_env(char **envp)
         parse_and_add(envp[i], &env);
         after = env_list_length(env);
         if (after == before)
-        {
-            free_env(env);
-            return (NULL);
-        }
+            return (free_env(env), NULL);
         i++;
     }
     return (env);
 }
 
-void    parse_and_add(char *entry, t_env **env)
-{
-    char *sep;
-    char *key;
-    char *value;
-    size_t key_len;
-
-    sep = ft_strchr(entry, '=');
-    if (!sep)
-        return ;
-    key_len = sep - entry;
-    key = ft_strndup(entry, key_len);
-    value = ft_strdup(sep + 1);
-    if (!key || !value || !add_new_node(env, key, value))
-    {
-        if (key)
-            free(key);
-        if (value)
-            free(value);
-        return ;
-    }
-    // if (!add_new_node(env, key, value))
-    // {
-    //     free(key);
-    //     free(value);
-    //     return ;
-    // }
-    else
-    {
-        free(key);
-        free(value);
-    }
-}
-
-// void    handle_empty_env(t_env **env)
-// {
-//     char cwd[PATH_MAX];
-
-//     if (!*env)
-//     {
-//         if (getcwd(cwd, PATH_MAX))
-//             add_new_node(env,  "SHLVL", "1");
-//         add_new_node(env, "PATH", "/usr/bin:/bin");
-//         add_new_node(env, "HOME", "/tmp");
-//     }
-// }
-
-void    handle_empty_env(t_env **env)
-{
-    char cwd[PATH_MAX];
-
-    if (!*env)
-    {
-        if (getcwd(cwd, PATH_MAX))
-        {
-            if (!add_new_node(env, "SHLVL", "1"))
-            {
-                free_env(*env);
-                *env = NULL;
-                return ;
-            }
-        }
-        if (!add_new_node(env, "PATH", "/usr/bin:/bin"))
-        {
-            free_env(*env);
-            *env = NULL;
-            return ;
-        }
-        if (!add_new_node(env, "HOME", "/tmp"))
-        {
-            free_env(*env);
-            *env = NULL;
-            return ;
-        }
-    }
-}
 
 
-char *extract_username(t_env *env)
-{
-    char *user;
-
-    user = get_env_value(env, "USER");
-    if (user)
-        return (ft_strdup(user));
-    return (ft_strdup("guest"));
-}
 

@@ -1,0 +1,388 @@
+
+       
+        ls
+        pwd
+        cat Makefile
+        echo hello world
+	    ls -l | grep c          drwxr-xr-x 15 bonbon bonbon   4096 Jun 28 23:05 srcs
+		cat < infile > outfile     bash: infile: No such file or directory  
+	    echo a >> file | grep a     cat file ->a
+		echo 'hello"world'hi        hello"worldhi
+        echo 'hello"world'hi""      hello"worldhi
+        echo ">>>"              >>>
+        echo "<>"               <>
+        echo "ls |"             ls |
+		echo hello>file           cat file ->hello
+		cat<infile|grep           bash: infile: No such file or directory
+		echo    >    outfile      空行
+        ""''echo Nola""'''' que""'' tal""''       Nola que tal
+        "e"'c'ho 'b'"o"nj"o"'u'r                 bonjour 
+        echo hello | grep h > out.txt            cat out.txt ->hello
+        ls -l | grep .c >> result.txt            drwxr-xr-x 15 bonbon bonbon   4096 Jun 28 23:05 srcs
+        ls | wc -l                        16
+        cat /etc/passwd | grep root           root:x:0:0:root:/root:/bin/bash
+        echo bonjour | cat | cat | cat        bonjour
+        ls -l | grep txt | awk '{print $1}'                    -rw-r--r--
+                                                                -rw-r--r--
+                                                                -rw-r--r--
+                                                                -rw-r--r--
+        ls | wc                                             16      16     145
+        date | cat -e                                      Sun Jun 29 01:08:04 CST 2025$
+        echo " " | cat -e                               $(前有空格)
+        echo "hola " | cat -e                          hola $
+        echo $:$= | cat -e                             $:$=$
+        echo | cat -e                                  $
+        echo "a" "b" "c" | cat -e                      a b c$
+        echo hello world | wc -w                       2
+        echo a | grep b | wc -l | sort > res.txt       0
+        >hello<world echo  (从文件 world 中读取标准输入，把 echo 命令的输出重定向写入到 hello 文件中。)                  空行
+        < testfile cat               wewtfgvefwerfwe\\\
+
+
+                                    fw3efwefwef
+
+
+        < testfile cat | cat (结果同上)
+        
+
+        echo hello > file1 > file2 > file3 << OK                                 cat file3->hello    ls-> file1 file2 file3
+        REDIR: > file1 > file2 > file3 << OK   先做heredoc, 生成临时文件之后，再按顺序做所有文件重定向
+
+
+        cd cd    cd: cd: No such file or directory
+		"      "//          command not found
+        "echo       "//       ommand not found
+        "echo     a     b"//      command not found
+        ""echo      ""//      command not found
+        ~         /home/bonbon: Is a directory
+        ""      command not found
+        ''      command not found
+        <      `newline'
+        >      `newline'
+        |       token `|'
+        cat <<<   `newline'
+        cat >>>    token `>'
+        cat > || ls    token `||'
+        cat ><         token `<'
+        cat <>         `newline'
+        | ls           token `|'
+        ls |           >ctrl-c ->自定义错误`newline'
+        cat <          `newline'
+        cat >           `newline'
+        cat <| file.txt      token `|'
+        echo 'unclosed       >ctrl-c ->unexpected EOF while looking for matching '
+        echo \"unclosed2      >ctrl-c ->unexpected EOF while looking for matching '
+        echo > <         token `<'
+        echo ><          token `<'
+        echo < >//       token `>' (目前我们是`newline')
+        echo <>          `newline'
+        <>               `newline'
+        ><                token `<'
+        > > >             token `>'
+        < < <             token `<'
+        echo < < >>       token `<'
+        echo < < hello    token `<'
+        echo << >>        token `>>'
+        >> >> >> >>       token `>>'
+        << << << <<       token `<<'
+        >>>>>              token `>>'
+        >>>>>>>>>>>>>>>    token `>>'
+        <<<<<              token `<<'
+        <<<<<<<<<<<<<<<    token `<<<'
+        > > > >            token `>'
+        >>>> >> >> >>      token `>>'
+        >>|><              token `|'
+        echo | |           token `|'
+        cat < infile > outfile |     >ctrl-c ->自定义错误`newline'
+        cat < infile > | grep        token `|'
+        echo hello | | grep e        token `|'
+        ls\t-l//            ls\t-l: command not found
+        sjflesj             sjflesj: command not found
+        echo ">""          >ctrl-c ->unexpected EOF while looking for matching "
+        echo "'h'""        >ctrl-c ->unexpected EOF while looking for matching "
+        echo '>'"          >ctrl-c ->unexpected EOF while looking for matching "
+        echo '|'"          >ctrl-c ->unexpected EOF while looking for matching "
+        echo '<infile'"    >ctrl-c ->unexpected EOF while looking for matching "
+        echo <<EOF"        >ctrl-c ->unexpected EOF while looking for matching "
+
+//expansion
+        $?//               bash:130: command not found , nous : 2: command not found
+        echo $? //         bash: 127, nous : 1
+        echo $HOME         /home/bonbon
+        echo $USER         bonbon
+        echo $SHELL        /bin/bash
+        echo ~             /home/bonbon
+        echo "~"           ~
+        echo ${USER}       bonbon
+        echo '$HOME'       $HOME
+        echo "$HOME"       /home/bonbon
+        echo '"$HOME"'     "$HOME"
+        echo "'$HOME'"     '/home/bonbon'
+
+        echo pre$USERpost       pre
+        echo pre$USER$post      prebonbon
+        echo pre$USER*post      prebonbon*post
+        echo pre$USER~post      prebonbon~post
+        echo pre$USER#post      下面同上
+        echo pre$USER@post
+        echo pre$USER%post
+        echo pre$USER^post
+        echo pre$USER-post
+        echo pre$USER+post
+        echo pre$USER=post
+        echo pre$USER[post
+        echo pre$USER]post
+        echo pre$USER{post
+        echo pre$USER}post
+        echo pre$USER\post
+        echo pre$USER/post
+        echo pre$USER?post
+        echo pre$USER,post
+        echo pre$USER.post
+        echo pre$USER:post
+        echo pre$USER post
+
+        echo pre$USER'post    >ctrl c->自定义错误：minishell: unexpected EOF while looking for matching '
+        echo pre$USER"post    >ctrl c->自定义错误：minishell: unexpected EOF while looking for matching "
+        echo pre$USER(post    bash: syntax error near unexpected token `('    //
+        echo pre$USER)post    bash: syntax error near unexpected token `)'
+        echo pre$USER`post    >ctrl c->自定义错误：minishell: syntax error near unexpected token ``'
+        echo pre$USER!post    bash: !post: event not found (minishell: !!: event not found)
+        echo pre$USER&post    bash:显示错误，自定义错误：minishell: `&': command not found
+
+        echo $HOME$USER       /home/bonbonbonbon
+        echo $USER+$HOME      bonbon+/home/bonbon
+        
+        echo $UNDEFINED       空行
+        
+ 
+//expansion heredoc
+        
+
+        cat << EOF > out5.txt
+        heredoc with redirection.
+        EOF
+        cat out5.txt                             heredoc with redirection.
+
+         bonbon@DESKTOP-LVSH144:~/minishell_new/new$ << OK << KO << KK cat (minishell 退出有 leak)
+        > ls
+        > KO
+        > asdf
+        > OK
+        > KO
+        > 1
+        > KK
+        1
+        
+        cat << EOF > /invalid/path/out.txt
+        Should fail
+        EOF
+        # /invalid/path/out.txt: No such file or directory
+
+        << OK
+        > asdf
+        > 123
+        > OK
+        我的结果和bash不同，虽然bash这样什么也不做，但是可以执行，并不会报错
+        << OK
+        minishell: invalide or empty
+        [修好了] 
+        
+         cat << EOF | grep hello
+        hello
+        world
+        hello my world, hello
+        EOF
+                                                 hello
+                                                hello my world, hello
+
+                                                [现在我们的有问题，没有出结果而且产生了一个错误]
+
+        cat << EOF | grep "bonjour" > bonjour.txt
+        bonjour le monde
+        hello world
+        bonjour encore
+        EOF
+        cat bonjour.txt                             bonjour le monde
+                                                    bonjour encore
+                                                    [现在我们的有问题，没有出结果而且产生了一个错误]
+        
+        cat << EOF > config.ini
+        [User]
+        Name = $USER
+        Home = $HOME
+        cat config.ini 
+                        
+                            [User]
+                            Name = bonbon
+                            Home = /home/bonbon
+
+错误情况：
+        //
+         < hello > world echo                           bash: hello: No such file or directory 
+        这是因为你尝试从 hello 文件中读取标准输入（< hello），但这个文件 并不存在，因此 shell 无法打开它作为输入源。
+        尽管 echo 不使用 stdin，但 shell 会在运行命令前就尝试打开所有重定向的文件。所以这个报错发生在命令执行前。
+        这说明你有一段代码，比如：
+            sh->stdin_fd = dup(STDIN_FILENO);
+            sh->stdout_fd = dup(STDOUT_FILENO);
+            保存了 stdin/stdout，但在命令结束后 没有关闭这些备份描述符。
+            所以 valgrind 报告说：
+            这些 fd 没关，但不构成内存泄漏。
+        //
+
+        //
+        speciale
+        unset HOME 之后 用cd 不能回到home, 但是用cd ~ 可以回到home
+
+        env -i ./minishell 会有很多环境变量没有但是应该能启动
+        //
+
+
+        //
+        # 你可以试着只输入 Ctrl+D 看是否能正确中断->退出minishell程序
+        # 你可以试着只输入 Ctrl+C 看是否能正确中断->回到新的prompt，需要把这一轮的free, 任何情况下都能回到新的prompt
+        # 你可以试着只输入 Ctrl+\ 看是否能正确中断->1]    29900 quit       ./minishell   打断正在运行的命令，但是不能退出minishell
+
+        //连续ctrl C 会重新反复出现一个新的prompt, 并且会出现 ^C（单个也会出现这个）
+        bonbon@DESKTOP-LVSH144:~/minishell_new/new$ ^C
+        bonbon@DESKTOP-LVSH144:~/minishell_new/new$ ^C
+        bonbon@DESKTOP-LVSH144:~/minishell_new/new$ ^C
+
+        //
+        sleep 10 
+        ^\Quit (core dumped)
+        ctrl \ ->会打印这个^\Quit (core dumped)
+        执行过程中 ctrl D 什么也不做
+
+        //heredoc 模式下
+        输入或不输入-》ctrl \什么都不做
+        ctrl c会打断heredoc， 回到一个新的prompt里并打印^C
+        ctrl D, 你正在输入过程中不会打断，但是进入新的>且没有输入时，ctrl d会退出heredoc, 回到一个新的prompt里并打印-bash: warning: here-document at line 11 delimited by end-of-file (wanted 
+`OK')
+
+
+        //
+        //builtin 
+            export EMPTY=
+            echo $EMPTY                   空行
+            env                           EMPTY=
+            export                        declare -x EMPTY="" (未实现)
+
+            export SPACES="   "
+            echo $SPCES                   空行，实际上是“   ”
+            env                           SPACES= 
+            export                        declare -x SPACES="   "(未实现)
+
+            export NAME=BONbon           
+            echo $NAME                    BONbon
+            env                           NAME=BONbon
+            export                        declare -x NAME2="BONbon"(未实现)
+            unset NAME
+            echo $NAME                    空行
+
+            export 1A=abc //             bash: export: `1A=abc': not a valid identifier （我们export: invalid variable name: No such file or directory）
+            env
+            
+            export =abc //               bash: export: `=abc': not a valid identifier    (我们export: invalid variable name: No such file or directory)
+            env
+
+            //
+            export A
+            env                 无A=，但是我们有
+            export              但是这里会出现 declare -x A （未实现）
+
+            export B=           
+            env                 B=
+            export              declare -x B="" （未实现）
+
+        //
+
+
+        //heredoc
+        cat << EOF
+        hello
+        $HOME
+        $USER+$HOME
+        "$HOME"
+        '$HOME'
+        echo ~
+        ~
+        $UNDEFINED
+        $?
+        EOF                                 hello
+                                            /home/bonbon
+                                            bonbon+/home/bonbon
+                                            "/home/bonbon"
+                                            '/home/bonbon'
+                                            echo ~
+                                            ~
+                                            [空行]
+                                            0
+
+                                            (之前实现的全展开现在不展开了要看一下为什么)
+                                            hello
+                                            /home/bonbon
+                                            bonbon+/home/bonbon
+                                            /home/bonbon
+                                            $HOME
+                                            echo ~
+                                            ~
+                                            [空行]
+                                            1（返回码有问题）
+
+        cat << 'EOF'
+        hello
+        $USER is here.
+        $HOME
+        $USER+$HOME
+        "$HOME"
+        '$HOME'
+        EOF
+                                            hello
+                                            $USER is here.
+                                            $HOME
+                                            $USER+$HOME
+                                            "$HOME"
+                                            '$HOME'
+
+                                            （有引号的时候都不展开，之前实现了不知道为啥现在实现不了了）
+                                            hello
+                                            bonbon is here.
+                                            /home/bonbon
+                                            bonbon+/home/bonbon
+                                            /home/bonbon
+                                            $HOME
+
+        cat << "EOF"
+        hello
+        $USER is here.
+        $HOME
+        $USER+$HOME
+        "$HOME"
+        '$HOME'
+        EOF
+                                            hello
+                                            $USER is here.
+                                            $HOME
+                                            $USER+$HOME
+                                            "$HOME"
+                                            '$HOME'
+
+                                            （有引号的时候都不展开，之前实现了不知道为啥现在实现不了了）
+                                            hello
+                                            bonbon is here.
+                                            /home/bonbon
+                                            bonbon+/home/bonbon
+                                            /home/bonbon
+                                            $HOME
+
+    
+    
+
+
+
+       
+        
+
+
+        

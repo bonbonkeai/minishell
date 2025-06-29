@@ -49,10 +49,10 @@ static void	update_pwd_vars(char *oldpwd, t_shell *shell)
 int	builtin_cd(t_shell *shell, char **argv)
 {
 	char	*target;
-	char	*oldpwd;
+	char	oldpwd[PATH_MAX];
 
-	oldpwd = getcwd(NULL, 0);
-	if (!oldpwd)
+	getcwd(oldpwd, PATH_MAX);
+	if (!getcwd(oldpwd, PATH_MAX))
 	{
 		write(2, "cd: getcwd failed\n", 18);
 		return (1);
@@ -61,16 +61,16 @@ int	builtin_cd(t_shell *shell, char **argv)
 	if (!target)
 	{
 		cd_error("HOME not set", "cd");
-		free(oldpwd);
+		// free(oldpwd);
 		return (1);
 	}
 	if (chdir(target) != 0)
 	{
 		cd_error("No such file or directory", target);
-		free(oldpwd);
+		// free(oldpwd);
 		return (1);
 	}
 	update_pwd_vars(oldpwd, shell);
-	free(oldpwd);
+	// free(oldpwd);
 	return (0);
 }
