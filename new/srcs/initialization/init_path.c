@@ -12,13 +12,13 @@
 
 #include "minishell.h"
 
-char *get_env_value(t_env *env, const char *key)
+char *get_env_value(t_env *env, char *key)
 {
     if (!env)
         return (NULL);
     while (env)
     {
-        if (strcmp(env->key, key) ==  0)
+        if (ft_strcmp(env->key, key) ==  0)
             return (env->value);
         env = env->next;
     }

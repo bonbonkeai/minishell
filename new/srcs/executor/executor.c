@@ -16,7 +16,7 @@ static int	exec_exit_status(int mode, int new_status)
 {
 	static int	last_exit_status;
 
-	last_exit_status = 0;
+	// last_exit_status = 0;
 	if (mode == 1)
 	{
 		if (new_status == -1)

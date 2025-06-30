@@ -21,20 +21,6 @@ int	if_cmd_builtin(t_shell *sh)
 	curr = sh->curr_cmd;
 	if (!curr || !curr->cmd)
         return (0);
-	// if (ft_strncmp(sh->cmd->cmd, "cd", 3) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "echo", 5) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "env", 4) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "export", 7) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "pwd", 4) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "unset", 6) == 0)
-	// 	re = 1;
-	// else if (ft_strncmp(sh->cmd->cmd, "exit", 5) == 0)
-	// 	re = 1;
 	if (ft_strncmp(curr->cmd, "cd", 3) == 0)
 		re = 1;
 	else if (ft_strncmp(curr->cmd, "echo", 5) == 0)

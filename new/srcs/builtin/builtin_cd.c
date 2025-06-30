@@ -60,13 +60,15 @@ int	builtin_cd(t_shell *shell, char **argv)
 	target = resolve_cd_target(shell, argv);
 	if (!target)
 	{
-		cd_error("HOME not set", "cd");
+		// cd_error("HOME not set", "cd");
+		ft_putstr_fd("cd: HOME not set\n", 2);
 		// free(oldpwd);
 		return (1);
 	}
 	if (chdir(target) != 0)
 	{
 		cd_error("No such file or directory", target);
+		// ft_putstr_fd("No such file or directory\n", 2);
 		// free(oldpwd);
 		return (1);
 	}

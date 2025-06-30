@@ -26,7 +26,7 @@ static char	*get_user(t_shell *shell)
 
 	if (!shell->env || !shell)
 		return (NULL);
-	user_env = ft_strjoin(get_env_var_value(shell, "USER"), " ");
+	user_env = ft_strjoin(get_env_var_value(shell, "USER"), "🍭");
 	if (!user_env)
 		user_env = ft_strdup("guest");
 	return (user_env);
@@ -54,34 +54,58 @@ static char	*get_user(t_shell *shell)
 // }
 
 
+// char	*build_prompt(t_shell *shell)
+// {
+// 	char	*tmp;
+// 	char	*res;
+// 	char	*home;
+
+// 	if (!shell)
+// 		return (NULL);
+// 	tmp = get_user(shell);
+// 	if (!tmp)
+// 		return (NULL);
+// 	res = ft_strjoin(tmp, "@minishell");
+// 	if (!res)
+// 		return (free(tmp), NULL);
+// 	free(tmp);
+// 	home = build_home(shell);
+// 	if (!home)
+// 		return (free(tmp), free(res), NULL);
+// 	tmp = ft_strjoin(home, res);
+// 	if (!tmp)
+// 		return (free(res), free(home), NULL);
+// 	free(res);
+// 	free(home);
+// 	res = ft_strjoin(tmp, "$ ");
+// 	if (!res)
+// 		return (free(tmp), NULL);
+// 	free(tmp);
+// 	tmp = ft_strjoin(res, DEFAULT);
+// 	if (!tmp)
+// 		return (free(res), NULL);
+// 	free(res);
+// 	return (tmp);
+// }
+
 char	*build_prompt(t_shell *shell)
 {
-	char	*tmp;
+	char	*user;
 	char	*res;
-	char	*home;
+	char	*styled;
 
-	if (!shell)
+	user = get_user(shell);
+	if (!user)
 		return (NULL);
-	tmp = get_user(shell);
-	res = ft_strjoin(tmp, "@minishell");
+	res = ft_strjoin(user, "@minishell$🌱 ");
+	free(user);
 	if (!res)
-		return (free(tmp), NULL);
-	free(tmp);
-	home = build_home(shell);
-	if (!home)
-		return (free(tmp), free(res), NULL);
-	tmp = ft_strjoin(home, res);
-	if (!tmp)
-		return (free(res), free(home), NULL);
+		return (NULL);
+	styled = ft_strjoin(CYAN_BOLD_UNDERLINE, res);
 	free(res);
-	free(home);
-	res = ft_strjoin(tmp, "$ ");
-	if (!res)
-		return (free(tmp), free(home), NULL);
-	free(tmp);
-	tmp = ft_strjoin(res, DEFAULT);
-	if (!tmp)
-		return (free(res), free(home), NULL);
-	free(res);
-	return (tmp);
+	if (!styled)
+		return (NULL);
+	res = ft_strjoin(styled, DEFAULT);
+	free(styled);
+	return (res);
 }

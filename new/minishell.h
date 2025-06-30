@@ -25,6 +25,7 @@
 # define GREEN  "\001\033[0;32m\002"
 # define BLUE   "\001\033[0;34m\002"
 # define DEFAULT "\001\033[0m\002"
+#define CYAN_BOLD_UNDERLINE "\001\033[1;4;36m\002"
 
 # define ERR_COMMAND ": command not found\n"
 
@@ -147,7 +148,7 @@ t_env   *init_env(char **envp);
 void    parse_and_add(char *entry, t_env **env);
 void    handle_empty_env(t_env **env);
 char *extract_username(t_env *env);
-char *get_env_value(t_env *env, const char *key);
+char *get_env_value(t_env *env, char *key);
 void    free_env(t_env *env);
 char    **init_path_array(t_env *env);
 void    free_paths(char **paths);

@@ -67,21 +67,33 @@ void    parse_and_add(char *entry, t_env **env)
 //     }
 // }
 
+// static int add_shlvl_if_possible(t_env **env)
+// {
+//     char cwd[PATH_MAX];
+
+//     if (getcwd(cwd, PATH_MAX))
+//     {
+//         if (!add_new_node(env, "SHLVL", "1"))
+//         {
+//             free_env(*env);
+//             *env = NULL;
+//             return (0);
+//         }
+//     }
+//     return (1);
+// }
+
 static int add_shlvl_if_possible(t_env **env)
 {
-    char cwd[PATH_MAX];
-
-    if (getcwd(cwd, PATH_MAX))
+    if (!add_new_node(env, "SHLVL", "1"))
     {
-        if (!add_new_node(env, "SHLVL", "1"))
-        {
-            free_env(*env);
-            *env = NULL;
-            return (0);
-        }
+        free_env(*env);
+        *env = NULL;
+        return (0);
     }
     return (1);
 }
+
 
 static int add_default_path(t_env **env)
 {

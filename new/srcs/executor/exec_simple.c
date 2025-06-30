@@ -100,7 +100,8 @@ int	execve_bin(t_shell *sh)
 	path = get_path(sh);
 	if (!path)
 	{
-		print_cmd_error(curr->cmd, "command not found");
+		// print_cmd_error(curr->cmd, "command not found");
+		perror(curr->cmd);
 		free_shell(sh);
 		return (127);
 	}
