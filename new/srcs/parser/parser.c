@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:37 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:44:38 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 13:53:35 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,62 +52,61 @@
 //     return (cmd_list);
 // }
 
-t_cmd *parser(t_shell *sh)
+t_cmd	*parser(t_shell *sh)
 {
-    t_token *token_list;
+	t_token	*token_list;
 
-    token_list = sh->token_list;
-    if (!token_list || check_pipe(token_list))
-        return (NULL);
-    return (build_cmd_list(token_list));
+	token_list = sh->token_list;
+	if (!token_list || check_pipe(token_list))
+		return (NULL);
+	return (build_cmd_list(token_list));
 }
 
-t_cmd *build_cmd_list(t_token *token_list)
+t_cmd	*build_cmd_list(t_token *token_list)
 {
-    t_cmd *cmd_list;
-    t_cmd *curr;
-    t_cmd *new_cmd;
+	t_cmd	*cmd_list;
+	t_cmd	*curr;
+	t_cmd	*new_cmd;
 
-    cmd_list = NULL;
-    curr = NULL;
-    while (token_list)
-    {
-        new_cmd = parse_one_command(&token_list);
-        if (!new_cmd)
-        {
-            ft_fprintf(2, "minishell: invalide or empty\n");
-            return (free_cmd_list(cmd_list), NULL);
-        }
-        if (!cmd_list)
-            cmd_list = curr = new_cmd;
-        else
-            curr = curr->next = new_cmd;
-        if (token_list && token_list->type == T_PIPE)
-            token_list = token_list->next;
-    }
-    return (cmd_list);
+	cmd_list = NULL;
+	curr = NULL;
+	while (token_list)
+	{
+		new_cmd = parse_one_command(&token_list);
+		if (!new_cmd)
+		{
+			ft_fprintf(2, "minishell: invalide or empty\n");
+			return (free_cmd_list(cmd_list), NULL);
+		}
+		if (!cmd_list)
+			cmd_list = curr = new_cmd;
+		else
+			curr = curr->next = new_cmd;
+		if (token_list && token_list->type == T_PIPE)
+			token_list = token_list->next;
+	}
+	return (cmd_list);
 }
 
-
-int check_pipe(t_token *tokens)
+int	check_pipe(t_token *tokens)
 {
-    if (!tokens)
-        return (0);
-    if (tokens->type == T_PIPE)
-        return (1);
-    while (tokens)
-    {
-        if (tokens->type == T_PIPE && (!tokens->next || tokens->next->type == T_PIPE))
-            return (1);
-        tokens = tokens->next;
-    }
-    return (0);
+	if (!tokens)
+		return (0);
+	if (tokens->type == T_PIPE)
+		return (1);
+	while (tokens)
+	{
+		if (tokens->type == T_PIPE && (!tokens->next || tokens->next->type == T_PIPE))
+			return (1);
+		tokens = tokens->next;
+	}
+	return (0);
 }
 
 // t_cmd *parse_one_command(t_token **token_list)
 // {
 //     t_cmd *cmd;
-    
+	
 //     cmd = init_cmd();
 //     if (!cmd)
 //         return (NULL);
@@ -133,9 +132,9 @@ int check_pipe(t_token *tokens)
 //     return (cmd);
 // }
 
-t_cmd *parse_one_command(t_token **token_list)
+t_cmd	*parse_one_command(t_token **token_list)
 {
-	t_cmd *cmd;
+	t_cmd	*cmd;
 
 	cmd = init_cmd();
 	if (!cmd)
@@ -150,9 +149,9 @@ t_cmd *parse_one_command(t_token **token_list)
 	return (cmd);
 }
 
-bool handle_token(t_cmd *cmd, t_token **token_list)
+bool	handle_token(t_cmd *cmd, t_token **token_list)
 {
-	t_token *curr;
+	t_token	*curr;
 
 	curr = *token_list;
 	if (curr->type == T_WORD)
@@ -168,5 +167,3 @@ bool handle_token(t_cmd *cmd, t_token **token_list)
 	*token_list = (*token_list)->next;
 	return (true);
 }
-
-

@@ -32,7 +32,6 @@ int	exec_simple(t_shell *sh)
 	if (is_empty_command(sh->trimmed_prompt))
     {
 		print_cmd_error(sh->trimmed_prompt, "command not found");
-		// print_cmd_error(curr->cmd, "command not found");
 		return (127);
     }
 	if (is_directory(curr->cmd))
@@ -66,18 +65,10 @@ int	exec_simple(t_shell *sh)
 			apply_input_red(sh); 
 		apply_output_red(sh);
 		status = execve_bin(sh);
-		//
-		// if (sh->curr_cmd)
-		// {
-		// 	free_cmd(sh->curr_cmd);
-		// 	sh->curr_cmd = NULL;
-		// }
-		//
 		exit(status);
 	}
 	else if (pid > 0)
 	{
-		// sh->cmd->pid = pid;
 		curr->pid = pid;
 		return (exec_wait_pid(pid));
 	}
@@ -100,7 +91,6 @@ int	execve_bin(t_shell *sh)
 	path = get_path(sh);
 	if (!path)
 	{
-		// print_cmd_error(curr->cmd, "command not found");
 		perror(curr->cmd);
 		free_shell(sh);
 		return (127);
@@ -118,8 +108,6 @@ int	execve_bin(t_shell *sh)
 			ft_fprintf(2, "Permission denied or command not executable");
 			return (2);
 		}
-		// execve(path, arg, vars);
-		//
 		if (execve(path, arg, vars) == -1)
 		{
 			ft_fprintf(2, "execve");
@@ -128,7 +116,6 @@ int	execve_bin(t_shell *sh)
 			free_paths(vars);
 			return (EXIT_FAILURE);
 		}
-		//
 		ft_fprintf(2, "Command execution failed");
 		return (1);
 	}

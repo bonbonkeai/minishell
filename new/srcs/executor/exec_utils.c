@@ -38,26 +38,6 @@ int	if_cmd_builtin(t_shell *sh)
 	return (re);
 }
 
-// int	if_cmd_start(t_shell *sh)
-// {
-// 	if (ft_strcmp(sh->cmd->cmd, "(") == 0)
-// 		return (1);
-// 	else
-// 		return (0);
-// }
-
-// int	if_cmd_simple(t_shell *sh)
-// {
-// 	if (ft_strcmp(sh->cmd->cmd, "(") != 0)
-// 	{
-// 		if (sh->cmd->next == NULL)
-// 			return (1);
-// 		else 
-// 			return (0);
-// 	}
-// 	return (2);
-// }
-
 int	if_cmd_start(t_cmd *cmd)
 {
 	if (ft_strcmp(cmd->cmd, "(") == 0)
@@ -94,9 +74,8 @@ int	exec_wait_pid(pid_t pid)
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status))
 	{
-		// sleep 10 ^\Quit (core dumped)//
 		if (WTERMSIG(status) == 3)
-			ft_putendl_fd("Quit: 3", STDERR_FILENO);
+			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
 		else if (WTERMSIG(status) == 2)
 			ft_putstr_fd("\n", STDERR_FILENO);
 		status = 128 + WTERMSIG(status);

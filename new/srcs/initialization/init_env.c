@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:42:57 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:42:59 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 13:33:24 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,20 @@ static void	append_node(t_env **envp, t_env *new)
 	}
 }
 
-t_env	*add_new_node(t_env **envp, const char *key, const char *value)
+// t_env	*add_new_node(t_env **envp, const char *key, const char *value)
+// {
+// 	t_env	*new;
+
+// 	if (!envp)
+// 		return (NULL);
+// 	new = create_node(key, value);
+// 	if (!new)
+// 		return (NULL);
+// 	append_node(envp, new);
+// 	return (new);
+// }
+
+t_env	*add_new_node(t_env **envp, const char *key, const char *value, int exported)
 {
 	t_env	*new;
 
@@ -93,6 +106,7 @@ t_env	*add_new_node(t_env **envp, const char *key, const char *value)
 	if (!new)
 		return (NULL);
 	append_node(envp, new);
+	new->exported = exported;
 	return (new);
 }
 
@@ -100,7 +114,7 @@ static int	env_list_length(t_env *env)
 {
 	int	count;
 
-    count = 0;
+	count = 0;
 	while (env)
 	{
 		count++;
@@ -110,27 +124,23 @@ static int	env_list_length(t_env *env)
 }
 
 
-t_env *init_env(char **envp)
+t_env	*init_env(char **envp)
 {
-    t_env *env;
-    int i;
-    size_t before;
-    size_t after;
+	t_env	*env;
+	int	i;
+	size_t	before;
+	size_t	after;
 
-    env = NULL;
-    i = 0;
-    while (envp[i])
-    {
-        before = env_list_length(env);
-        parse_and_add(envp[i], &env);
-        after = env_list_length(env);
-        if (after == before)
-            return (free_env(env), NULL);
-        i++;
-    }
-    return (env);
+	env = NULL;
+	i = 0;
+	while (envp[i])
+	{
+		before = env_list_length(env);
+		parse_and_add(envp[i], &env);
+		after = env_list_length(env);
+		if (after == before)
+			return (free_env(env), NULL);
+		i++;
+	}
+	return (env);
 }
-
-
-
-

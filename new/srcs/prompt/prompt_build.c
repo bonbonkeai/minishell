@@ -28,7 +28,7 @@ static char	*get_user(t_shell *shell)
 		return (NULL);
 	user_env = ft_strjoin(get_env_var_value(shell, "USER"), "🍭");
 	if (!user_env)
-		user_env = ft_strdup("guest");
+		user_env = ft_strdup("guest[;(]");
 	return (user_env);
 }
 

@@ -2,6 +2,12 @@
        
         ls
         pwd
+        /bin/ls 
+        /bin/ls -l
+        cd .
+        cd ..
+        空格
+        tab（我们使用了readline的自动补全机制）
         cat Makefile
         echo hello world
 	    ls -l | grep c          drwxr-xr-x 15 bonbon bonbon   4096 Jun 28 23:05 srcs
@@ -40,7 +46,7 @@
 
 
                                     fw3efwefwef
-
+          < hello > world echo                           bash: hello: No such file or directory  
 
         < testfile cat | cat (结果同上)
         
@@ -156,6 +162,19 @@
         echo $UNDEFINED       空行
         
  
+        //
+        speciale
+        unset HOME 之后 用cd 不能回到home, 但是用cd ~ 可以回到home
+
+        env -i ./minishell 会有很多环境变量没有但是应该能启动
+        pwd
+        unset PATH
+        cd 
+        unset HOME
+        cd ~
+        cd cd
+
+
 //expansion heredoc
         
 
@@ -164,7 +183,7 @@
         EOF
         cat out5.txt                             heredoc with redirection.
 
-         bonbon@DESKTOP-LVSH144:~/minishell_new/new$ << OK << KO << KK cat (minishell 退出有 leak)
+        bonbon@DESKTOP-LVSH144:~/minishell_new/new$ << OK << KO << KK cat (minishell 退出有 leak)
         > ls
         > KO
         > asdf
@@ -196,7 +215,6 @@
                                                  hello
                                                 hello my world, hello
 
-                                                [现在我们的有问题，没有出结果而且产生了一个错误]
 
         cat << EOF | grep "bonjour" > bonjour.txt
         bonjour le monde
@@ -205,7 +223,6 @@
         EOF
         cat bonjour.txt                             bonjour le monde
                                                     bonjour encore
-                                                    [现在我们的有问题，没有出结果而且产生了一个错误]
         
         cat << EOF > config.ini
         [User]
@@ -218,26 +235,7 @@
                             Home = /home/bonbon
 
 错误情况：
-        //
-         < hello > world echo                           bash: hello: No such file or directory 
-        这是因为你尝试从 hello 文件中读取标准输入（< hello），但这个文件 并不存在，因此 shell 无法打开它作为输入源。
-        尽管 echo 不使用 stdin，但 shell 会在运行命令前就尝试打开所有重定向的文件。所以这个报错发生在命令执行前。
-        这说明你有一段代码，比如：
-            sh->stdin_fd = dup(STDIN_FILENO);
-            sh->stdout_fd = dup(STDOUT_FILENO);
-            保存了 stdin/stdout，但在命令结束后 没有关闭这些备份描述符。
-            所以 valgrind 报告说：
-            这些 fd 没关，但不构成内存泄漏。
-        //
-
-        //
-        speciale
-        unset HOME 之后 用cd 不能回到home, 但是用cd ~ 可以回到home
-
-        env -i ./minishell 会有很多环境变量没有但是应该能启动
-        //
-
-
+       
         //
         # 你可以试着只输入 Ctrl+D 看是否能正确中断->退出minishell程序
         # 你可以试着只输入 Ctrl+C 看是否能正确中断->回到新的prompt，需要把这一轮的free, 任何情况下都能回到新的prompt

@@ -6,16 +6,16 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:45:29 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:45:30 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 13:22:05 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void tokenize_prompt(t_shell *sh, const char *line)
+void	tokenize_prompt(t_shell *sh, const char *line)
 {
-	int i;
-	int skip;
+	int	i;
+	int	skip;
 
 	i = 0;
 	while (line[i])
@@ -29,9 +29,9 @@ void tokenize_prompt(t_shell *sh, const char *line)
 	}
 }
 
-void free_tokens(t_token *tok)
+void	free_tokens(t_token *tok)
 {
-	t_token *tmp;
+	t_token	*tmp;
 
 	if (!tok)
 		return ;
@@ -45,7 +45,7 @@ void free_tokens(t_token *tok)
 	}
 }
 
-int check_token_syntax(t_token *t)
+int	check_token_syntax(t_token *t)
 {
 	if (!t)
 		return (ft_fprintf(2, "minishell: empty input\n"), 1);

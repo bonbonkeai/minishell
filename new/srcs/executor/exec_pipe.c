@@ -30,6 +30,8 @@ static int	wait_for_allpid(pid_t last_pid)
 	int	status;
 	pid_t	pid;
 
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	status = exec_wait_pid(last_pid);
 	if (status == -1)
 		return (-1);
@@ -72,28 +74,17 @@ static int	exec_simple_pipe(t_shell *sh)
     }
 	touch_all_output_files(curr);
 	resolve_redir(curr);
-	//
-	if (curr->heredoc_fd != -1)
-	{
-		char *cmd_name;
-		if (curr->cmd && curr->cmd[0])
-			cmd_name = curr->cmd;
-		else
-			cmd_name = "(null)";
-		printf("Applying heredoc_fd for command [%s]: fd=%d\n", cmd_name, curr->heredoc_fd);
-	}
-	//
-    // if (curr->heredoc_fd != -1)
-    // {
-	//     if (dup2(curr->heredoc_fd, STDIN_FILENO) == -1)
-	//     {
-	// 	    perror("dup2 heredoc_fd");
-	// 	    exit(EXIT_FAILURE);
-	//     }
-	//     close(curr->heredoc_fd);
-    // }
-    // else
-	    // apply_input_red(sh);
+    if (curr->heredoc_fd != -1)
+    {
+	    if (dup2(curr->heredoc_fd, STDIN_FILENO) == -1)
+	    {
+		    perror("dup2 heredoc_fd");
+		    exit(EXIT_FAILURE);
+	    }
+	    close(curr->heredoc_fd);
+    }
+    else
+	    apply_input_red(sh);
 	apply_input_red(sh);
     apply_output_red(sh);
     status = execve_bin(sh);
@@ -112,34 +103,25 @@ void touch_all_output_files_in_list(t_cmd *cmd_list)
     }
 }
 
-static void iteration_pipe(t_shell *sh)
+static void	iteration_pipe(t_shell *sh)
 {
 	if (!sh->curr_cmd)
 		return ;
-	// resolve_redir(sh->curr_cmd);
-	exec_simple_pipe(sh);
+	resolve_redir(sh->curr_cmd);
+	if ((if_cmd_start(sh->curr_cmd)) == 1 || (if_cmd_simple(sh->curr_cmd)) != 2)
+	{
+		if (if_cmd_start(sh->curr_cmd) == 1)
+		{
+			printf("here i am WRONG!\n");
+			return ;
+		}
+		else
+			exec_simple_pipe(sh);
+	}
+	else
+		return ;
 	safe_close_all_pipes(sh);
 }
-
-// static void	iteration_pipe(t_shell *sh)
-// {
-// 	if (!sh->curr_cmd)
-// 		return ;
-// 	resolve_redir(sh->curr_cmd);
-// 	if ((if_cmd_start(sh->curr_cmd)) == 1 || (if_cmd_simple(sh->curr_cmd)) != 2)
-// 	{
-// 		if (if_cmd_start(sh->curr_cmd) == 1)
-// 		{
-// 			printf("here i am WRONG!\n");
-// 			return ;
-// 		}
-// 		else
-// 			exec_simple_pipe(sh);
-// 	}
-// 	else
-// 		return ;
-// 	safe_close_all_pipes(sh);
-// }
 
 void	close_all_heredoc_fd(t_cmd *cmd_list)
 {
@@ -163,8 +145,6 @@ int	exec_pipe(t_shell *sh)
 	t_cmd *curr;
 	int last_cmd;
 	
-	// if (expand_heredoc_in_cmd_list(sh) != 0)
-	// 	return (-1);
 	curr = sh->cmd;
 	while (curr)
 	{
@@ -185,8 +165,7 @@ int	exec_pipe(t_shell *sh)
 		}
 		if (pid == 0)
 		{
-			// pipe_fork_child(&sh->new_pipe, &sh->old_pipe, last_cmd);
-			pipe_fork_child(&sh->new_pipe, &sh->old_pipe, last_cmd, curr);
+			pipe_fork_child(&sh->new_pipe, &sh->old_pipe, last_cmd);
 			iteration_pipe(sh);
 			exit(EXIT_SUCCESS);
 		}
@@ -197,7 +176,7 @@ int	exec_pipe(t_shell *sh)
 		curr = curr->next;
 	}
 	//
-	close_all_heredoc_fd(sh->cmd);
+	// close_all_heredoc_fd(sh->cmd);
 	//
 	return (wait_for_allpid(pid));
 }

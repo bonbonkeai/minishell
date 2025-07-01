@@ -1,22 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*   token_create.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/19 13:45:29 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:45:30 by jdu              ###   ########.fr       */
+/*   Created: 2025/07/01 13:20:09 by jdu               #+#    #+#             */
+/*   Updated: 2025/07/01 13:20:47 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token *create_token(const char *content, t_token_type type)
+t_token	*create_token(const char *content, t_token_type type)
 {
-	t_token *new;
-    
-    new = malloc(sizeof(t_token));
+	t_token	*new;
+	
+	new = malloc(sizeof(t_token));
 	if (!new)
 		return (NULL);
 	new->content = ft_strdup(content);
@@ -27,7 +27,7 @@ t_token *create_token(const char *content, t_token_type type)
 	return (new);
 }
 
-void add_token(t_token **head, t_token *new)
+void	add_token(t_token **head, t_token *new)
 {
 	t_token *curr;
 
@@ -44,7 +44,7 @@ void add_token(t_token **head, t_token *new)
 	}
 }
 
-t_token_type get_token_type(char *s)
+t_token_type	get_token_type(char *s)
 {
 	if (!ft_strcmp(s, "|"))
 		return (T_PIPE);

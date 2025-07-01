@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:47:32 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:47:34 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 13:28:13 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,18 +84,18 @@ static char	*ft_join_argv(int argc, char **argv)
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell	*shell;
-    char *input;
+	char	*input;
 
 	shell = init_shell(envp);
 	if (!shell)
-    {
-        write(2, "Error: failed to initialize shell\n", 34);
+	{
+		write(2, "Error: failed to initialize shell\n", 34);
 		return (EXIT_FAILURE);
-    }
-    signal_handle();
+	}
+	// signal_handle();
 	if (argc > 1)
 	{
-        input = ft_join_argv(argc - 1, argv + 1);
+		input = ft_join_argv(argc - 1, argv + 1);
 		if (!input)
 		{
 			write(2, "Error: failed to join input args\n", 33);
@@ -107,5 +107,3 @@ int	main(int argc, char **argv, char **envp)
 	minishell_loop(shell);
 	return (free_shell(shell), EXIT_SUCCESS);
 }
-
-

@@ -114,15 +114,11 @@ int	exec_builtin_main(t_shell *sh)
 	int	ret;
 	int	storage[2] = {-1, -1};
 
-	//
 	sh->curr_cmd = sh->cmd;
-	// ft_fprintf(2, "[DEBUG] entering exec_builtin_main for cmd: %s\n", sh->cmd->cmd);
-	//
 	ret = apply_store_and_red(sh, storage);
 	if (ret == -1)
 		return (0);
 	status = allocate_builtin(sh);
 	recover_io_and_close(storage);
-	// free_shell(sh);
 	return (status);
 }

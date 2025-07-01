@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   token_words.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/19 13:45:38 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:45:40 by jdu              ###   ########.fr       */
+/*   Created: 2025/07/01 13:21:00 by jdu               #+#    #+#             */
+/*   Updated: 2025/07/01 13:21:25 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int handle_redirection_token(const char *line, int i, t_token **tokens)
+static int	handle_redirection_token(const char *line, int i, t_token **tokens)
 {
-	char op[3];
-	char op2[2];
+	char	op[3];
+	char	op2[2];
 
 	if (line[i] == line[i + 1])
 	{
@@ -34,14 +34,13 @@ static int handle_redirection_token(const char *line, int i, t_token **tokens)
 	}
 }
 
-static int handle_pipe_token(t_token **tokens)
+static int	handle_pipe_token(t_token **tokens)
 {
 	add_token(tokens, create_token("|", T_PIPE));
 	return (1);
 }
 
-
-int get_operator_token(const char *line, int i, t_token **tokens)
+int	get_operator_token(const char *line, int i, t_token **tokens)
 {
 	if (!line[i])
 		return (0);

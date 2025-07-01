@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_heredoc_utils.c                             :+:      :+:    :+:   */
+/*   expand_heredoc_util.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/19 13:47:07 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:47:08 by jdu              ###   ########.fr       */
+/*   Created: 2025/07/01 13:46:34 by jdu               #+#    #+#             */
+/*   Updated: 2025/07/01 13:48:42 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int has_quote(const char *str)
+int	has_quote(const char *str)
 {
 	while (*str)
 	{
@@ -28,9 +28,9 @@ char	*merge_quoted_string(const char *limiter)
 	int		i;
 	int		j;
 	char	*merged;
-
-    i = 0;
-    j = 0;
+	
+	i = 0;
+	j = 0;
 	if (!limiter)
 		return (NULL);
 	merged = malloc(sizeof(char) * (ft_strlen(limiter) + 1));
@@ -46,22 +46,20 @@ char	*merge_quoted_string(const char *limiter)
 	return (merged);
 }
 
-char *remove_quotes(const char *str)
+char	*remove_quotes(const char *str)
 {
-    size_t len;
-    
-    len = ft_strlen(str);
-    if (len >= 2 && ((str[0] == '"' && str[len - 1] == '"') || 
-                     (str[0] == '\'' && str[len - 1] == '\'')))
-    {
-        return ft_substr(str, 1, len - 2);
-    }
-    return ft_strdup(str);
+	size_t	len;
+
+	len = ft_strlen(str);
+	if (len >= 2 && ((str[0] == '"' && str[len - 1] == '"') || 
+		(str[0] == '\'' && str[len - 1] == '\'')))
+			return ft_substr(str, 1, len - 2);
+	return (ft_strdup(str));
 }
 
-int valid_exp(int c)
+int	valid_exp(int c)
 {
-    if (c == '?' || c == '{' || ft_isalnum(c) || c == '_')
-        return (1);
-    return (0);
+	if (c == '?' || c == '{' || ft_isalnum(c) || c == '_')
+		return (1);
+	return (0);
 }

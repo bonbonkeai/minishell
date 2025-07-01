@@ -17,6 +17,7 @@
 # include <stdbool.h>
 # include <termios.h>
 # include <signal.h>
+#include <sys/ioctl.h>
 
 # ifndef PATH_MAX
 #  define PATH_MAX 4096
@@ -42,108 +43,113 @@
 # define INIT_SIZE 64
 # define FACTOR     2
 
+extern int			g_signal;
+
 typedef struct s_env
 {
-    char *key;
-    char *value;
-    struct s_env *next;
+	char *key;
+	char *value;
+	int  exported;
+	struct s_env *next;
 }               t_env;
 
 typedef struct s_pipe
 {
-    int   fd[2];
+	int   fd[2];
 }               t_pipe;
 
 typedef enum e_token_type
 {
-    T_WORD,
-    T_PIPE,
-    T_INPUT,
-    T_OUTPUT,
-    T_APPEND,
-    T_HEREDOC,
+	T_WORD,
+	T_PIPE,
+	T_INPUT,
+	T_OUTPUT,
+	T_APPEND,
+	T_HEREDOC,
 }               t_token_type;
 
 typedef struct s_token
 {
-    char *content;
-    t_token_type type;
-    struct s_token *next;
-    
+	char *content;
+	t_token_type type;
+	struct s_token *next;
+	
 }                   t_token;
 
 typedef struct s_cmd
 {
-    char *cmd;
-    char *pth;
-    char **args;
-    char *infile;
-    char *outfile;
-    char *heredoc_limiter;
-    int fd_in;
-    int fd_out;
-    int append;
-    int heredoc;
-    char **red;
-    int heredoc_expand;
-    int heredoc_fd;
-    int pid;
-    struct s_cmd *next;
-    
+	char *cmd;
+	char *pth;
+	char **args;
+	char *infile;
+	char *outfile;
+	char *heredoc_limiter;
+	int fd_in;
+	int fd_out;
+	int append;
+	int heredoc;
+	char **red;
+	int heredoc_expand;
+	int heredoc_fd;
+	int pid;
+	struct s_cmd *next;
+	
 }               t_cmd;
 
 typedef struct s_redir
 {
-    char *file;
-    int     type;
+	char *file;
+	int     type;
 }               t_redir;
 
 typedef struct s_expansion
 {
-    char    *str;
-    char    *buf;
-    int     size;
-    int     len;
-    int     i;
-    int     k;
-    int     in_squote;
-    int     in_dquote;
-    char    *env_val;
-    char    *var_name;
-    char    *exit_status;
-    int     illegal_type;
-    char    *error_char;
-    int		status;
+	char    *str;
+	char    *buf;
+	int     size;
+	int     len;
+	int     i;
+	int     k;
+	int     in_squote;
+	int     in_dquote;
+	char    *env_val;
+	char    *var_name;
+	char    *exit_status;
+	int     illegal_type;
+	char    *error_char;
+	int		status;
 } t_expansion;
 
 typedef struct s_shell
 {
-    t_env *env;
-    char **paths;
-    char *username;
-    char    *trimmed_prompt;
-    int     status;
-    t_pipe  old_pipe;
-    t_pipe  new_pipe;
-    t_cmd *cmd;
-    t_token *token_list;
-    t_cmd *curr_cmd;
+	t_env *env;
+	char **paths;
+	char *username;
+	char    *trimmed_prompt;
+	char    *default_home;
+	int     status;
+	t_pipe  old_pipe;
+	t_pipe  new_pipe;
+	t_cmd *cmd;
+	t_token *token_list;
+	t_cmd *curr_cmd;
 
 }              t_shell;
 
 typedef enum e_suffix_type
 {
-    SUFFIX_OK,
-    SUFFIX_PIPE,
-    SUFFIX_REDIR,
-    SUFFIX_SYNTAX_ERROR,
-    SUFFIX_HISTORY,
-    SUFFIX_BACKGROUND,
-    SUFFIX_SEMICOLON
+	SUFFIX_OK,
+	SUFFIX_PIPE,
+	SUFFIX_REDIR,
+	SUFFIX_SYNTAX_ERROR,
+	SUFFIX_HISTORY,
+	SUFFIX_BACKGROUND,
+	SUFFIX_SEMICOLON
 }   t_suffix_type;
 
 //init
-t_env   *add_new_node(t_env **envp, const char *key, const char *value);
+// t_env   *add_new_node(t_env **envp, const char *key, const char *value);
+t_env	*add_new_node(t_env **envp, const char *key, const char *value, int exported);
 t_env   *init_env(char **envp);
 void    parse_and_add(char *entry, t_env **env);
 void    handle_empty_env(t_env **env);
@@ -165,14 +171,10 @@ void rm_void_tab_cmd(t_cmd **tab_cmd);
 //signal
 void	signal_hiding(void);
 void	signal_showing(void);
-void	signal_sigint(int sig);
-void	signal_eof(void);
+void signal_sigint(int sig);
+int	event(void);
 void	signal_handle(void);
-void	signal_handle_fork(void);
 void	signal_default(void);
-void	signal_heredoc(void);
-void	sigint_hl_heredoc(int sig);
-void	check_fork_signal(int statloc);
 
 //promt
 char *ft_getcwd(char *buf, size_t size);
@@ -281,6 +283,7 @@ int handle_digit_after_dollar(const char *input, t_expansion *exp);
 int handle_illegal_or_braces(const char *input, t_expansion *exp, t_env *lst_env);
 int check_and_handle_suffix(const char *input, t_expansion *exp, int matched_len);
 int expand_and_append_value(t_expansion *exp, const char *value, int matched_len);
+
 //builtin
 int	is_valid_var_name(char *var);
 int	builtin_unset(t_shell *sh, char **argv);
@@ -297,17 +300,14 @@ bool	executor(t_shell *shell);
 int	is_directory(const char *path);
 void	print_cmd_error(char *cmd, char *msg);
 int	if_cmd_builtin(t_shell *sh);
-// int	if_cmd_start(t_shell *sh);
 int	if_cmd_start(t_cmd *cmd);
-// int	if_cmd_simple(t_shell *sh);
 int	if_cmd_simple(t_cmd *cmd);
 void	exec_simple_exit(t_shell *sh);
 int	exec_wait_pid(pid_t pid);
 int	exec_simple(t_shell *sh);
 int	execve_bin(t_shell *sh);
 int	exec_pipe(t_shell *sh);
-void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last, t_cmd *curr_cmd);
-// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
+void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
 void	safe_close_all_pipes(t_shell *shell);
 int	allocate_builtin(t_shell *shell);

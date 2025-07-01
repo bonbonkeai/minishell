@@ -24,7 +24,8 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/redirection/handle_red.c \
 		./srcs/parser/parser.c \
 		./srcs/parser/parser_args.c \
-		./srcs/signal/pas_sur.c \
+		./srcs/signal/signal.c \
+		./srcs/signal/signal_util.c \
 		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
 		./srcs/minishell/minishell.c \

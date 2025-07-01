@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   minishell_loop.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/19 13:47:32 by jdu               #+#    #+#             */
-/*   Updated: 2025/06/19 13:47:34 by jdu              ###   ########.fr       */
+/*   Created: 2025/07/01 13:28:20 by jdu               #+#    #+#             */
+/*   Updated: 2025/07/01 13:29:00 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *safe_prompt(t_shell *shell)
+static char	*safe_prompt(t_shell *shell)
 {
-    char *prompt;
-    
-    prompt = build_prompt(shell);
-    if (!prompt)
-        prompt = ft_strdup("minishell$ ");
-    return (prompt);
+	char	*prompt;
+	
+	prompt = build_prompt(shell);
+	if (!prompt)
+		prompt = ft_strdup("minishell$ ");
+	return (prompt);
 }
 
 // void minishell_loop(t_shell *shell)
@@ -54,17 +54,18 @@ static char *safe_prompt(t_shell *shell)
 // 	}
 // }
 
-static char *generate_prompt(t_shell *sh)
-{
-	char *prompt;
+// static char	*generate_prompt(t_shell *sh)
+// {
+// 	char	*prompt;
 
-	prompt = safe_prompt(sh);
-	if (!prompt)
-		write(2, "Error: failed to allocate prompt\n", 33);
-	return (prompt);
-}
+// 	if (g_signal != SIGINT)
+// 		prompt = safe_prompt(sh);
+// 	if (!prompt)
+// 		write(2, "Error: failed to allocate prompt\n", 33);
+// 	return (prompt);
+// }
 
-static bool handle_input_line(t_shell *shell, char *line)
+static bool	handle_input_line(t_shell *shell, char *line)
 {
 	if (!line)
 	{
@@ -78,19 +79,33 @@ static bool handle_input_line(t_shell *shell, char *line)
 		free(line);
 		return (false);
 	}
+	if (g_signal == SIGINT)
+        shell->status = 130;
 	process_input(shell, line);
 	free(line);
+	g_signal = 0;
+    rl_done = 0;
 	return (true);
 }
 
-void minishell_loop(t_shell *shell)
+void	minishell_loop(t_shell *shell)
 {
-	char *line;
-	char *prompt;
+	char	*line;
+	char	*prompt;
 
+	rl_bind_key('\t', rl_insert);
 	while (1)
 	{
-		prompt = generate_prompt(shell);
+		signal_handle();
+        signal_showing();
+		// prompt = generate_prompt(shell);
+		if (g_signal != SIGINT)
+            prompt = safe_prompt(shell);
+        if (!prompt)
+        {
+            write(2, "Error: failed to allocate prompt\n", 33);
+            break ;
+        }
 		if (!prompt)
 			break ;
 		line = readline(prompt);
