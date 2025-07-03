@@ -1,22 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_sim.c                                         :+:      :+:    :+:   */
+/*   exec_simple.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:52:08 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 17:12:07 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 20:22:36 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_check_prexec(t_shell *sh, t_cmd *curr)
+int	handle_preprecheck(t_cmd *curr)
 {
-	int status;
-
-	status = -2;
 	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
 		return (0);
 	if (!curr || !curr->cmd || curr->cmd[0] == '\0')
@@ -24,6 +21,13 @@ int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 		print_cmd_error(curr->cmd, "command not found");
 		exit (127);
 	}
+	return (1);
+}
+
+void	handle_check_prexec(t_shell *sh, t_cmd *curr)
+{
+	int	status;
+
 	if (is_empty_command(sh->trimmed_prompt))
 	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");
@@ -42,7 +46,6 @@ int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 		free_shell(sh);
 		exit(status);
 	}
-	return (-2);
 }
 
 void	exec_child(t_shell *sh, t_cmd *curr, int status)
@@ -69,15 +72,12 @@ void	exec_child(t_shell *sh, t_cmd *curr, int status)
 int	exec_simple(t_shell *sh)
 {
 	t_cmd	*curr;
-	int		precheck;
 	int		status;
 	int		pid;
 
 	curr = sh->curr_cmd;
-	status = 0;
-	precheck = handle_check_prexec(sh, curr);
-	if (precheck != -2)
-		return (precheck);
+	status = handle_preprecheck(curr);
+	handle_check_prexec(sh, curr);
 	pid = fork();
 	if (pid == 0)
 		exec_child(sh, curr, status);

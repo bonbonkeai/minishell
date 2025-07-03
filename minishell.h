@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:51:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 20:17:54 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 20:25:41 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,8 +356,10 @@ void			recover_io_and_close(int storage[2]);
 int				exec_builtin_main(t_shell *sh);
 void			touch_all_output_files_in_list(t_cmd *cmd_list);
 int				exec_simple_pipe(t_shell *sh);
-int				handle_check_prexec(t_shell *sh, t_cmd *curr);
 void			exec_child(t_shell *sh, t_cmd *curr, int status);
+void			handle_check_prexec(t_shell *sh, t_cmd *curr);
+void			exec_child(t_shell *sh, t_cmd *curr, int status);
+int				handle_preprecheck(t_cmd *curr);
 
 //utils
 void			ft_perror_export(char *arg);

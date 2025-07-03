@@ -15,14 +15,12 @@
 int	exec_simple_pipe(t_shell *sh)
 {
 	t_cmd	*curr;
-	int		precheck;
 	int		status;
 
 	curr = sh->curr_cmd;
 	status = 0;
-	precheck = handle_check_prexec(sh, curr);
-	if (precheck != -2)
-		return (precheck);
+	status = handle_preprecheck(curr);
+	handle_check_prexec(sh, curr);
 	exec_child(sh, curr, status);
 	return (status);
 }

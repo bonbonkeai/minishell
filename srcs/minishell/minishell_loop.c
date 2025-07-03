@@ -31,12 +31,6 @@ static bool	handle_input_line(t_shell *shell, char *line)
 	}
 	if (line[0])
 		add_history(line);
-	if (ft_strncmp(line, "exit", 4) == 0 && \
-		(line[4] == '\0' || ft_isspace(line[4])))
-	{
-		free(line);
-		return (false);
-	}
 	if (g_signal == SIGINT)
 		shell->status = 130;
 	process_input(shell, line);
