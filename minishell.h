@@ -320,6 +320,8 @@ bool			is_heredoc(t_cmd *cmd);
 int				assign_cmd_names(t_cmd *cmd);
 bool			read_heredoc_loop(char **buffer, size_t *buf_len, \
 				char *delimiter, t_shell *sh);
+bool			process_heredoc_line(char **buffer, size_t *buf_len, \
+				char *line, t_shell *sh);
 
 //builtin
 int				is_valid_var_name(char *var);

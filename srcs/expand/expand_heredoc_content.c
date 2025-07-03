@@ -58,7 +58,7 @@ static int	append_to_buffer(char **buffer, size_t *buf_len, char *line)
 	return (1);
 }
 
-static bool	process_heredoc_line(char **buffer, size_t *buf_len, \
+bool	process_heredoc_line(char **buffer, size_t *buf_len, \
 		char *line, t_shell *sh)
 {
 	char	*expanded;
