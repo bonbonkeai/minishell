@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 19:56:49 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/12 20:10:54 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:49:56 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,28 +22,57 @@ static void	cd_error(char *msg, char *arg)
 	write(2, "\n", 1);
 }
 
+static void	update_pwd_vars(char *oldpwd, t_shell *shell)
+{
+	char	cwd[PATH_MAX];
+
+	env_set_value(shell, "OLDPWD", oldpwd, 0);
+	if (getcwd(cwd, sizeof(cwd)))
+		env_set_value(shell, "PWD", cwd, 0);
+}
+
+static char	*resolve_cd_special_cases(t_shell *sh, char *arg)
+{
+	char	*home;
+	char	*oldpwd;
+
+	if (!arg || ft_strcmp(arg, "~") == 0)
+	{
+		home = get_env_var_value(sh, "HOME");
+		if (home)
+			return (ft_strdup(home));
+		else
+			return (ft_strdup(sh->default_home));
+	}
+	else if (ft_strcmp(arg, "-") == 0)
+	{
+		oldpwd = get_env_var_value(sh, "OLDPWD");
+		if (oldpwd)
+			return (ft_strdup(oldpwd));
+		else
+			return (NULL);
+	}
+	return (NULL);
+}
+
 static char	*resolve_cd_target(t_shell *sh, char **argv)
 {
-	int	len;
+	int		len;
+	char	*res;
 
 	len = 0;
 	while (argv[len])
 		len++;
 	if (len < 2 || !argv[1])
-		return (get_env_var_value(sh, "HOME"));
-	else if (ft_strcmp(argv[1], "-") == 0)
-		return (get_env_var_value(sh, "OLDPWD"));
+		return (resolve_cd_special_cases(sh, NULL));
 	else
-		return (argv[1]);
-}
-
-static void	update_pwd_vars(char *oldpwd, t_shell *shell)
-{
-	char	cwd[PATH_MAX];
-
-	env_set_var("OLDPWD", oldpwd, shell);
-	if (getcwd(cwd, sizeof(cwd)))
-		env_set_var("PWD", cwd, shell);
+	{
+		res = resolve_cd_special_cases(sh, argv[1]);
+		if (res)
+			return (res);
+		else
+			return (ft_strdup(argv[1]));
+	}
 }
 
 int	builtin_cd(t_shell *shell, char **argv)
@@ -60,19 +89,16 @@ int	builtin_cd(t_shell *shell, char **argv)
 	target = resolve_cd_target(shell, argv);
 	if (!target)
 	{
-		// cd_error("HOME not set", "cd");
-		ft_putstr_fd("cd: HOME not set\n", 2);
-		// free(oldpwd);
+		cd_error("HOME not set", "cd");
 		return (1);
 	}
 	if (chdir(target) != 0)
 	{
 		cd_error("No such file or directory", target);
-		// ft_putstr_fd("No such file or directory\n", 2);
-		// free(oldpwd);
+		free(target);
 		return (1);
 	}
 	update_pwd_vars(oldpwd, shell);
-	// free(oldpwd);
+	free(target);
 	return (0);
 }

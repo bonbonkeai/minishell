@@ -24,6 +24,5 @@ int	builtin_pwd(void)
 	}
 	ft_printf("%s\n", pth);
 	free(pth);
-	//free(str);
 	return (EXIT_SUCCESS);
 }

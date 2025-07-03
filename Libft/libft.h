@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 18:13:13 by jdu               #+#    #+#             */
-/*   Updated: 2025/01/30 17:18:10 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 17:34:59 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ t_clist	*copy_tolist(t_clist **lst, const char *src, int size);
 int		lst_find_nl(t_clist *lst);
 int		lst_count_nlorend(t_clist *lst);
 
-char *ft_strjoinchr(char *s, char c);
-int	ft_isspace(char c);
+char	*ft_strjoinchr(char *s, char c);
+int		ft_isspace(char c);
 
 #endif

@@ -75,5 +75,3 @@ void	safe_close_all_pipes(t_shell *shell)
 		shell->old_pipe.fd[1] = -1;
 	}
 }
-
-

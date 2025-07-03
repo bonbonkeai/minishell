@@ -6,183 +6,95 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 18:21:45 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/12 21:34:56 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:55:06 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// static void	split_var_asin(char *arg, char **key, char **value)
-// {
-// 	char	*eq;
-
-// 	eq = ft_strchr(arg, '=');
-// 	if (eq)
-// 	{
-// 		*key = ft_strndup(arg, eq - arg);
-// 		*value = ft_strdup(eq + 1);
-// 	}
-// 	else
-// 	{
-// 		*key = ft_strdup(arg);
-// 		*value = ft_strdup("");
-// 	}
-// }
-
-void	split_var_asin(char *arg, char **key, char **value)
-{
-	char	*eq;
-
-	if (!arg)
-	{
-		*key = NULL;
-		*value = NULL;
-		return ;
-	}
-	eq = ft_strchr(arg, '=');
-	if (eq)
-	{
-		*key = ft_strndup(arg, eq - arg);
-		*value = ft_strdup(eq + 1);
-	}
-	else
-	{
-		*key = ft_strdup(arg);
-		*value = ft_strdup("");
-	}
-	if (!*key || !*value)
-	{
-		free(*key);
-		free(*value);
-		*key = NULL;
-		*value = NULL;
-	}
-}
-
-
-void	env_set_var(char *key, char *value, t_shell *sh)
+static void	env_set_exported(t_shell *sh, char *key, int exported)
 {
 	t_env	*cur;
-	t_env	*new;
-	char	*dup_key;
-	char	*dup_value;
 
 	cur = sh->env;
 	while (cur)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
-			dup_value = ft_strdup(value);
-			if (!dup_value)
-				return ;
-			free(cur->value);
-			cur->value = dup_value;
+			cur->exported = exported;
 			return ;
 		}
 		cur = cur->next;
 	}
-	new = malloc(sizeof(t_env));
-	if (!new)
-		return ;
-	dup_key = ft_strdup(key);
-	dup_value = ft_strdup(value);
-	if (!dup_key || !dup_value)
-	{
-		free(dup_key);
-		free(dup_value);
-		free(new);
-		return ;
-	}
-	new->key = dup_key;
-	new->value = dup_value;
-	new->next = sh->env;
-	sh->env = new;
 }
 
+static int	env_has_var(char *key, t_shell *sh)
+{
+	t_env	*env;
 
-// void	env_set_var(char *key, char *value, t_shell *sh)
-// {
-// 	t_env	*cur;
-// 	t_env	*new;
+	env = sh->env;
+	while (env)
+	{
+		if (ft_strcmp(env->key, key) == 0)
+			return (1);
+		env = env->next;
+	}
+	return (0);
+}
 
-// 	cur = sh->env;
-// 	while (cur)
-// 	{
-// 		if (ft_strcmp(cur->key, key) == 0)
-// 		{
-// 			free(cur->value);
-// 			cur->value = ft_strdup(value);
-// 			return ;
-// 		}
-// 		cur = cur->next;
-// 	}
-// 	new = malloc(sizeof(t_env));
-// 	if (!new)
-// 		return ;
-// 	new->key = ft_strdup(key);
-// 	new->value = ft_strdup(value);
-// 	new->next = sh->env;
-// 	sh->env = new;
-// }
+static int	process_export_arg(t_shell *sh, char *arg)
+{
+	char	*key;
+	char	*value;
+	int		append;
 
+	split_var_asin(arg, &key, &value, &append);
+	if (!key || !value)
+		return (perror(ERRMAL), EXIT_FAILURE);
+	if (!is_valid_var_name(key))
+	{
+		ft_perror_export(arg);
+		return (free(key), free(value), EXIT_FAILURE);
+	}
+	if (ft_strchr(arg, '=') == NULL)
+	{
+		if (!env_has_var(key, sh))
+			env_set_value(sh, key, value, append);
+		env_set_exported(sh, key, 0);
+	}
+	else
+	{
+		env_set_value(sh, key, value, append);
+		env_set_exported(sh, key, 1);
+	}
+	return (free(key), free(value), EXIT_SUCCESS);
+}
 
 int	builtin_export(char **argv, t_shell *sh)
 {
-	int		i;
-	int		status;
-	char	*key;
-	char	*value;
+	int	i;
+	int	status;
 
 	i = 0;
 	status = EXIT_SUCCESS;
-	while (argv[i])
+	if (!argv[1])
 	{
-		split_var_asin(argv[i], &key, &value);
-		if (!key || !value)
+		export_print_env(sh);
+		return (status);
+	}
+	if (argv[1][0] == '-')
+	{
+		if (argv[1][1] != 'f' && argv[1][1] != 'n' && argv[1][1] != '\0')
 		{
-			perror("export: memory allocation failed");
+			ft_printf("bash: export: -%c: invalid option\n", argv[1][1]);
+			ft_printf(MES_E);
+			return (EXIT_FAILURE);
+		}
+	}
+	while (argv[i++])
+	{
+		if (process_export_arg(sh, argv[i - 1]) == EXIT_FAILURE)
 			status = EXIT_FAILURE;
-		}
-		else if (!is_valid_var_name(key))
-		{
-			perror("export: invalid variable name");
-			status = EXIT_FAILURE;
-			free(key);
-			free(value);
-		}
-		else
-		{
-			env_set_var(key, value, sh);
-			free(key);
-			free(value);
-		}
-		i++;
 	}
 	return (status);
 }
-
-// int	builtin_export(char **argv, t_shell *sh)
-// {
-// 	int	i;
-// 	int	status;
-// 	char	*key;
-// 	char	*value;
-
-// 	i = 0;
-// 	status = EXIT_SUCCESS;
-// 	while (argv[i])
-// 	{
-// 		split_var_asin(argv[i], &key, &value);
-// 		if (!is_valid_var_name(key))
-// 		{
-// 			perror("export:");
-// 			status = EXIT_FAILURE;
-// 		}
-// 		else
-// 			env_set_var(key, value, sh);
-// 		free(key);
-// 		free(value);
-// 		i++;
-// 	}
-// 	return (status);
-// }

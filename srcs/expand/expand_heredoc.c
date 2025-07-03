@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:45:18 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 15:26:25 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 15:31:21 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,24 +90,6 @@ char	*expand_var_here(char *input, t_shell *sh)
 
 int	expand_var_here_check(char *input, t_expansion *exp, t_shell *sh)
 {
-	/*if (input[exp->i] == '\'' && !exp->in_dquote)
-	{
-		exp->i++;
-		while (input[exp->i] && input[exp->i] != '\'')
-			exp->buf[exp->len++] = input[exp->i++];
-		if (input[exp->i] == '\'')
-			exp->i++;
-	}
-	else if (input[exp->i] == '"' && !exp->in_squote)
-	{
-		exp->in_dquote = !exp->in_dquote;
-		exp->i++;
-	}
-	else if (input[exp->i] == '$' && valid_exp(input[exp->i + 1]))
-	{
-		if (!handle_dollar(input, exp, sh->env))
-			return (1);
-	}*/
 	if (input[exp->i] == '$' && valid_exp(input[exp->i + 1]))
 	{
 		if (!handle_dollar(input, exp, sh->env))

@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 19:46:41 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/12 19:56:24 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/02 20:55:00 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,10 @@ static void	put_error(const char *msg, const char *arg)
 static long	str_to_int(const char *str)
 {
 	long	result;
-	int	sign;
+	int		sign;
 
 	result = 0;
 	sign = 1;
-
 	if (*str == '-' || *str == '+')
 	{
 		if (*str == '-')
@@ -58,15 +57,22 @@ static long	str_to_int(const char *str)
 	return (result * sign);
 }
 
-int	builtin_exit(char **argv)
+static void	exit_free(t_shell *sh)
+{
+	free_shell(sh);
+	rl_clear_history();
+}
+
+int	builtin_exit(t_shell *sh, char **argv)
 {
 	long	code;
-	int	len;
+	int		len;
 
 	code = 0;
 	len = 0;
 	while (argv[len])
 		len++;
+	write(STDOUT_FILENO, "exit\n", 5);
 	if (argv[1] && !is_numeric(argv[1]))
 	{
 		put_error("numeric argument required", argv[1]);
@@ -79,6 +85,6 @@ int	builtin_exit(char **argv)
 	}
 	if (argv[1])
 		code = str_to_int(argv[1]);
-	write(1, "exit\n", 5);
-    exit((unsigned char)code);
-}       
+	exit_free(sh);
+	exit((unsigned char)code);
+}

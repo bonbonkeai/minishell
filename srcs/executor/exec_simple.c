@@ -1,39 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_simple.c                                      :+:      :+:    :+:   */
+/*   exec_sim.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/28 19:15:09 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/05/28 20:19:01 by jinhuang         ###   ########.fr       */
+/*   Created: 2025/07/02 16:52:08 by jinhuang          #+#    #+#             */
+/*   Updated: 2025/07/02 17:12:07 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minishell.h"
 
-
-int	exec_simple(t_shell *sh)
+int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 {
-	int		pid;
-	int		status;
-	t_cmd *curr;
-	
-	curr = sh->curr_cmd;
-
-	//
-	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
-		return (0);
-	//
 	if (!curr || !curr->cmd || curr->cmd[0] == '\0')
 	{
 		print_cmd_error(curr->cmd, "command not found");
 		return (127);
 	}
 	if (is_empty_command(sh->trimmed_prompt))
-    {
+	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");
 		return (127);
-    }
+	}
 	if (is_directory(curr->cmd))
 	{
 		print_cmd_error(curr->cmd, "Is a directory");
@@ -45,28 +35,44 @@ int	exec_simple(t_shell *sh)
 		resolve_redir(curr);
 		return (exec_builtin_main(sh));
 	}
+	return (-2);
+}
+
+void	exec_child(t_shell *sh, t_cmd *curr, int status)
+{
+	touch_all_output_files(curr);
+	resolve_redir(curr);
+	if (curr->heredoc_fd != -1)
+	{
+		if (dup2(curr->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc_fd");
+			exit(EXIT_FAILURE);
+		}
+		close(curr->heredoc_fd);
+	}
+	else
+		apply_input_red(sh);
+	apply_output_red(sh);
+	status = execve_bin(sh);
+	exit(status);
+}
+
+int	exec_simple(t_shell *sh)
+{
+	t_cmd	*curr;
+	int		precheck;
+	int		status;
+	int		pid;
+
+	curr = sh->curr_cmd;
 	status = 0;
+	precheck = handle_check_prexec(sh, curr);
+	if (precheck != -2)
+		return (precheck);
 	pid = fork();
 	if (pid == 0)
-	{
-		touch_all_output_files(curr);
-    	resolve_redir(curr);
-		signal_default();
-		if (curr->heredoc_fd != -1)
-		{
-			if (dup2(curr->heredoc_fd, STDIN_FILENO) == -1)
-			{
-				ft_fprintf(2, "dup2 heredoc_fd");
-				exit(EXIT_FAILURE);
-			}
-			close(curr->heredoc_fd);
-		}
-		else
-			apply_input_red(sh); 
-		apply_output_red(sh);
-		status = execve_bin(sh);
-		exit(status);
-	}
+		exec_child(sh, curr, status);
 	else if (pid > 0)
 	{
 		curr->pid = pid;
@@ -74,55 +80,8 @@ int	exec_simple(t_shell *sh)
 	}
 	else
 	{
-		ft_fprintf(2, "fork failed");
+		perror("fork failed");
 		return (1);
 	}
 	return (status);
-}
-
-int	execve_bin(t_shell *sh)
-{
-	char	*path;
-	char	**arg;
-	char	**vars;
-	t_cmd *curr;
-
-	curr = sh->curr_cmd;
-	path = get_path(sh);
-	if (!path)
-	{
-		perror(curr->cmd);
-		free_shell(sh);
-		return (127);
-	}
-	arg = get_args(sh);
-	if (!arg)
-		return (free(path), 127);
-	vars = get_env_variables(sh);
-	if (!vars)
-		return (free(path), free_paths(arg), 127);
-	if (check_cmd_standard(sh))
-	{
-		if (access(path, X_OK) == -1)
-		{
-			ft_fprintf(2, "Permission denied or command not executable");
-			return (2);
-		}
-		if (execve(path, arg, vars) == -1)
-		{
-			ft_fprintf(2, "execve");
-			free(path);
-			free_paths(arg);
-			free_paths(vars);
-			return (EXIT_FAILURE);
-		}
-		ft_fprintf(2, "Command execution failed");
-		return (1);
-	}
-	else
-	{
-		execve(path, arg, vars);
-		ft_fprintf(2, "Command execution failed");
-		return (1);
-	}
 }

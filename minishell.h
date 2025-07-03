@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:51:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/02 18:30:07 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 17:02:40 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@
 # define DEFAULT "\001\033[0m\002"
 # define CYAN_BOLD_UNDERLINE "\001\033[1;4;36m\002"
 
-# define ERR_COMMAND ": command not found\n"
+# define ERR_COMMAND ": command not found"
 # define ERR_SQUOTE "minishell: unexpected EOF while looking for matching '\n"
 # define ERR_DQUOTE "minishell: unexpected EOF while looking for matching \"\n"
 # define ERR_DOUBLE_PIPE "minishell: syntax error near unexpected token `||'\n"
@@ -48,6 +48,8 @@
 # define ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
 # define ERR_TOKEN "minishell: syntax error near unexpected token `%s'\n"
 # define ERR_TOKEN_C "minishell: syntax error near unexpected token `%c'\n"
+# define MES_E "export: usage: export [-fn] [name[=value] ...] or export -p\n"
+# define ERRMAL "export: memory allocation failed"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -300,6 +302,7 @@ int				expand_heredoc_in_cmd_list(t_shell *sh);
 char			*expand_var_here(char *input, t_shell *sh);
 int				expand_var_here_check(char *input, \
 				t_expansion *exp, t_shell *sh);
+char			*remove_quotes(const char *str);
 void			cleanup_current_cmd(t_shell *sh);
 char			*expand_home(char *str, t_shell *sh);
 char			*handle_expand_error(t_expansion *exp, \
@@ -321,13 +324,13 @@ int				builtin_unset(t_shell *sh, char **argv);
 int				builtin_pwd(void);
 void			env_set_var(char *key, char *value, t_shell *sh);
 int				builtin_export(char **argv, t_shell *sh);
-int				builtin_exit(char **argv);
+int				builtin_exit(t_shell *sh, char **argv);
 int				builtin_env(t_shell *sh);
 int				builtin_echo(char *args[]);
 int				builtin_cd(t_shell *shell, char **argv);
 
 //executor
-bool			executor(t_shell *shell);
+int				executor(t_shell *shell);
 int				is_directory(const char *path);
 void			print_cmd_error(char *cmd, char *msg);
 int				if_cmd_builtin(t_shell *sh);
@@ -345,11 +348,20 @@ int				allocate_builtin(t_shell *shell);
 int				apply_store_and_red(t_shell *sh, int storage[2]);
 void			recover_io_and_close(int storage[2]);
 int				exec_builtin_main(t_shell *sh);
+void			touch_all_output_files_in_list(t_cmd *cmd_list);
+int				exec_simple_pipe(t_shell *sh);
+int				handle_check_prexec(t_shell *sh, t_cmd *curr);
+void			exec_child(t_shell *sh, t_cmd *curr, int status);
 
 //utils
+void			ft_perror_export(char *arg);
+void			bubble_sort_env(t_env **arr, int size);
 char			**get_args(t_shell *sh);
 char			*get_path(t_shell *sh);
 char			**get_env_variables(t_shell *sh);
+void			export_print_env(t_shell *sh);
+void			env_set_value(t_shell *sh, char *key, char *value, int append);
+void			split_var_asin(char *arg, char **key, char **value, int *ap);
 bool			save_std_io(int storage[2]);
 bool			restore_std_io(int storage[2]);
 int				check_standard_fd(int fd);

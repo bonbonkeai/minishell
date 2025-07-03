@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 17:51:09 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/12 21:06:17 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/02 21:01:03 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	is_var_char(char c)
 {
-	if (( c >= 'A' && c <= 'Z') || \
+	if ((c >= 'A' && c <= 'Z') || \
 			(c >= 'a' && c <= 'z') || \
 			(c >= '0' && c <= '9') || \
 			c == '_')
@@ -22,28 +22,17 @@ static int	is_var_char(char c)
 	return (0);
 }
 
-// int	is_valid_var_name(char *var)
-// {
-// 	int	i;
-
-// 	if (!var || var[0] == '\0')
-// 		return (0);
-// 	i = 0;
-// 	while (var[i])
-// 	{
-// 		if (!is_var_char(var[i]))
-// 			return (0);
-// 		i++;
-// 	}
-// 	return (1);
-// }
 int	is_valid_var_name(char *var)
 {
 	int	i;
 
 	if (!var || var[0] == '\0')
 		return (0);
-	if (!ft_isalpha(var[0]) && var[0] != '_')
+	if (!((var[0] >= 'A' && var[0] <= 'Z') || \
+		(var[0] >= 'a' && var[0] <= 'z') || \
+			var[0] == '_'))
+		return (0);
+	if (!var || var[0] == '\0')
 		return (0);
 	i = 1;
 	while (var[i])
@@ -54,7 +43,6 @@ int	is_valid_var_name(char *var)
 	}
 	return (1);
 }
-
 
 static void	env_unset_var(char *var, t_shell *sh)
 {
@@ -85,13 +73,12 @@ static void	env_unset_var(char *var, t_shell *sh)
 
 int	builtin_unset(t_shell *sh, char **argv)
 {
-	int	i;
-	int	status;
+	int		i;
+	int		status;
 	char	*var;
 
-	i = 0;
+	i = 1;
 	status = EXIT_SUCCESS;
-
 	while (argv[i])
 	{
 		var = argv[i];

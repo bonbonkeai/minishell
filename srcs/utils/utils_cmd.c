@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 19:40:23 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 18:45:02 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 16:07:07 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,7 @@ static char	*join_key_value(const char *key, const char *value)
 	j = 0;
 	while (value[j])
 	{
-		res[i] = value[j];
-		i++;
-		j++;
+		res[i++] = value[j++];
 	}
 	res[i] = '\0';
 	return (res);
@@ -102,23 +100,22 @@ char	**get_env_variables(t_shell *sh)
 	t_env	*tmp;
 	int		i;
 
+	i = 0;
 	count = count_env(sh);
 	envp = malloc(sizeof(char *) * (count + 1));
+	tmp = sh->env;
 	if (!envp)
 		return (NULL);
-	tmp = sh->env;
-	i = 0;
 	while (tmp)
 	{
 		envp[i] = join_key_value(tmp->key, tmp->value);
-		if (!envp[i])
+		if (!envp[i++])
 		{
 			while (--i >= 0)
 				free(envp[i]);
 			free(envp);
 			return (NULL);
 		}
-		i++;
 		tmp = tmp->next;
 	}
 	envp[i] = NULL;

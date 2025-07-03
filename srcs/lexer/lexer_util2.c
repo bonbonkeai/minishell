@@ -39,7 +39,7 @@ int	is_specific_case(t_shell *s)
 	(s->trimmed_prompt[0] == '\'' && s->trimmed_prompt[len - 1] == '\''))
 	{
 		s->status = 127;
-		ft_putstr_fd("minishell: : command not found\n", 2);
+		print_cmd_error(s->trimmed_prompt, ERR_COMMAND);
 		return (TRUE);
 	}
 	return (FALSE);

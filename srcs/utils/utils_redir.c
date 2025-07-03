@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 20:21:45 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/05/28 20:24:14 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:08:39 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,10 @@ int	check_standard_fd(int fd)
 	return (0);
 }
 
-/*
-int	check_cmd_standard(t_cmd *cmd)
-{
-	if (check_standard_fd(cmd->fd_in) && check_standard_fd(cmd->fd_out) && \
-		cmd->infile == NULL && cmd ->outfile == NULL)
-		return (1);
-	return (0);
-}
-
 int	check_cmd_standard(t_shell *sh)
 {
-	if (check_standard_fd(sh->cmd->fd_in) && check_standard_fd(sh->cmd->fd_out) && \
-		sh->cmd->infile == NULL && sh->cmd ->outfile == NULL)
-		return (1);
-	return (0);
-}*/
-
-int	check_cmd_standard(t_shell *sh)
-{
-	if (check_standard_fd(sh->curr_cmd->fd_in) && check_standard_fd(sh->curr_cmd->fd_out) && \
+	if (check_standard_fd(sh->curr_cmd->fd_in) && \
+			check_standard_fd(sh->curr_cmd->fd_out) && \
 		sh->curr_cmd->infile == NULL && sh->curr_cmd->outfile == NULL)
 		return (1);
 	return (0);

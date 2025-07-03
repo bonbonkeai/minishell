@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 21:10:36 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/07 21:30:31 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:07:41 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool	save_std_io(int storage[2])
 bool	restore_std_io(int storage[2])
 {
 	bool	res;
-	
+
 	res = true;
 	if (dup2(storage[0], STDIN_FILENO) == -1)
 		res = false;

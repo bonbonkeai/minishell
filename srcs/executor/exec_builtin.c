@@ -6,29 +6,11 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:45:07 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/12 20:56:27 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 16:10:39 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// int	allocate_builtin(t_shell *shell)
-// {
-// 	if (ft_strcmp(shell->cmd->cmd, "cd") == 0)
-// 		return (builtin_cd(shell, shell->cmd->args));
-// 	else if (ft_strcmp(shell->cmd->cmd, "echo") == 0)
-// 		return (builtin_echo(shell->cmd->args));
-// 	else if (ft_strcmp(shell->cmd->cmd, "pwd") == 0)
-// 		return (builtin_pwd());
-// 	else if (ft_strcmp(shell->cmd->cmd, "export") == 0)
-// 		return (builtin_export(shell->cmd->args, shell));
-// 	else if (ft_strcmp(shell->cmd->cmd, "unset") == 0)
-// 		return (builtin_unset(shell, shell->cmd->args));
-// 	else if (ft_strcmp(shell->cmd->cmd, "env") == 0)
-// 		return (builtin_env(shell));
-// 	else
-// 		return (1);
-// }
 
 int	allocate_builtin(t_shell *shell)
 {
@@ -48,39 +30,20 @@ int	allocate_builtin(t_shell *shell)
 		return (1);
 }
 
-// int	apply_store_and_red(t_shell *sh, int storage[2])
-// {
-// 	if (ft_strcmp(sh->cmd->cmd, "exit") != 0)
-// 	{
-// 		if (!save_std_io(storage)) 
-// 		{
-//     			perror("Failed to save std IO");
-//     			return(1);
-// 		}
-// 		apply_red(sh);
-// 	}
-// 	else
-// 	{
-// 		builtin_exit(sh->cmd->args);
-// 		return (-1);
-// 	}
-// 	return (0);
-// }
-
 int	apply_store_and_red(t_shell *sh, int storage[2])
 {
 	if (ft_strcmp(sh->curr_cmd->cmd, "exit") != 0)
 	{
-		if (!save_std_io(storage)) 
+		if (!save_std_io(storage))
 		{
-    			perror("Failed to save std IO");
-    			return (1);
+			perror("Failed to save std IO");
+			return (1);
 		}
 		apply_red(sh);
 	}
 	else
 	{
-		builtin_exit(sh->curr_cmd->args);
+		builtin_exit(sh, sh->curr_cmd->args);
 		return (-1);
 	}
 	return (0);
@@ -107,13 +70,14 @@ void	recover_io_and_close(int storage[2])
 		perror("restore error:");
 }
 
-
 int	exec_builtin_main(t_shell *sh)
 {
 	int	status;
 	int	ret;
-	int	storage[2] = {-1, -1};
+	int	storage[2];
 
+	storage[0] = -1;
+	storage[1] = -1;
 	sh->curr_cmd = sh->cmd;
 	ret = apply_store_and_red(sh, storage);
 	if (ret == -1)

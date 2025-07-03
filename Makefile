@@ -50,11 +50,17 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/builtin/builtin_unset.c \
 		./srcs/executor/executor.c \
 		./srcs/executor/exec_simple.c \
+		./srcs/executor/exec_bin.c \
 		./srcs/executor/exec_utils.c \
 		./srcs/executor/exec_handle_pipes.c \
 		./srcs/executor/exec_pipe.c \
+		./srcs/executor/exec_pipe_utils.c \
 		./srcs/executor/exec_builtin.c \
+		./srcs/utils/utils_builtin.c \
 		./srcs/utils/utils_cmd.c \
+		./srcs/utils/utils_env_print.c \
+		./srcs/utils/utils_env.c \
+		./srcs/utils/utils_export.c \
 		./srcs/utils/utils_redir.c \
 		./srcs/utils/utils_setpath.c \
 		./srcs/utils/utils_io.c \

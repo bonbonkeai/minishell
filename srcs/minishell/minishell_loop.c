@@ -21,7 +21,7 @@ static char	*safe_prompt(t_shell *shell)
 		prompt = ft_strdup("minishell$ ");
 	return (prompt);
 }
-	
+
 static bool	handle_input_line(t_shell *shell, char *line)
 {
 	if (!line)

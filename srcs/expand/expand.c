@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:46:02 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 21:47:56 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 15:32:24 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	expand_all(t_shell *sh, t_suffix_type *out_type, char *error_char)
 			return (cleanup_current_cmd(sh), 0);
 	}
 	if (!assign_cmd_names(sh->cmd))
-			return (cleanup_current_cmd(sh), 0);
+		return (cleanup_current_cmd(sh), 0);
 	return (1);
 }
 
