@@ -6,35 +6,11 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 19:40:23 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/01 20:50:24 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:45:02 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils_cmd.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 19:40:23 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/01 20:50:24 by jinhuang         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "minishell.h"
-
-// char	**get_args(t_shell *sh)
-// {
-// 	if (!sh->cmd)
-// 		return (NULL);
-// 	if (sh->cmd->args)
-// 		return (sh->cmd->args);
-// 	return (NULL);
-// }
 
 char	**get_args(t_shell *sh)
 {
@@ -45,23 +21,10 @@ char	**get_args(t_shell *sh)
 	return (NULL);
 }
 
-// static int	count_env(t_shell *sh)
-// {
-// 	int	count;
-
-// 	count = 0;
-// 	while (sh->env)
-// 	{
-// 		count++;
-// 		sh->env = sh->env->next;
-// 	}
-// 	return (count);
-// }
-
 static int	count_env(t_shell *sh)
 {
-	int count;
-	t_env *tmp;
+	int		count;
+	t_env	*tmp;
 
 	count = 0;
 	tmp = sh->env;
@@ -73,12 +36,11 @@ static int	count_env(t_shell *sh)
 	return (count);
 }
 
-
 static char	*join_key_value(const char *key, const char *value)
 {
-	int	i;
-	int	j;
-	int	total;
+	int		i;
+	int		j;
+	int		total;
 	char	*res;
 
 	total = ft_strlen(key) + 1 + ft_strlen(value) + 1;
@@ -103,46 +65,6 @@ static char	*join_key_value(const char *key, const char *value)
 	res[i] = '\0';
 	return (res);
 }
-
-// char	*get_path(t_shell *sh)
-// {
-// 	char	*path;
-// 	char	**bins;
-// 	char	*pathlist;
-
-// 	path = NULL;
-// 	if (!sh->cmd || !sh->cmd->cmd)
-// 	{
-// 		// ft_printf("%s\n", "case1");
-// 		return (NULL);
-// 	}
-// 		// return (NULL);
-// 	if (!if_cmd_builtin(sh))
-// 	{
-// 		if (if_abs_bin_access(sh->cmd->cmd) == 1)
-// 			path = sh->cmd->cmd;
-// 		else
-// 		{
-// 			pathlist = get_env_var_value(sh, "PATH");
-// 			if (!pathlist)
-// 			{
-// 				// ft_printf("%s\n", "case2");
-// 				return (NULL);
-// 			}
-				
-// 			bins = ft_split(pathlist, ':');
-// 			if (!bins)
-// 			{
-// 				// ft_printf("%s\n", "case3");
-// 				return (NULL);
-// 			}
-// 			if (if_bin_access(bins, sh) == 1)
-// 				path = sh->cmd->pth;
-// 			free_paths(bins);
-// 		}
-// 	}
-// 	return (path);
-// }
 
 char	*get_path(t_shell *sh)
 {
@@ -173,16 +95,19 @@ char	*get_path(t_shell *sh)
 	return (path);
 }
 
-
 char	**get_env_variables(t_shell *sh)
 {
-	int		count = count_env(sh);
-	char	**envp = malloc(sizeof(char *) * (count + 1));
-	t_env	*tmp = sh->env;
-	int		i = 0;
+	int		count;
+	char	**envp;
+	t_env	*tmp;
+	int		i;
 
+	count = count_env(sh);
+	envp = malloc(sizeof(char *) * (count + 1));
 	if (!envp)
 		return (NULL);
+	tmp = sh->env;
+	i = 0;
 	while (tmp)
 	{
 		envp[i] = join_key_value(tmp->key, tmp->value);
@@ -199,37 +124,3 @@ char	**get_env_variables(t_shell *sh)
 	envp[i] = NULL;
 	return (envp);
 }
-
-// char	**get_env_variables(t_shell *sh)
-// {
-// 	char	**envp;
-// 	int	count;
-// 	int	i;
-// 	int	k;
-
-// 	count = count_env(sh);
-// 	envp = malloc(sizeof(char *) * (count + 1));
-// 	if (!envp)
-// 		return (NULL);
-// 	i = 0;
-// 	while (sh->env)
-// 	{
-// 		envp[i] = join_key_value(sh->env->key, sh->env->value);
-// 		if (!envp[i])
-// 		{
-// 			k = 0;
-// 			while (k < i)
-// 			{
-// 				free(envp[k]);
-// 				k++;
-// 			}
-// 			free(envp);
-// 			return (NULL);
-// 		}
-// 		i++;
-// 		sh->env = sh->env->next;
-// 	}
-// 	envp[i] = NULL;
-// 	envp[i] = NULL;
-// 	return (envp);
-// }

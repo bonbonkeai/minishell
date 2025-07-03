@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:57 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:24:44 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:26:16 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,42 +23,6 @@ void	handle_input_redir(t_cmd *cmd, char *op, char *file)
 		cmd->infile = ft_strdup(file);
 	}
 }
-
-// void handle_input_redir(t_cmd *cmd, char *op, char *file)
-// {
-//     if (!op || !file || !cmd)
-//         return ;
-//     if (!ft_strcmp(op, "<"))
-//     {
-//         free(cmd->infile);
-//         cmd->infile = ft_strdup(file);
-//         cmd->heredoc = 0;
-//         free(cmd->heredoc_limiter);
-//         cmd->heredoc_limiter = NULL;
-//     }
-//     else if (!ft_strcmp(op, "<<"))
-//     {
-//         free(cmd->heredoc_limiter);
-//         cmd->heredoc_limiter = ft_strdup(file);
-//         free(cmd->infile);
-//         cmd->infile = ft_strdup(file);
-//         if (!cmd->heredoc_limiter || !cmd->infile)
-//         {
-//             free(cmd->heredoc_limiter);
-//             cmd->heredoc_limiter = NULL;
-//             free(cmd->infile);
-//             cmd->infile = NULL;
-//             return ;
-//         }
-//         cmd->heredoc = 1;
-//         if ((file[0] == '\'' && file[ft_strlen(file) - 1] == '\'') ||
-//             (file[0] == '"' && file[ft_strlen(file) - 1] == '"'))
-//             cmd->heredoc_expand = 0;
-//         else
-//             cmd->heredoc_expand = 1;
-//     }
-// }
-
 
 void	handle_output_redir(t_cmd *cmd, char *op, char *file)
 {
@@ -84,31 +48,6 @@ void	handle_output_redir(t_cmd *cmd, char *op, char *file)
 		cmd->append = 1;
 	}
 }
-// void handle_output_redir(t_shell *sh, char *op, char *file)
-// {
-//     char    *tmp;
-
-//     if (!sh->cmd || !op || !file)
-//         return ;
-//     tmp = ft_strdup(file);
-//     if (!tmp)
-//         return ;
-//     if (!ft_strcmp(op, ">"))
-//     {
-//         if (sh->cmd->outfile)
-//             free(sh->cmd->outfile);
-//         sh->cmd->outfile = tmp;
-//         sh->cmd->append = 0;
-//     }
-//     else if (!ft_strcmp(op, ">>"))
-//     {
-//         if (sh->cmd->outfile)
-//             free(sh->cmd->outfile);
-//         sh->cmd->outfile = tmp;
-//         sh->cmd->append = 1;
-//     }
-//     // free(tmp);
-// }
 
 void	resolve_redir(t_cmd *cmd)
 {
@@ -141,7 +80,8 @@ void	touch_all_output_files(t_cmd *cmd)
 	i = 0;
 	while (cmd->red[i])
 	{
-		if (ft_strcmp(cmd->red[i], ">") == 0 || ft_strcmp(cmd->red[i], ">>") == 0)
+		if (ft_strcmp(cmd->red[i], ">") == 0 \
+		|| ft_strcmp(cmd->red[i], ">>") == 0)
 		{
 			if (cmd->red[i + 1])
 			{
@@ -158,7 +98,7 @@ void	touch_all_output_files(t_cmd *cmd)
 int	count_redirs(char **red)
 {
 	int	len;
-	
+
 	len = 0;
 	while (red && red[len])
 		len++;

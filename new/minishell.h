@@ -29,6 +29,13 @@
 #define CYAN_BOLD_UNDERLINE "\001\033[1;4;36m\002"
 
 # define ERR_COMMAND ": command not found\n"
+# define ERR_SQUOTE "minishell: unexpected EOF while looking for matching '\n"
+# define ERR_DQUOTE "minishell: unexpected EOF while looking for matching \"\n"
+# define ERR_DOUBLE_PIPE "minishell: syntax error near unexpected token `||'\n"
+# define ERR_NEWLINE "minishell: syntax error near unexpected token `newline'\n"
+# define ERR_PIPE "minishell: syntax error near unexpected token `|'\n"
+# define ERR_TOKEN "minishell: syntax error near unexpected token `%s'\n"
+# define ERR_TOKEN_C "minishell: syntax error near unexpected token `%c'\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -133,6 +140,7 @@ typedef struct s_shell
 	t_cmd *cmd;
 	t_token *token_list;
 	t_cmd *curr_cmd;
+	int	should_expand;
 
 }              t_shell;
 
@@ -269,8 +277,11 @@ int handle_env_var(t_expansion *exp, t_env *lst_env);
 int has_quote(const char *str);
 int should_heredoc_expand(const char *delimiter);
 char *expand_heredoc_line(char *line, t_shell *sh);
-char	*process_heredoc_content(char *delimiter, t_shell *sh, int should_expand);
+// char	*process_heredoc_content(char *delimiter, t_shell *sh, int should_expand);
+char	*process_heredoc_content(char *delimiter, t_shell *sh);
 char	*merge_quoted_string(const char *limiter);
+char *get_heredoc_content(char *target, char *lim, t_shell *sh);
+char *set_should_expand(t_shell *sh, char *target);
 int	expand_heredoc_in_cmd_list(t_shell *sh);
 char *expand_var_here(char *input, t_shell *sh);
 int expand_var_here_check(char *input, t_expansion *exp, t_shell *sh);

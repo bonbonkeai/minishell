@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:43:25 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:35:46 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:34:38 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ char	*get_env_value(t_env *env, char *key)
 		return (NULL);
 	while (env)
 	{
-		if (ft_strcmp(env->key, key) ==  0)
+		if (ft_strcmp(env->key, key) == 0)
 			return (env->value);
 		env = env->next;
 	}
 	return (NULL);
 }
 
-void    free_env(t_env *env)
+void	free_env(t_env *env)
 {
 	t_env	*tmp;
 

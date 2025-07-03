@@ -6,42 +6,11 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:43:10 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:35:02 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:33:38 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// int init_expand(t_expansion *exp, char *input, int status)
-// {
-//     if (!exp)
-//         return (0);
-//     ft_bzero(exp, sizeof(t_expansion));
-//     free(exp->str);
-//     exp->str = ft_strdup(input);
-//     if (!exp->str)
-//         return (0);
-//     exp->buf = malloc(INIT_SIZE);
-//     if (!exp->buf)
-//         return (free(exp->str), 0);
-//     exp->buf[0] = '\0';
-//     exp->size = INIT_SIZE;
-//     exp->len = 0;
-//     exp->i = 0;
-//     exp->k = 0;
-//     exp->in_squote = 0;
-//     exp->in_dquote = 0;
-//     exp->env_val = NULL;
-//     exp->var_name = NULL;
-//     exp->status = status;
-//     free(exp->exit_status);
-//     exp->exit_status = ft_itoa(status);
-//     if (!exp->exit_status)
-//         return (free(exp->str), free(exp->buf), 0);
-//     exp->illegal_type = SUFFIX_OK;
-//     exp->error_char = NULL;
-//     return (1);
-// }
 
 static int	reset_and_alloc_expand(t_expansion *exp, char *input)
 {
@@ -95,7 +64,7 @@ int	init_expand(t_expansion *exp, char *input, int status)
 int	get_tab_num(char **tab)
 {
 	int	i;
-	
+
 	i = 0;
 	if (!tab)
 		return (0);

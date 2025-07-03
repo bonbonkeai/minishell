@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:42:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:32:09 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:28:27 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,37 +36,6 @@ t_cmd	*init_cmd(void)
 	cmd->pid = 0;
 	return (cmd);
 }
-
-// void    free_cmd(t_cmd *cmd)
-// {
-//     if (!cmd)
-//         return ;
-//     free(cmd->cmd);
-//     if (cmd->args)
-//     {
-//         free_paths(cmd->args);
-//         cmd->args = NULL;
-//     }
-//     if (cmd->pth)
-//     {
-//         free(cmd->pth);
-//         cmd->pth = NULL;
-//     }
-//     if (cmd->red)
-//     {
-//         free_paths(cmd->red);
-//         cmd->red = NULL;
-//     }
-//     if (cmd->heredoc_limiter)
-//         free(cmd->heredoc_limiter);
-//     if (cmd->infile)
-//         free(cmd->infile);
-//     if (cmd->outfile)
-//         free(cmd->outfile);
-//     if (cmd->heredoc_fd != -1)
-//         close(cmd->heredoc_fd);
-//     free(cmd);
-// }
 
 static void	free_basic_fields(t_cmd *cmd)
 {

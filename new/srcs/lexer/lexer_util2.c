@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:16:44 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:17:12 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 20:51:30 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	is_empty_command(const char *input)
 {
 	int	i;
-	
+
 	i = 0;
 	if (!input)
 		return (TRUE);
@@ -35,8 +35,8 @@ int	is_specific_case(t_shell *s)
 	if (!s->trimmed_prompt)
 		return (TRUE);
 	len = ft_strlen(s->trimmed_prompt);
-	if ((s->trimmed_prompt[0] == '"' && s->trimmed_prompt[len - 1] == '"') ||
-		(s->trimmed_prompt[0] == '\'' && s->trimmed_prompt[len - 1] == '\''))
+	if ((s->trimmed_prompt[0] == '"' && s->trimmed_prompt[len - 1] == '"') || \
+	(s->trimmed_prompt[0] == '\'' && s->trimmed_prompt[len - 1] == '\''))
 	{
 		s->status = 127;
 		ft_putstr_fd("minishell: : command not found\n", 2);

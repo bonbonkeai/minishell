@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:20:09 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:20:47 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 20:58:23 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 t_token	*create_token(const char *content, t_token_type type)
 {
 	t_token	*new;
-	
+
 	new = malloc(sizeof(t_token));
 	if (!new)
 		return (NULL);
@@ -29,7 +29,7 @@ t_token	*create_token(const char *content, t_token_type type)
 
 void	add_token(t_token **head, t_token *new)
 {
-	t_token *curr;
+	t_token	*curr;
 
 	if (!head || !new)
 		return ;

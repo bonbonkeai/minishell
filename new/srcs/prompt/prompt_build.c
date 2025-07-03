@@ -1,25 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   prompt_user.c                                      :+:      :+:    :+:   */
+/*   prompt_build.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 20:27:39 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/05/22 20:42:57 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/02 18:37:53 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// static char	*get_user(t_shell *shell)
-// {
-// 	char	*user_env;
-
-// 	user_env = ft_strjoin(get_env_var_value(shell->env, "USER"), " ");
-// 	if (!user_env)
-// 		user_env = ft_strdup("guest");
-// 	return (user_env);
-// }
 static char	*get_user(t_shell *shell)
 {
 	char	*user_env;
@@ -28,65 +19,9 @@ static char	*get_user(t_shell *shell)
 		return (NULL);
 	user_env = ft_strjoin(get_env_var_value(shell, "USER"), "🍭");
 	if (!user_env)
-		user_env = ft_strdup("guest[;(]");
+		user_env = ft_strdup("jingyi&jinhuang[;(]");
 	return (user_env);
 }
-
-
-// char	*build_prompt(t_shell *shell)
-// {
-// 	char	*tmp;
-// 	char	*res;
-// 	char	*home;
-
-// 	tmp = get_user(shell);
-// 	res = ft_strjoin(tmp, "@minishell");
-// 	free(tmp);
-// 	home = build_home(shell);
-// 	tmp = ft_strjoin(home, res);
-// 	free(res);
-// 	free(home);
-// 	res = ft_strjoin(tmp, "$ ");
-// 	free(tmp);
-// 	tmp = ft_strjoin(res, DEFAULT);
-// 	free(res);
-// 	return (tmp);
-// }
-
-
-// char	*build_prompt(t_shell *shell)
-// {
-// 	char	*tmp;
-// 	char	*res;
-// 	char	*home;
-
-// 	if (!shell)
-// 		return (NULL);
-// 	tmp = get_user(shell);
-// 	if (!tmp)
-// 		return (NULL);
-// 	res = ft_strjoin(tmp, "@minishell");
-// 	if (!res)
-// 		return (free(tmp), NULL);
-// 	free(tmp);
-// 	home = build_home(shell);
-// 	if (!home)
-// 		return (free(tmp), free(res), NULL);
-// 	tmp = ft_strjoin(home, res);
-// 	if (!tmp)
-// 		return (free(res), free(home), NULL);
-// 	free(res);
-// 	free(home);
-// 	res = ft_strjoin(tmp, "$ ");
-// 	if (!res)
-// 		return (free(tmp), NULL);
-// 	free(tmp);
-// 	tmp = ft_strjoin(res, DEFAULT);
-// 	if (!tmp)
-// 		return (free(res), NULL);
-// 	free(res);
-// 	return (tmp);
-// }
 
 char	*build_prompt(t_shell *shell)
 {
@@ -108,4 +43,54 @@ char	*build_prompt(t_shell *shell)
 	res = ft_strjoin(styled, DEFAULT);
 	free(styled);
 	return (res);
+}
+
+static char	*add_prefix(const char *str)
+{
+	char	*spaced;
+	char	*final;
+
+	spaced = ft_strjoin(" ", str);
+	if (!spaced)
+		return (NULL);
+	final = ft_strjoin(spaced, BLUE);
+	free(spaced);
+	if (!final)
+		return (NULL);
+	return (final);
+}
+
+static char	*get_home(t_shell *shell)
+{
+	char	*cwd;
+	char	*home;
+	char	*res;
+
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+		cwd = ft_strdup(" ");
+	home = get_env_var_value(shell, "HOME");
+	if (home && home[0] && ft_strnstr(cwd, home, ft_strlen(cwd)))
+	{	
+		res = ft_strjoin("~", cwd + ft_strlen(home));
+		free(cwd);
+	}
+	else
+		res = cwd;
+	return (res);
+}
+
+char	*build_home(t_shell *shell)
+{
+	char	*res;
+	char	*final;
+
+	res = get_home(shell);
+	if (!res)
+		return (NULL);
+	final = add_prefix(res);
+	free(res);
+	if (!final)
+		return (NULL);
+	return (final);
 }

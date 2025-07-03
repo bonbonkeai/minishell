@@ -6,80 +6,22 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:45:18 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:46:23 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 15:26:25 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-// int expand_heredoc_in_cmd_list(t_shell *sh)
-// {
-//     t_cmd *curr;
-//     char *lim;
-//     char *heredoc_content;
-//     char *op;
-//     char *target;
-//     int fd[2];
-//     int should_expand;
-//     int i;
-
-//     curr = sh->cmd;
-//     while (curr)
-//     {
-//         i = 0;
-//         while (curr->red && curr->red[i] && curr->red[i + 1])
-//         {
-//             op = curr->red[i];
-//             target = curr->red[i + 1];
-//             if (!ft_strcmp(op, "<<"))
-//             {
-//                 if (pipe(fd) == -1)
-//                 {
-//                     perror("pipe");
-//                     return (1);
-//                 }
-//                 should_expand = !has_quote(target);
-//                 lim = merge_quoted_string(target);
-//                 if (!lim)
-//                     return (1);
-//                 heredoc_content = process_heredoc_content(lim, sh, should_expand);
-//                 free(lim);
-//                 if (!heredoc_content)
-//                 {
-//                     close(fd[0]);
-//                     close(fd[1]);
-//                     return (1);
-//                 }
-//                 write(fd[1], heredoc_content, ft_strlen(heredoc_content));
-//                 close(fd[1]);
-//                 free(heredoc_content);
-//                 if (curr->heredoc_fd != -1)
-//                     close(curr->heredoc_fd);
-//                 curr->heredoc_fd = fd[0];
-//             }
-//             i += 2;
-//         }
-//         curr = curr->next;
-//     }
-//     return (0);
-// }
 
 static int	handle_heredoc(t_cmd *cmd, t_shell *sh, char *target)
 {
 	int		fd[2];
 	char	*lim;
 	char	*heredoc_content;
-	int		should_expand;
 
 	if (pipe(fd) == -1)
 		return (perror("pipe"), 1);
-	should_expand = !has_quote(target);
-	lim = merge_quoted_string(target);
-	if (!lim)
-		return (close(fd[0]), close(fd[1]), 1);
-	heredoc_content = process_heredoc_content(lim, sh, should_expand);
-	free(lim);
+	lim = set_should_expand(sh, target);
+	heredoc_content = get_heredoc_content(target, lim, sh);
 	if (!heredoc_content)
 		return (close(fd[0]), close(fd[1]), 1);
 	write(fd[1], heredoc_content, ft_strlen(heredoc_content));
@@ -148,7 +90,7 @@ char	*expand_var_here(char *input, t_shell *sh)
 
 int	expand_var_here_check(char *input, t_expansion *exp, t_shell *sh)
 {
-	if (input[exp->i] == '\'' && !exp->in_dquote)
+	/*if (input[exp->i] == '\'' && !exp->in_dquote)
 	{
 		exp->i++;
 		while (input[exp->i] && input[exp->i] != '\'')
@@ -162,6 +104,11 @@ int	expand_var_here_check(char *input, t_expansion *exp, t_shell *sh)
 		exp->i++;
 	}
 	else if (input[exp->i] == '$' && valid_exp(input[exp->i + 1]))
+	{
+		if (!handle_dollar(input, exp, sh->env))
+			return (1);
+	}*/
+	if (input[exp->i] == '$' && valid_exp(input[exp->i + 1]))
 	{
 		if (!handle_dollar(input, exp, sh->env))
 			return (1);

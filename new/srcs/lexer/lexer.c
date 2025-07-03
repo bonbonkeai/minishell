@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:43:58 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:12:03 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 20:33:02 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,10 @@ void	toggle_quote(char ch, int *in_squote, int *in_dquote)
 		*in_dquote = !(*in_dquote);
 }
 
-
 int	is_pipe_error(const char *s)
 {
 	int	len;
-	
+
 	if (!s)
 		return (FALSE);
 	len = ft_strlen(s) - 1;
@@ -61,21 +60,17 @@ void	syntax_error_newline(void)
 
 int	lexer(t_shell *shell)
 {
-    // if (is_empty_command(shell->trimmed_prompt))
-    //     return (FALSE);
-    if (check_syntax(shell->trimmed_prompt))
-    {
-        shell->status = 2;
-        return (FALSE);
-    }
-    if (is_pipe_error(shell->trimmed_prompt))
-    {
-        shell->status = 2;
-        return (FALSE);
-    }
-    if (is_specific_case(shell))
-        return (FALSE);
-    return (TRUE);
+	if (check_syntax(shell->trimmed_prompt))
+	{
+		shell->status = 2;
+		return (FALSE);
+	}
+	if (is_pipe_error(shell->trimmed_prompt))
+	{
+		shell->status = 2;
+		return (FALSE);
+	}
+	if (is_specific_case(shell))
+		return (FALSE);
+	return (TRUE);
 }
-
-

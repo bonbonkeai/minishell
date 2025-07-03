@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:53:45 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:54:31 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:23:34 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,52 +22,7 @@ static int	args_len(char **args)
 	while (args[i])
 		i++;
 	return (i);
-} 
-
-// void add_arg(t_cmd *cmd, const char *arg)
-// {
-//     int len;
-//     char **new_args;
-//     int i;
-
-//     if (!arg || !arg[0])
-//         return ;
-//     len = args_len(cmd->args);
-//     new_args = malloc(sizeof(char *) * (len + 2));
-//     if (!new_args)
-//         return ;
-//     i = 0;
-//     while (i < len)
-//     {
-//         new_args[i] = ft_strdup(cmd->args[i]);
-//         if (!new_args[i])
-//         {
-//             while (--i >= 0)
-//                 free(new_args[i]);
-//             free(new_args);
-//             return ;
-//         }
-//         i++;
-//     }
-//     new_args[i++] = ft_strdup(arg);
-//     // if (!new_args[i - 1])
-//     // {
-// 	//     free(new_args);
-// 	//     return ;
-//     // }
-//     if (!new_args[i - 1])
-//     {
-//         while (--i >= 0)
-//             free(new_args[i]);
-//         free(new_args);
-//         return;
-//     }
-//     new_args[i] = NULL;
-//     free_paths(cmd->args);
-//     cmd->args = new_args;
-//     if (!cmd->cmd)
-//         cmd->cmd = ft_strdup(arg);
-// }
+}
 
 void	add_arg(t_cmd *cmd, const char *arg)
 {
@@ -128,22 +83,12 @@ char	**duplicate_args(char **old_args, int len, const char *arg)
 	return (new_args);
 }
 
-// int is_cmd_valide(t_cmd *cmd)
-// {
-//     if (!cmd)
-//         return (0);
-//     if (!cmd->cmd || cmd->cmd[0] == '\0')
-//         return (0);
-//     if (!cmd->args || !cmd->args[0])
-//         return (0);
-//     return (1);
-// }
-int	is_cmd_valide(t_cmd *cmd) 
+int	is_cmd_valide(t_cmd *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (cmd->cmd && cmd->cmd[0] != '\0' &&
-		cmd->args && cmd->args[0] != NULL)
+	if (cmd->cmd && cmd->cmd[0] != '\0' && \
+	cmd->args && cmd->args[0] != NULL)
 		return (1);
 	if (cmd->heredoc_limiter || cmd->infile || cmd->outfile)
 		return (1);

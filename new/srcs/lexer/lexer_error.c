@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:12:19 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:13:14 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 20:37:46 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	check_heredoc_redir_conflict(const char *input, int i)
 int	check_long_redir_sequence(const char *input, int i)
 {
 	int	count;
-       
+
 	count = 0;
 	if (input[i] == '<')
 	{
@@ -49,7 +49,8 @@ int	check_long_redir_sequence(const char *input, int i)
 
 int	check_pipe_conflict(const char *input, int i)
 {
-	if ((input[i] == '>' || input[i] == '<') && input[i + 1] == input[i] && input[i + 1] == '|')
+	if ((input[i] == '>' || input[i] == '<') && \
+		input[i + 1] == input[i] && input[i + 1] == '|')
 		return (syntax_error_pipex("|"), TRUE);
 	if ((input[i] == '>' || input[i] == '<') && input[i + 1] == '|')
 		return (syntax_error_pipex("|"), TRUE);
@@ -65,15 +66,19 @@ int	check_redir_newline_end(const char *input, int i)
 
 int	check_triple_redir(const char *input, int i)
 {
-	//cat >>> ; cat <<< ; cat << ; cat >>
-	if (input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>' && input[i + 3] != '>')
+	if (input[i] == '>' && input[i + 1] == '>' \
+		&& input[i + 2] == '>' && input[i + 3] != '>')
 		return (syntax_error('>'), TRUE);
-	else if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<' && input[i + 3] != '<')
+	else if (input[i] == '<' && input[i + 1] == '<' && \
+		input[i + 2] == '<' && input[i + 3] != '<')
 		return (syntax_error_newline(), TRUE);
-	if ((input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<' && input[i + 3] != '<') ||
-	(input[i] == '>' && input[i + 1] == '>' && input[i + 2] == '>' && input[i + 3] != '>'))
+	if ((input[i] == '<' && input[i + 1] == '<' && \
+	input[i + 2] == '<' && input[i + 3] != '<') || \
+	(input[i] == '>' && input[i + 1] == '>' && \
+	input[i + 2] == '>' && input[i + 3] != '>'))
 		return (syntax_error_newline(), TRUE);
-	if (input[i] == '<' && input[i + 1] == '<' && input[i + 2] == '<' && input[i + 3] != '<')
+	if (input[i] == '<' && input[i + 1] == '<' && \
+		input[i + 2] == '<' && input[i + 3] != '<')
 		return (syntax_error_newline(), TRUE);
 	return (FALSE);
 }

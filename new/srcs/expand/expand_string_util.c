@@ -6,13 +6,14 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:42:08 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:42:44 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 15:07:20 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*handle_expand_error(t_expansion *exp, t_suffix_type *out_type, char *error_char)
+char	*handle_expand_error(t_expansion *exp, \
+		t_suffix_type *out_type, char *error_char)
 {
 	if (out_type)
 		*out_type = exp->illegal_type;
@@ -77,7 +78,7 @@ int	append_char(t_expansion *exp, char c)
 int	handle_buffer(t_expansion *exp)
 {
 	char	*new_buf;
-	int	new_size;
+	int		new_size;
 
 	new_size = exp->size * 2;
 	new_buf = malloc(new_size);

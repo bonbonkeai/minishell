@@ -6,12 +6,11 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 21:13:50 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/03 21:39:03 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/01 21:27:13 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 void	apply_input_red(t_shell *sh)
 {
@@ -34,7 +33,6 @@ void	apply_input_red(t_shell *sh)
 	}
 	close(fd);
 }
-
 
 void	apply_output_red(t_shell *sh)
 {

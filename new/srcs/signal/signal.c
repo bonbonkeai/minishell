@@ -6,17 +6,15 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 19:36:14 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 19:36:19 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 15:21:37 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "minishell.h"
 
 int		g_signal = 0;
 
-void signal_sigint(int sig)
+void	signal_sigint(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -26,6 +24,7 @@ void signal_sigint(int sig)
 		rl_on_new_line();
 	}
 }
+
 int	event(void)
 {
 	return (0);
@@ -46,6 +45,7 @@ void	signal_handle(void)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	rl_event_hook = event;
 }
+
 void	signal_default(void)
 {
 	signal(SIGINT, SIG_DFL);

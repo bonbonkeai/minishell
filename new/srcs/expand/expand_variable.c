@@ -6,80 +6,17 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:46:44 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:43:56 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 15:10:49 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// int handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
-// {
-//     char *key;
-//     char *value;
-//     int matched_len;
-//     char next;
-//     t_suffix_type type;
-
-//     key = NULL;
-//     value = NULL;
-//     matched_len = 0;
-//     exp->i++;
-//     if (input[exp->i] == '?')
-//     {
-//         exp->i++;
-//         if (!handle_exit_status(exp))
-//             return (0);
-//         return (1);
-//     }
-//     if (ft_isdigit(input[exp->i]))
-//     {
-//         exp->i++;
-//         return (1);
-//     }
-//     if (input[exp->i] == '{')
-//         return (handle_braces(exp, lst_env));
-//     if (!ft_isalpha(input[exp->i]) && input[exp->i] != '_' && input[exp->i] != '\0')
-//         return (handle_illegal_dollar(input, exp));
-//     key = extract_var_name(input, exp->i, &matched_len);
-//     if (key)
-// 	{
-// 		value = get_env_value(lst_env, key);
-// 		next = input[exp->i + matched_len];
-// 		type = get_suffix_type(next);
-//         if (type != SUFFIX_OK)
-// 		{
-// 			exp->illegal_type = type;
-//             if (exp->error_char)
-// 		        free(exp->error_char);
-//             exp->error_char = ft_substr(input, exp->i + matched_len, 1);
-// 			free(key);
-// 			return (0);
-// 		}
-// 		if (value && !append_str_to_buffer(exp, value))
-// 		{
-// 			free(key);
-// 			return (0);
-// 		}
-// 		exp->i += matched_len;
-// 		free(key);
-// 		return (1);
-// 	}
-//     if (!append_char(exp, '$'))
-//         return (0);
-//     if (input[exp->i])
-//     {
-//         if (!append_char(exp, input[exp->i]))
-//             return (0);
-//         exp->i++;
-//     }
-//     return (1);
-// }
-
-
-int	check_and_handle_suffix(const char *input, t_expansion *exp, int matched_len)
+int	check_and_handle_suffix(const char *input, \
+		t_expansion *exp, int matched_len)
 {
 	t_suffix_type	type;
-	char		next;
+	char			next;
 
 	next = input[exp->i + matched_len];
 	type = get_suffix_type(next);
@@ -92,7 +29,8 @@ int	check_and_handle_suffix(const char *input, t_expansion *exp, int matched_len
 	return (0);
 }
 
-int	expand_and_append_value(t_expansion *exp, const char *value, int matched_len)
+int	expand_and_append_value(t_expansion *exp, \
+		const char *value, int matched_len)
 {
 	if (value && !append_str_to_buffer(exp, value))
 		return (0);
@@ -113,7 +51,8 @@ static int	append_and_step(t_expansion *exp, char *input)
 	return (1);
 }
 
-static int	handle_key_expansion(char *input, t_expansion *exp, t_env *lst_env)
+static int	handle_key_expansion(char *input, t_expansion *exp, \
+		t_env *lst_env)
 {
 	int		matched_len;
 	char	*key;

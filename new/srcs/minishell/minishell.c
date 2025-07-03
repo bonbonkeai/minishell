@@ -6,43 +6,11 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:47:32 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:28:13 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 19:59:46 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// static char	*ft_join_argv(int argc, char **argv)
-// {
-// 	int		i;
-// 	char	*joined;
-// 	char	*tmp;
-// 	char	*with_space;
-
-// 	i = 0;
-// 	joined = ft_strdup("");
-// 	if (!joined)
-// 		return (NULL);
-// 	while (i < argc)
-// 	{
-// 		tmp = ft_strjoin(joined, argv[i]);
-// 		free(joined);
-// 		if (!tmp)
-// 			return (NULL);
-// 		if (i < argc - 1)
-// 		{
-// 			with_space = ft_strjoin(tmp, " ");
-// 			free(tmp);
-// 			if (!with_space)
-// 				return (NULL);
-// 			joined = with_space;
-// 		}
-// 		else
-// 			joined = tmp;
-// 		i++;
-// 	}
-// 	return (joined);
-// }
 
 static char	*join_arg_with_space(char *joined, char *arg, int is_last)
 {
@@ -92,7 +60,6 @@ int	main(int argc, char **argv, char **envp)
 		write(2, "Error: failed to initialize shell\n", 34);
 		return (EXIT_FAILURE);
 	}
-	// signal_handle();
 	if (argc > 1)
 	{
 		input = ft_join_argv(argc - 1, argv + 1);

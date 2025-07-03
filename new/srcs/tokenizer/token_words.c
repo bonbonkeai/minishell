@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:21:00 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:21:25 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:00:21 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,44 +51,11 @@ int	get_operator_token(const char *line, int i, t_token **tokens)
 	return (0);
 }
 
-// int get_operator_token(const char *line, int i, t_token **tokens)
-// {
-// 	char	op[3];
-// 	char	op2[2];
-
-// 	if (!line[i])
-// 		return (0);
-// 	if (line[i] == '>' || line[i] == '<')
-// 	{
-// 		if (line[i] == line[i + 1])
-//         {
-// 			op[0] = line[i];
-//             op[1] = line[i];
-//             op[2] = '\0';
-// 			add_token(tokens, create_token(op, get_token_type(op)));
-// 			return (2);
-// 		}
-// 		else
-// 		{
-// 			op2[0] = line[i];
-//             op2[1] = '\0';
-// 			add_token(tokens, create_token(op2, get_token_type(op2)));
-// 			return (1);
-// 		}
-// 	}
-// 	if (line[i] == '|')
-// 	{
-// 		add_token(tokens, create_token("|", T_PIPE));
-// 		return (1);
-// 	}
-// 	return (0);
-// }
-
-int consume_word(const char *line, int i)
+int	consume_word(const char *line, int i)
 {
-	int j = 0;
-	int in_squote;
-	int in_dquote;
+	int	j;
+	int	in_squote;
+	int	in_dquote;
 
 	j = 0;
 	in_squote = 0;
@@ -99,14 +66,15 @@ int consume_word(const char *line, int i)
 			in_squote = !in_squote;
 		else if (line[i + j] == '\"' && !in_squote)
 			in_dquote = !in_dquote;
-		else if (!in_squote && !in_dquote && (ft_isspace(line[i + j]) || ft_strchr("<>|", line[i + j])))
+		else if (!in_squote && !in_dquote && (ft_isspace(line[i + j]) \
+			|| ft_strchr("<>|", line[i + j])))
 			break ;
 		j++;
 	}
 	return (j);
 }
 
-int get_word_token(const char *line, int i, t_shell *sh)
+int	get_word_token(const char *line, int i, t_shell *sh)
 {
 	int		len;
 	char	*word;

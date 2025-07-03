@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:44:11 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:45:04 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 15:01:34 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	*extract_var_name(const char *input, int start, int *matched_len)
 int	append_str_to_buffer(t_expansion *exp, const char *str)
 {
 	int	i;
-	
+
 	i = 0;
 	while (str[i])
 	{

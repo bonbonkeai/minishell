@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:46:34 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:48:42 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/02 15:14:09 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ char	*merge_quoted_string(const char *limiter)
 	int		i;
 	int		j;
 	char	*merged;
-	
+
 	i = 0;
 	j = 0;
 	if (!limiter)
@@ -46,20 +46,42 @@ char	*merge_quoted_string(const char *limiter)
 	return (merged);
 }
 
-char	*remove_quotes(const char *str)
-{
-	size_t	len;
-
-	len = ft_strlen(str);
-	if (len >= 2 && ((str[0] == '"' && str[len - 1] == '"') || 
-		(str[0] == '\'' && str[len - 1] == '\'')))
-			return ft_substr(str, 1, len - 2);
-	return (ft_strdup(str));
-}
-
 int	valid_exp(int c)
 {
 	if (c == '?' || c == '{' || ft_isalnum(c) || c == '_')
 		return (1);
 	return (0);
+}
+
+char	*get_heredoc_content(char *target, char *lim, t_shell *sh)
+{
+	char	*res;
+
+	if (!lim)
+		return (process_heredoc_content(target, sh));
+	else
+	{
+		res = process_heredoc_content(lim, sh);
+		free(lim);
+		return (res);
+	}
+}
+
+char	*set_should_expand(t_shell *sh, char *target)
+{
+	char	*lim;
+
+	if (has_quote(target))
+	{
+		sh->should_expand = 0;
+		lim = merge_quoted_string(target);
+		if (!lim)
+			return (NULL);
+	}
+	else
+	{
+		sh->should_expand = 1;
+		lim = NULL;
+	}
+	return (lim);
 }

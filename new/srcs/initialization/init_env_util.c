@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:33:34 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:34:15 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/01 21:32:07 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	parse_and_add(char *entry, t_env **env)
 	char	*sep;
 	char	*key;
 	char	*value;
-	size_t		key_len;
+	size_t	key_len;
 
 	sep = ft_strchr(entry, '=');
 	if (!sep)
@@ -37,53 +37,6 @@ void	parse_and_add(char *entry, t_env **env)
 	free(value);
 }
 
-// void    handle_empty_env(t_env **env)
-// {
-//     char cwd[PATH_MAX];
-
-//     if (!*env)
-//     {
-//         if (getcwd(cwd, PATH_MAX))
-//         {
-//             if (!add_new_node(env, "SHLVL", "1"))
-//             {
-//                 free_env(*env);
-//                 *env = NULL;
-//                 return ;
-//             }
-//         }
-//         if (!add_new_node(env, "PATH", "/usr/bin:/bin"))
-//         {
-//             free_env(*env);
-//             *env = NULL;
-//             return ;
-//         }
-//         if (!add_new_node(env, "HOME", "/tmp"))
-//         {
-//             free_env(*env);
-//             *env = NULL;
-//             return ;
-//         }
-//     }
-// }
-
-// static int add_shlvl_if_possible(t_env **env)
-// {
-//     char cwd[PATH_MAX];
-
-//     if (getcwd(cwd, PATH_MAX))
-//     {
-//         if (!add_new_node(env, "SHLVL", "1"))
-//         {
-//             free_env(*env);
-//             *env = NULL;
-//             return (0);
-//         }
-//     }
-//     return (1);
-// }
-
-
 static int	add_shlvl_if_possible(t_env **env)
 {
 	if (!add_new_node(env, "SHLVL", "1", 1))
@@ -94,7 +47,6 @@ static int	add_shlvl_if_possible(t_env **env)
 	}
 	return (1);
 }
-
 
 static int	add_default_path(t_env **env)
 {
@@ -130,50 +82,3 @@ void	handle_empty_env(t_env **env)
 			return ;
 	}
 }
-
-// static int	add_shlvl_if_possible(t_env **env)
-// {
-// 	if (!add_new_node(env, "SHLVL", "1"))
-// 	{
-// 		free_env(*env);
-// 		*env = NULL;
-// 		return (0);
-// 	}
-// 	return (1);
-// }
-
-
-// static int	add_default_path(t_env **env)
-// {
-// 	if (!add_new_node(env, "PATH", "/usr/bin:/bin"))
-// 	{
-// 		free_env(*env);
-// 		*env = NULL;
-// 		return (0);
-// 	}
-// 	return (1);
-// }
-
-// static int	add_default_home(t_env **env)
-// {
-// 	if (!add_new_node(env, "HOME", "/tmp"))
-// 	{
-// 		free_env(*env);
-// 		*env = NULL;
-// 		return (0);
-// 	}
-// 	return (1);
-// }
-
-// void	handle_empty_env(t_env **env)
-// {
-// 	if (!*env)
-// 	{
-// 		if (!add_shlvl_if_possible(env))
-// 			return ;
-// 		if (!add_default_path(env))
-// 			return ;
-// 		if (!add_default_home(env))
-// 			return ;
-// 	}
-// }
