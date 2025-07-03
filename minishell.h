@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:51:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 17:02:40 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 20:17:54 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@
 # define ERR_TOKEN_C "minishell: syntax error near unexpected token `%c'\n"
 # define MES_E "export: usage: export [-fn] [name[=value] ...] or export -p\n"
 # define ERRMAL "export: memory allocation failed"
-# define ERR_SIGNAL "minishell: warning: here-document at line 1 delimited by end-of-file (wanted `ok')\n"
+# define ERR_SIGNAL "minishell: warning: here-document at \
+line 1 delimited by end-of-file (wanted `ok')\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
