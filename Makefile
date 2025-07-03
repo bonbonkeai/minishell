@@ -26,7 +26,6 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/parser/parser_args.c \
 		./srcs/signal/signal.c \
 		./srcs/signal/signal_util.c \
-		./srcs/prompt/prompt_home.c \
 		./srcs/prompt/prompt_build.c \
 		./srcs/minishell/minishell.c \
 		./srcs/minishell/minishell_loop.c \
