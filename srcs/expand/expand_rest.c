@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:41:47 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 15:31:54 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/03 19:56:55 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,30 @@ int	assign_cmd_names(t_cmd *cmd)
 		cmd = cmd->next;
 	}
 	return (1);
+}
+
+bool	read_heredoc_loop(char **buffer, size_t *buf_len, \
+		char *delimiter, t_shell *sh)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = readline("> ");
+		if (!line)
+		{
+			ft_fprintf(2, ERR_SIGNAL);
+			return (free(*buffer), NULL);
+		}
+		if (g_signal == SIGINT || !line || !ft_strcmp(line, delimiter))
+		{
+			free(line);
+			if (g_signal == SIGINT)
+				return (free(*buffer), NULL);
+			break ;
+		}
+		if (!process_heredoc_line(buffer, buf_len, line, sh))
+			return (false);
+	}
+	return (true);
 }

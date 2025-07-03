@@ -40,6 +40,8 @@ static int	wait_for_allpid(pid_t last_pid)
 	int		status;
 	pid_t	pid;
 
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
 	status = exec_wait_pid(last_pid);
 	if (status == -1)
 		return (-1);

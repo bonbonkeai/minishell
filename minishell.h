@@ -50,6 +50,7 @@
 # define ERR_TOKEN_C "minishell: syntax error near unexpected token `%c'\n"
 # define MES_E "export: usage: export [-fn] [name[=value] ...] or export -p\n"
 # define ERRMAL "export: memory allocation failed"
+# define ERR_SIGNAL "minishell: warning: here-document at line 1 delimited by end-of-file (wanted `ok')\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -317,6 +318,8 @@ int				expand_and_append_value(t_expansion *exp, \
 				const char *value, int matched_len);
 bool			is_heredoc(t_cmd *cmd);
 int				assign_cmd_names(t_cmd *cmd);
+bool			read_heredoc_loop(char **buffer, size_t *buf_len, \
+				char *delimiter, t_shell *sh);
 
 //builtin
 int				is_valid_var_name(char *var);

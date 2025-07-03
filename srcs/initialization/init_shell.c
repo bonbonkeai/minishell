@@ -18,8 +18,7 @@ static int	init_shell_env(t_shell *sh, char **envp)
 
 	sh->env = init_env(envp);
 	if (!sh->env)
-		return (free(sh), 0);
-	handle_empty_env(&sh->env);
+		handle_empty_env(&sh->env);
 	if (!sh->env)
 		return (free(sh), 0);
 	sh->username = extract_username(sh->env);

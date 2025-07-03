@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 18:41:13 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 20:41:15 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/03 19:58:39 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@ int	executor(t_shell *shell)
 {
 	int	status;
 
+	shell->curr_cmd = shell->cmd;
+	if (!shell->cmd || (!shell->cmd->cmd && !shell->cmd->args && \
+		(shell->cmd->heredoc || shell->cmd->infile || shell->cmd->outfile)))
+	{
+		return (true);
+	}
 	shell->curr_cmd = shell->cmd;
 	if (if_cmd_simple(shell->cmd) == 1)
 		status = exec_simple(shell);

@@ -83,24 +83,43 @@ char	*process_heredoc_content(char *delimiter, t_shell *sh)
 {
 	char	*buffer;
 	size_t	buf_len;
-	char	*line;
 
 	buffer = init_buffer(1024);
 	if (!buffer)
 		return (NULL);
 	buf_len = 0;
-	while (1)
-	{
-		line = readline("> ");
-		if (g_signal == SIGINT || !line || !ft_strcmp(line, delimiter))
-		{
-			free(line);
-			if (g_signal == SIGINT)
-				return (free(buffer), NULL);
-			break ;
-		}
-		if (!process_heredoc_line(&buffer, &buf_len, line, sh))
-			return (NULL);
-	}
+	if (!read_heredoc_loop(&buffer, &buf_len, delimiter, sh))
+		return (NULL);
 	return (buffer);
 }
+
+// char	*process_heredoc_content(char *delimiter, t_shell *sh)
+// {
+// 	char	*buffer;
+// 	size_t	buf_len;
+// 	char	*line;
+
+// 	buffer = init_buffer(1024);
+// 	if (!buffer)
+// 		return (NULL);
+// 	buf_len = 0;
+// 	while (1)
+// 	{
+// 		line = readline("> ");
+// 		if (!line)
+// 		{
+// 			ft_fprintf(2, ERR_SIGNAL);
+// 			return (free(buffer), NULL);
+// 		}
+// 		if (g_signal == SIGINT || !line || !ft_strcmp(line, delimiter))
+// 		{
+// 			free(line);
+// 			if (g_signal == SIGINT)
+// 				return (free(buffer), NULL);
+// 			break ;
+// 		}
+// 		if (!process_heredoc_line(&buffer, &buf_len, line, sh))
+// 			return (NULL);
+// 	}
+// 	return (buffer);
+// }

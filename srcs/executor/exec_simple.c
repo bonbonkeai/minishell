@@ -14,26 +14,33 @@
 
 int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 {
+	int status;
+
+	status = -2;
+	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
+		return (0);
 	if (!curr || !curr->cmd || curr->cmd[0] == '\0')
 	{
 		print_cmd_error(curr->cmd, "command not found");
-		return (127);
+		exit (127);
 	}
 	if (is_empty_command(sh->trimmed_prompt))
 	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");
-		return (127);
+		exit (126);
 	}
 	if (is_directory(curr->cmd))
 	{
 		print_cmd_error(curr->cmd, "Is a directory");
-		return (126);
+		exit (126);
 	}
 	if (if_cmd_builtin(sh) == 1)
 	{
 		touch_all_output_files(curr);
 		resolve_redir(curr);
-		return (exec_builtin_main(sh));
+		status = exec_builtin_main(sh);
+		free_shell(sh);
+		exit(status);
 	}
 	return (-2);
 }
@@ -42,6 +49,7 @@ void	exec_child(t_shell *sh, t_cmd *curr, int status)
 {
 	touch_all_output_files(curr);
 	resolve_redir(curr);
+	signal_default();
 	if (curr->heredoc_fd != -1)
 	{
 		if (dup2(curr->heredoc_fd, STDIN_FILENO) == -1)
