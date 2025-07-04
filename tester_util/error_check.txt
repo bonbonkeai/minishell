@@ -54,6 +54,20 @@
         echo hello > file1 > file2 > file3 << OK                                 cat file3->hello    ls-> file1 file2 file3
         REDIR: > file1 > file2 > file3 << OK   先做heredoc, 生成临时文件之后，再按顺序做所有文件重定向
 
+	touch file
+	chmod 000 file
+	ls > file >> file1 > file2
+	报错，不创建file1, file2
+	echo hello > file >> file1 > file2
+	echo hello > file2 >> file1 > file
+	echo hello > file >> file3 > file4 | cat file | cat -e
+	echo hello > file3 >> file4 > file | cat file | cat -e
+
+	< outfile cat > outfile
+	cat > outfile < outfile
+		
+
+
 
         cd cd    cd: cd: No such file or directory
 		"      "//          command not found

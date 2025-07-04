@@ -27,6 +27,7 @@ static bool	handle_input_line(t_shell *shell, char *line)
 	if (!line)
 	{
 		write(1, "exit\n", 5);
+		// free_shell(shell);
 		return (false);
 	}
 	if (line[0])
@@ -45,7 +46,7 @@ void	minishell_loop(t_shell *shell)
 	char	*line;
 	char	*prompt;
 
-	rl_bind_key('\t', rl_insert);
+	// rl_bind_key('\t', rl_insert);
 	while (1)
 	{
 		signal_handle();

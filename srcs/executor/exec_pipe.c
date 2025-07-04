@@ -5,18 +5,15 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/02 17:46:13 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 18:09:31 by jinhuang         ###   ########.fr       */
+/*   Created: 2025/05/29 16:28:32 by jinhuang          #+#    #+#             */
+/*   Updated: 2025/06/05 19:58:27 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	prepare_pipe_command(t_shell *sh, t_cmd *curr)
+static int	create_pipes(t_shell *sh, t_cmd *curr)
 {
-	sh->curr_cmd = curr;
-	sh->new_pipe.fd[0] = -1;
-	sh->new_pipe.fd[1] = -1;
 	if (curr->next)
 	{
 		if (pipe(sh->new_pipe.fd) == -1)
@@ -28,16 +25,9 @@ static int	prepare_pipe_command(t_shell *sh, t_cmd *curr)
 	return (0);
 }
 
-static int	is_last_cmd(t_cmd *cmd)
-{
-	if (cmd->next == NULL)
-		return (1);
-	return (0);
-}
-
 static int	wait_for_allpid(pid_t last_pid)
 {
-	int		status;
+	int	status;
 	pid_t	pid;
 
 	signal(SIGINT, SIG_IGN);
@@ -45,24 +35,128 @@ static int	wait_for_allpid(pid_t last_pid)
 	status = exec_wait_pid(last_pid);
 	if (status == -1)
 		return (-1);
-	errno = 0;
-	while (1)
+	while ((pid = wait(NULL)) != -1 || errno != ECHILD)
 	{
-		pid = wait(NULL);
 		if (pid == -1)
 		{
-			if (errno == ECHILD)
-				break ;
-			else
+			if (errno != ECHILD)
 			{
 				perror("wait failed");
 				return (-1);
 			}
-			break ;
+			break;
 		}
 	}
+	errno = 0;
 	return (status);
 }
+
+int	exec_simple_pipe(t_shell *sh)
+{
+    t_cmd	*curr = sh->curr_cmd;
+    int		status;
+
+	//
+	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
+		return (0);
+	//
+    if (!curr || !curr->cmd || curr->cmd[0] == '\0')
+    {
+        print_cmd_error("", "command not found");
+        exit(127);
+    }
+    if (is_directory(curr->cmd))
+    {
+        print_cmd_error(curr->cmd, "Is a directory");
+        exit(126);
+    }
+    if (if_cmd_builtin(sh) == 1)
+    {
+		if (!touch_all_output_files(curr))
+		{
+			free_shell(sh);
+			exit(1);
+		}
+		resolve_redir(curr);
+        status = exec_builtin_main(sh);
+		free_shell(sh);
+        exit(status);
+    }
+	if (!touch_all_output_files(curr))
+	{
+		free_shell(sh);
+		exit(1);
+	}
+	resolve_redir(curr);
+	//
+	if (curr->heredoc_fd != -1)
+	{
+		char *cmd_name;
+		if (curr->cmd && curr->cmd[0])
+			cmd_name = curr->cmd;
+		else
+			cmd_name = "(null)";
+		printf("Applying heredoc_fd for command [%s]: fd=%d\n", cmd_name, curr->heredoc_fd);
+	}
+    else
+	    apply_input_red(sh);
+	// apply_input_red(sh);
+    apply_output_red(sh);
+    status = execve_bin(sh);
+    exit(status);
+}
+
+// int	exec_simple_pipe(t_shell *sh)
+// {
+//     t_cmd	*curr = sh->curr_cmd;
+//     int		status;
+
+// 	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
+// 		return (0);
+//     if (!curr || !curr->cmd || curr->cmd[0] == '\0')
+//     {
+//         print_cmd_error("", "command not found");
+//         exit(127);
+//     }
+//     if (is_directory(curr->cmd))
+//     {
+//         print_cmd_error(curr->cmd, "Is a directory");
+//         exit(126);
+//     }
+//     if (if_cmd_builtin(sh) == 1)
+//     {
+// 		if (!touch_all_output_files(curr))
+// 		{
+// 			free_shell(sh);
+// 			exit(1);
+// 		}
+// 		resolve_redir(curr);
+//         status = exec_builtin_main(sh);
+// 		free_shell(sh);
+//         exit(status);
+//     }
+// 	if (!touch_all_output_files(curr))
+// 	{
+// 		free_shell(sh);
+// 		exit(1);
+// 	}
+// 	if (curr->heredoc_fd != -1)
+// 	{
+// 		char *cmd_name;
+// 		if (curr->cmd && curr->cmd[0])
+// 			cmd_name = curr->cmd;
+// 		else
+// 			cmd_name = "(null)";
+// 		printf("Applying heredoc_fd for command [%s]: fd=%d\n", cmd_name, curr->heredoc_fd);
+// 	}
+// 	if (resolve_redir(curr) == -1)
+// 	{
+// 		free_shell(sh);
+// 		exit(1);
+// 	}
+//     status = execve_bin(sh);
+//     exit(status);
+// }
 
 static void	iteration_pipe(t_shell *sh)
 {
@@ -72,7 +166,10 @@ static void	iteration_pipe(t_shell *sh)
 	if ((if_cmd_start(sh->curr_cmd)) == 1 || (if_cmd_simple(sh->curr_cmd)) != 2)
 	{
 		if (if_cmd_start(sh->curr_cmd) == 1)
+		{
+			printf("here i am WRONG!\n");
 			return ;
+		}
 		else
 			exec_simple_pipe(sh);
 	}
@@ -81,15 +178,39 @@ static void	iteration_pipe(t_shell *sh)
 	safe_close_all_pipes(sh);
 }
 
+void	close_all_heredoc_fd(t_cmd *cmd_list)
+{
+	t_cmd *curr;
+	
+	curr = cmd_list;
+	while (curr)
+	{
+		if (curr->heredoc_fd != -1)
+		{
+			close(curr->heredoc_fd);
+			curr->heredoc_fd = -1;
+		}
+		curr = curr->next;
+	}
+}
+
 int	exec_pipe(t_shell *sh)
 {
-	t_cmd	*curr;
 	pid_t	pid;
-
+	t_cmd *curr;
+	int last_cmd;
+	
 	curr = sh->cmd;
 	while (curr)
 	{
-		if (prepare_pipe_command(sh, curr) == -1)
+		if (curr->next == NULL)
+			last_cmd = 1;
+		else
+			last_cmd = 0;
+		sh->curr_cmd = curr;
+		sh->new_pipe.fd[0] = -1;
+		sh->new_pipe.fd[1] = -1;
+		if (create_pipes(sh, curr) == -1)
 			return (-1);
 		pid = fork();
 		if (pid == -1)
@@ -99,13 +220,18 @@ int	exec_pipe(t_shell *sh)
 		}
 		if (pid == 0)
 		{
-			pipe_fork_child(&sh->new_pipe, &sh->old_pipe, is_last_cmd(curr));
+			pipe_fork_child(&sh->new_pipe, &sh->old_pipe, last_cmd);
 			iteration_pipe(sh);
 			exit(EXIT_SUCCESS);
 		}
 		else
+		{
 			pipe_for_parent(&sh->new_pipe, &sh->old_pipe);
+		}
 		curr = curr->next;
 	}
+	//
+	close_all_heredoc_fd(sh->cmd);
+	//
 	return (wait_for_allpid(pid));
 }

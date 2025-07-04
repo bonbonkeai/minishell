@@ -14,6 +14,10 @@
 
 static void	put_error(const char *msg, const char *arg)
 {
+	if (!msg)
+		msg = "";
+	if (!arg)
+		arg = "";
 	write(2, "minishell: exit: ", 17);
 	write(2, arg, ft_strlen(arg));
 	write(2, ": ", 2);
@@ -45,6 +49,8 @@ static long	str_to_int(const char *str, long *out)
 	long	result;
 	int		sign;
 
+	if (!str)
+		return (0);
 	result = 0;
 	sign = 1;
 	if (*str == '-' || *str == '+')
@@ -67,6 +73,32 @@ static void	exit_free(t_shell *sh)
 	rl_clear_history();
 }
 
+// int	builtin_exit(t_shell *sh, char **argv)
+// {
+// 	long	code;
+// 	int		len;
+
+// 	code = 0;
+// 	len = 0;
+// 	while (argv[len])
+// 		len++;
+// 	write(STDOUT_FILENO, "exit\n", 5);
+// 	if (!str_to_int(argv[1], &code))
+// 	{
+// 		put_error("numeric argument required", argv[1]);
+// 		exit_free(sh);
+// 		exit(2);
+// 	}
+// 	if (len > 2)
+// 	{
+// 		write(2, "minishell: exit: too many arguments\n", 37);
+// 		return (1);
+// 	}
+// 	// exit_free(sh);
+// 	rl_clear_history();
+// 	exit((unsigned char)code);
+// }
+
 int	builtin_exit(t_shell *sh, char **argv)
 {
 	long	code;
@@ -77,16 +109,22 @@ int	builtin_exit(t_shell *sh, char **argv)
 	while (argv[len])
 		len++;
 	write(STDOUT_FILENO, "exit\n", 5);
-	if (!str_to_int(argv[1], &code))
-	{
-		put_error("numeric argument required", argv[1]);
-		exit_free(sh);
-		exit(2);
-	}
-	if (len > 2)
+	if (len == 1)
+		code = exec_exit_status(0, 0);
+	else if (len > 2)
 	{
 		write(2, "minishell: exit: too many arguments\n", 37);
+		sh->status = 1;
 		return (1);
+	}
+	else 
+	{
+		if (!str_to_int(argv[1], &code))
+		{
+			put_error("numeric argument required", argv[1]);
+			exit_free(sh);
+			exit(2);
+		}
 	}
 	exit_free(sh);
 	exit((unsigned char)code);

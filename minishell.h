@@ -253,13 +253,14 @@ char			**duplicate_args(char **old_args, int len, const char *arg);
 void			handle_input_redir(t_cmd *cmd, char *op, char *file);
 void			handle_output_redir(t_cmd *cmd, char *op, char *file);
 void			resolve_redir(t_cmd *cmd);
+// int				resolve_redir(t_cmd *cmd);
 void			add_redir(t_cmd *cmd, char *op, char *target);
 int				is_red_type(t_token_type type);
 void			apply_input_red(t_shell *sh);
 void			apply_output_red(t_shell *sh);
 void			apply_red(t_shell *sh);
-void			touch_all_output_files(t_cmd *cmd);
-void			touch_all_output_files_in_list(t_cmd *cmd_list);
+bool			touch_all_output_files(t_cmd *cmd);
+// void			touch_all_output_files_in_list(t_cmd *cmd_list);
 int				append_op_and_target(char **new_red, int len, \
 				char *op, char *target);
 char			**init_new_redir_array(t_cmd *cmd, int len);
@@ -279,7 +280,7 @@ int				handle_illegal_dollar(const char *input, t_expansion *exp);
 int				handle_dollar(char *input, t_expansion *exp, t_env *lst_env);
 int				handle_braces(t_expansion *exp, t_env *lst_env);
 char			*extract_var_name(const char *input, int start, \
-			int *matched_len);
+				int *matched_len);
 int				append_str_to_buffer(t_expansion *exp, const char *str);
 t_suffix_type	get_suffix_type(char c);
 void			handle_single_quote(t_expansion *exp);
@@ -327,11 +328,13 @@ bool			process_heredoc_line(char **buffer, size_t *buf_len, \
 //builtin
 int				is_valid_var_name(char *var);
 int				builtin_unset(t_shell *sh, char **argv);
-int				builtin_pwd(void);
+// int				builtin_pwd(void);
+int				builtin_pwd(t_shell *sh);
 void			env_set_var(char *key, char *value, t_shell *sh);
 int				builtin_export(char **argv, t_shell *sh);
 int				builtin_exit(t_shell *sh, char **argv);
 int				builtin_env(t_shell *sh);
+// int				builtin_env(t_shell *sh, char **av);
 int				builtin_echo(char *args[]);
 int				builtin_cd(t_shell *shell, char **argv);
 
@@ -360,6 +363,7 @@ void			exec_child(t_shell *sh, t_cmd *curr, int status);
 void			handle_check_prexec(t_shell *sh, t_cmd *curr);
 void			exec_child(t_shell *sh, t_cmd *curr, int status);
 int				handle_preprecheck(t_cmd *curr);
+int				exec_exit_status(int mode, int new_status);
 
 //utils
 void			ft_perror_export(char *arg);

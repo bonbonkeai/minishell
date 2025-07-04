@@ -12,10 +12,34 @@
 
 #include "minishell.h"
 
-int	builtin_pwd(void)
+// int	builtin_pwd(void)
+// {
+// 	char	*pth;
+
+// 	pth = getcwd(NULL, 0);
+// 	if (!pth)
+// 	{
+// 		perror("pwd:");
+// 		return (EXIT_FAILURE);
+// 	}
+// 	ft_printf("%s\n", pth);
+// 	free(pth);
+// 	return (EXIT_SUCCESS);
+// }
+
+int	builtin_pwd(t_shell *sh)
 {
 	char	*pth;
+	int		i;
 
+	while (sh->cmd->args[1])
+	{
+		i = 0;
+		if (sh->cmd->args[1] && sh->cmd->args[1][i] == '-')
+			return (ft_putstr_fd("This input is not accecpted\n", 2), 0);
+		else
+			break ;
+	}
 	pth = getcwd(NULL, 0);
 	if (!pth)
 	{
