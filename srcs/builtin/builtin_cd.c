@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 19:56:49 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 20:49:56 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 18:21:29 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,15 @@ static char	*resolve_cd_special_cases(t_shell *sh, char *arg)
 	char	*home;
 	char	*oldpwd;
 
-	if (!arg || ft_strcmp(arg, "~") == 0)
+	if (!arg)
+	{
+		home = get_env_var_value(sh, "HOME");
+		if (home)
+			return (ft_strdup(home));
+		else
+			return (NULL);
+	}
+	if (ft_strcmp(arg, "~") == 0)
 	{
 		home = get_env_var_value(sh, "HOME");
 		if (home)
