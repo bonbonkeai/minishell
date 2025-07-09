@@ -12,9 +12,20 @@
 
 #include "minishell.h"
 
-void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
+void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, t_pipe *old_pipe, int last)
 {
-	if (old_pipe->fd[0] != -1)
+	t_cmd *cmd;
+	
+	cmd = sh->curr_cmd;
+	if (cmd && cmd->heredoc_fd != -1)
+	{
+		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc_fd");
+			exit(EXIT_FAILURE);
+		}
+	}
+	else if (old_pipe->fd[0] != -1)
 	{
 		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
 		{
@@ -30,6 +41,11 @@ void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
 			exit(EXIT_FAILURE);
 		}
 	}
+	if (cmd && cmd->heredoc_fd != -1)
+	{
+		close(cmd->heredoc_fd);
+		cmd->heredoc_fd = -1;
+	}
 	if (old_pipe->fd[0] != -1)
 		close(old_pipe->fd[0]);
 	if (old_pipe->fd[1] != -1)
@@ -39,6 +55,35 @@ void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
 	if (new_pipe->fd[1] != -1)
 		close(new_pipe->fd[1]);
 }
+
+
+// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
+// {
+// 	if (old_pipe->fd[0] != -1)
+// 	{
+// 		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
+// 		{
+// 			perror("dup2 old_pipe->fd[0]");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	if (!last && new_pipe->fd[1] != -1)
+// 	{
+// 		if (dup2(new_pipe->fd[1], STDOUT_FILENO) == -1)
+// 		{
+// 			perror("dup2 new_pipe->fd[1]");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 	}
+// 	if (old_pipe->fd[0] != -1)
+// 		close(old_pipe->fd[0]);
+// 	if (old_pipe->fd[1] != -1)
+// 		close(old_pipe->fd[1]);
+// 	if (new_pipe->fd[0] != -1)
+// 		close(new_pipe->fd[0]);
+// 	if (new_pipe->fd[1] != -1)
+// 		close(new_pipe->fd[1]);
+// }
 
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe)
 {
@@ -75,5 +120,3 @@ void	safe_close_all_pipes(t_shell *shell)
 		shell->old_pipe.fd[1] = -1;
 	}
 }
-
-

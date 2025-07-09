@@ -23,28 +23,48 @@ int	has_quote(const char *str)
 	return (0);
 }
 
-char	*merge_quoted_string(const char *limiter)
+char	*strip_outer_quotes(const char *s)
 {
-	int		i;
-	int		j;
-	char	*merged;
+	char	*stripped;
+	size_t	len;
 
-	i = 0;
-	j = 0;
-	if (!limiter)
+	if (!s)
 		return (NULL);
-	merged = malloc(sizeof(char) * (ft_strlen(limiter) + 1));
-	if (!merged)
-		return (NULL);
-	while (limiter[i])
+
+	len = ft_strlen(s);
+	if (len >= 2 && 
+		((s[0] == '"' && s[len - 1] == '"') || (s[0] == '\'' && s[len - 1] == '\'')))
 	{
-		if (!is_quote(limiter[i]))
-			merged[j++] = limiter[i];
-		i++;
+		stripped = ft_substr(s, 1, len - 2);
+		if (!stripped)
+			return (NULL);
+		return (stripped);
 	}
-	merged[j] = '\0';
-	return (merged);
+	return (ft_strdup(s));
 }
+
+// char	*merge_quoted_string(const char *limiter)
+// {
+// 	int		i;
+// 	int		j;
+// 	char	*merged;
+
+// 	i = 0;
+// 	j = 0;
+// 	if (!limiter)
+// 		return (NULL);
+// 	merged = malloc(sizeof(char) * (ft_strlen(limiter) + 1));
+// 	if (!merged)
+// 		return (NULL);
+// 	while (limiter[i])
+// 	{
+// 		if (!is_quote(limiter[i]))
+// 			merged[j++] = limiter[i];
+// 		i++;
+// 	}
+// 	merged[j] = '\0';
+// 	return (merged);
+// }
 
 int	valid_exp(int c)
 {
@@ -74,7 +94,7 @@ char	*set_should_expand(t_shell *sh, char *target)
 	if (has_quote(target))
 	{
 		sh->should_expand = 0;
-		lim = merge_quoted_string(target);
+		lim = strip_outer_quotes(target);
 		if (!lim)
 			return (NULL);
 	}

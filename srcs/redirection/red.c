@@ -49,150 +49,158 @@ void	handle_output_redir(t_cmd *cmd, char *op, char *file)
 	}
 }
 
-void	resolve_redir(t_cmd *cmd)
+void	process_input_redir(t_shell *sh, char *op, char *file, int *storage)
 {
-	int		i;
-	char	*op;
-	char	*file;
-
-	i = 0;
-	if (!cmd || !cmd->red)
-		return ;
-	while (cmd->red[i] && cmd->red[i + 1])
+	t_cmd *cmd;
+	
+	cmd = sh->curr_cmd;
+	if (!ft_strcmp(op, "<") && cmd->heredoc_fd != 1)
 	{
-		op = cmd->red[i];
-		file = cmd->red[i + 1];
-		if (!ft_strcmp(op, "<"))
-			handle_input_redir(cmd, op, file);
-		else if (!ft_strcmp(op, ">") || !ft_strcmp(op, ">>"))
-			handle_output_redir(cmd, op, file);
-		i += 2;
+		handle_input_redir(cmd, op, file);
+		apply_input_red(sh, storage);
 	}
 }
 
+void	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)
+{
+	if (cmd->heredoc_fd == -1)
+		return ;
+	if (cmd->heredoc_fd != -1)
+	{
+		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2 heredoc_fd");
+			safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+		}
+		// ft_printf("HERE fd: %d\n", cmd->heredoc_fd);
+		// close_all_heredoc_fd(sh->cmd);
+		// close(cmd->heredoc_fd);
+		// cmd->heredoc_fd = -1;
+	}
+}
+// void	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)
+// {
+// 	if (cmd->heredoc_fd == -1)
+// 		return ;
+// 	if (cmd->heredoc_fd != -1)
+// 	{
+// 		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
+// 		{
+// 			perror("dup2 heredoc_fd");
+// 			safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+// 		}
+// 		close(cmd->heredoc_fd);
+// 		cmd->heredoc_fd = -1;
+// 	}
+// }
 
-// int	resolve_redir(t_cmd *cmd)
+// void	resolve_redir(t_shell *sh, t_cmd *cmd, int *storage)
 // {
 // 	int		i;
 // 	char	*op;
 // 	char	*file;
-// 	int		fd;
-// 	int		flags;
 
 // 	if (!cmd || !cmd->red)
-// 		return (-1);
+// 		return ;
+// 	if (cmd->heredoc_fd != -1)
+// 		apply_heredoc_fd(sh, cmd, storage);
+// 	else
+// 	{
+// 		i = 0;
+// 		while (cmd->red[i] && cmd->red[i + 1])
+// 		{
+// 			op = cmd->red[i];
+// 			file = cmd->red[i + 1];
+// 			if (cmd->heredoc_fd == -1 && !ft_strcmp(op, "<"))
+// 			{
+// 				handle_input_redir(cmd, op, file);
+// 				apply_input_red(sh, storage);
+// 			}
+// 			i += 2;
+// 		}
+// 	}
 // 	i = 0;
 // 	while (cmd->red[i] && cmd->red[i + 1])
 // 	{
 // 		op = cmd->red[i];
 // 		file = cmd->red[i + 1];
-// 		if (!ft_strcmp(op, "<"))
+// 		if (!ft_strcmp(op, ">") || !ft_strcmp(op, ">>"))
 // 		{
-// 			fd = open(file, O_RDONLY);
-// 			if (fd < 0)
-// 			{
-// 				perror(file);
-// 				return (-1);
-// 			}
-// 			if (dup2(fd, STDIN_FILENO) == -1)
-// 			{
-// 				perror("dup2 stdin");
-// 				close(fd);
-// 				return (-1);
-// 			}
-// 			close(fd);
-// 		}
-// 		else if (!ft_strcmp(op, ">") || !ft_strcmp(op, ">>"))
-// 		{
-// 			flags = O_WRONLY | O_CREAT;
-// 			if (!ft_strcmp(op, ">>"))
-// 				flags |= O_APPEND;
-// 			else
-// 				flags |= O_TRUNC;
-// 			fd = open(file, flags, 0644);
-// 			if (fd < 0)
-// 			{
-// 				perror(file);
-// 				return (-1);
-// 			}
-// 			if (dup2(fd, STDOUT_FILENO) == -1)
-// 			{
-// 				perror("dup2 stdout");
-// 				close(fd);
-// 				return (-1);
-// 			}
-// 			close(fd);
+// 			if (!touch_all_output_files(cmd))
+// 				safe_exit_with_io_close(sh, storage, 1);
+// 			handle_output_redir(cmd, op, file);
 // 		}
 // 		i += 2;
 // 	}
-// 	return (0);
+// 	apply_output_red(sh, storage);
 // }
 
 
-// void	touch_all_output_files(t_cmd *cmd)
-// {
-// 	int	fd;
-// 	int	i;
+void	resolve_redir(t_shell *sh, t_cmd *cmd, int *storage)
+{
+	int		i;
+	char	*op;
+	char	*file;
+	
+	if (!cmd || !cmd->red)
+		return ;
+	//
+	sh->curr_cmd = cmd;
+	//
+	i = 0;
+	while (cmd->red[i] && cmd->red[i + 1])
+	{
+		op = cmd->red[i];
+		file = cmd->red[i + 1];
+		process_input_redir(sh, op, file, storage);
+		if (!ft_strcmp(op, ">") || !ft_strcmp(op, ">>"))
+		{
+			if (!touch_all_output_files(cmd))
+				safe_exit_with_io_close(sh, storage, 1);
+			handle_output_redir(cmd, op, file);
+		}
+		i += 2;
+	}
+	apply_heredoc_fd(sh, cmd, storage);
+	apply_output_red(sh, storage);
+}
 
+// void	resolve_redir(t_shell *sh, t_cmd *cmd, int *storage)
+// {
+// 	int		i;
+// 	char	*op;
+// 	char	*file;
+
+// 	i = 0;
 // 	if (!cmd || !cmd->red)
 // 		return ;
-// 	i = 0;
-// 	while (cmd->red[i])
+// 	while (cmd->red[i] && cmd->red[i + 1])
 // 	{
-// 		if (ft_strcmp(cmd->red[i], ">") == 0 \
-// 		|| ft_strcmp(cmd->red[i], ">>") == 0)
+// 		op = cmd->red[i];
+// 		file = cmd->red[i + 1];
+// 		if (!ft_strcmp(op, "<") && cmd->heredoc_fd != 1)
 // 		{
-// 			if (cmd->red[i + 1])
-// 			{
-// 				fd = open(cmd->red[i + 1], O_WRONLY | O_CREAT, 0644);
-// 				if (fd < 0)
-//                     perror(cmd->red[i + 1]);
-// 				else
-// 					close(fd);
-// 				i++;
-// 			}
+// 			handle_input_redir(cmd, op, file);
+// 			apply_input_red(sh);
 // 		}
-// 		i++;
+// 		else if (!ft_strcmp(op, ">") || !ft_strcmp(op, ">>"))
+// 		{
+// 			if (!touch_all_output_files(cmd))
+// 			{
+// 				safe_exit_with_io_close(sh, storage, 1);
+// 			}
+// 			handle_output_redir(cmd, op, file);
+// 		}
+// 		i += 2;
 // 	}
+// 	if (cmd->heredoc_fd != -1)
+// 	{
+// 		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
+// 		{
+// 			perror("dup2 heredoc_fd");
+// 			safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+// 		}
+// 		close(cmd->heredoc_fd);
+// 	}
+// 	apply_output_red(sh);
 // }
-
-bool	touch_all_output_files(t_cmd *cmd)
-{
-	int	fd;
-	int	i;
-
-	if (!cmd || !cmd->red)
-		return (true);
-	i = 0;
-	while (cmd->red[i])
-	{
-		if (ft_strcmp(cmd->red[i], ">") == 0 \
-		|| ft_strcmp(cmd->red[i], ">>") == 0)
-		{
-			if (cmd->red[i + 1])
-			{
-				fd = open(cmd->red[i + 1], O_WRONLY | O_CREAT, 0644);
-				if (fd < 0)
-				{
-					perror(cmd->red[i + 1]);
-					return (false);
-				}
-				else
-					close(fd);
-				i++;
-			}
-		}
-		i++;
-	}
-	return (true);
-}
-
-int	count_redirs(char **red)
-{
-	int	len;
-
-	len = 0;
-	while (red && red[len])
-		len++;
-	return (len);
-}

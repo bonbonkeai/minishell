@@ -83,7 +83,7 @@ int	expand_all(t_shell *sh, t_suffix_type *out_type, char *error_char)
 {
 	if (is_heredoc(sh->cmd))
 	{
-		if (expand_heredoc_in_cmd_list(sh))
+		if (expand_heredoc_in_cmd_list(sh, out_type, error_char))
 			return (cleanup_current_cmd(sh), 0);
 	}
 	else

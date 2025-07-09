@@ -27,7 +27,6 @@ static bool	handle_input_line(t_shell *shell, char *line)
 	if (!line)
 	{
 		write(1, "exit\n", 5);
-		// free_shell(shell);
 		return (false);
 	}
 	if (line[0])

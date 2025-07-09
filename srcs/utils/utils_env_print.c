@@ -43,6 +43,7 @@ static t_env	**env_list_to_array(t_env *env, int count)
 		env_array[i++] = cur;
 		cur = cur->next;
 	}
+	bubble_sort_env(env_array, count);
 	return (env_array);
 }
 

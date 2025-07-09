@@ -21,6 +21,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/tokenizer/token_words.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
+		./srcs/redirection/red_util2.c \
 		./srcs/redirection/handle_red.c \
 		./srcs/parser/parser.c \
 		./srcs/parser/parser_args.c \
@@ -62,9 +63,9 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/utils/utils_redir.c \
 		./srcs/utils/utils_setpath.c \
 		./srcs/utils/utils_io.c \
-
-		# ./srcs/executor/exec_bin.c \
-		# ./srcs/executor/exec_pipe_utils.c \
+		./srcs/executor/exec_bin.c \
+		./srcs/executor/exec_pipe_utils.c \
+		./srcs/executor/exec_wait.c \
 	
 		
 	

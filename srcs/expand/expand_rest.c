@@ -76,3 +76,4 @@ bool	read_heredoc_loop(char **buffer, size_t *buf_len, \
 	}
 	return (true);
 }
+

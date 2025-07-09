@@ -28,7 +28,7 @@ int	is_empty_command(const char *input)
 	return (TRUE);
 }
 
-int	is_specific_case(t_shell *s)
+/*int	is_specific_case(t_shell *s)
 {
 	int	len;
 
@@ -43,4 +43,4 @@ int	is_specific_case(t_shell *s)
 		return (TRUE);
 	}
 	return (FALSE);
-}
+}*/

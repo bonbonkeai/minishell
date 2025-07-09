@@ -70,7 +70,7 @@ int	lexer(t_shell *shell)
 		shell->status = 2;
 		return (FALSE);
 	}
-	if (is_specific_case(shell))
-		return (FALSE);
+	// if (is_specific_case(shell))
+	// 	return (FALSE);
 	return (TRUE);
 }

@@ -52,6 +52,9 @@
 # define ERRMAL "export: memory allocation failed"
 # define ERR_SIGNAL "minishell: warning: here-document at \
 line 1 delimited by end-of-file (wanted `ok')\n"
+# define ERR_PWD "minishell: pwd: %s: invalid option \npwd: usage: pwd [-LP]\n"
+# define ERR_ENV_I "This input is not accecpted\n"
+# define ERR_ENV "env: invalid option `%s'\nTry 'env --help' for more information.\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -217,7 +220,6 @@ int				check_mixed_combos(const char *input, int i);
 int				is_invalid_operator(const char *input, int i);
 int				lexer(t_shell *shell);
 int				is_empty_command(const char *input);
-int				is_specific_case(t_shell *s);
 int				check_syntax(const char *input);
 void			toggle_quote(char ch, int *in_squote, int *in_dquote);
 void			syntax_error(char unexpected);
@@ -252,19 +254,21 @@ char			**duplicate_args(char **old_args, int len, const char *arg);
 //redirection
 void			handle_input_redir(t_cmd *cmd, char *op, char *file);
 void			handle_output_redir(t_cmd *cmd, char *op, char *file);
-void			resolve_redir(t_cmd *cmd);
-// int				resolve_redir(t_cmd *cmd);
+void			resolve_redir(t_shell *sh, t_cmd *cmd, int *storage);
 void			add_redir(t_cmd *cmd, char *op, char *target);
 int				is_red_type(t_token_type type);
-void			apply_input_red(t_shell *sh);
-void			apply_output_red(t_shell *sh);
-void			apply_red(t_shell *sh);
+void			apply_input_red(t_shell *sh, int *storage);
+void			apply_output_red(t_shell *sh, int *storage);
 bool			touch_all_output_files(t_cmd *cmd);
-// void			touch_all_output_files_in_list(t_cmd *cmd_list);
 int				append_op_and_target(char **new_red, int len, \
 				char *op, char *target);
 char			**init_new_redir_array(t_cmd *cmd, int len);
 int				count_redirs(char **red);
+void			safe_exit_with_io_close(t_shell *sh, int *storage, int code);
+void			process_input_redir(t_shell *sh, char *op, char *file, int *storage);
+void			apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage);
+void			process_single_redirection(t_shell *sh, char *op, char *file, int *storage);
+void			close_all_heredoc_fd(t_cmd *cmd_list);
 
 //expander
 int				expand_tab(char **tab, t_shell *sh, \
@@ -301,7 +305,7 @@ char			*process_heredoc_content(char *delimiter, t_shell *sh);
 char			*merge_quoted_string(const char *limiter);
 char			*get_heredoc_content(char *target, char *lim, t_shell *sh);
 char			*set_should_expand(t_shell *sh, char *target);
-int				expand_heredoc_in_cmd_list(t_shell *sh);
+int				expand_heredoc_in_cmd_list(t_shell *sh, t_suffix_type *out_type, char *error_char);
 char			*expand_var_here(char *input, t_shell *sh);
 int				expand_var_here_check(char *input, \
 				t_expansion *exp, t_shell *sh);
@@ -324,17 +328,16 @@ bool			read_heredoc_loop(char **buffer, size_t *buf_len, \
 				char *delimiter, t_shell *sh);
 bool			process_heredoc_line(char **buffer, size_t *buf_len, \
 				char *line, t_shell *sh);
+char			*strip_outer_quotes(const char *s);
 
 //builtin
 int				is_valid_var_name(char *var);
 int				builtin_unset(t_shell *sh, char **argv);
-// int				builtin_pwd(void);
 int				builtin_pwd(t_shell *sh);
 void			env_set_var(char *key, char *value, t_shell *sh);
 int				builtin_export(char **argv, t_shell *sh);
 int				builtin_exit(t_shell *sh, char **argv);
 int				builtin_env(t_shell *sh);
-// int				builtin_env(t_shell *sh, char **av);
 int				builtin_echo(char *args[]);
 int				builtin_cd(t_shell *shell, char **argv);
 
@@ -350,20 +353,23 @@ int				exec_wait_pid(pid_t pid);
 int				exec_simple(t_shell *sh);
 int				execve_bin(t_shell *sh);
 int				exec_pipe(t_shell *sh);
-void			pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
+// void			pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
+void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, t_pipe *old_pipe, int last);
 void			pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
 void			safe_close_all_pipes(t_shell *shell);
 int				allocate_builtin(t_shell *shell);
 int				apply_store_and_red(t_shell *sh, int storage[2]);
 void			recover_io_and_close(int storage[2]);
-int				exec_builtin_main(t_shell *sh);
+int				exec_builtin_main(t_shell *sh, t_cmd *curr_cmd);
 void			touch_all_output_files_in_list(t_cmd *cmd_list);
 int				exec_simple_pipe(t_shell *sh);
 void			exec_child(t_shell *sh, t_cmd *curr, int status);
-void			handle_check_prexec(t_shell *sh, t_cmd *curr);
+int				handle_check_prexec(t_shell *sh, t_cmd *curr);
 void			exec_child(t_shell *sh, t_cmd *curr, int status);
-int				handle_preprecheck(t_cmd *curr);
 int				exec_exit_status(int mode, int new_status);
+int				check_exec_if_builtin(t_shell *sh, t_cmd *curr);
+int				wait_for_allpid(pid_t last_pid);
+void			handle_check(t_shell *sh, t_cmd *curr);
 
 //utils
 void			ft_perror_export(char *arg);

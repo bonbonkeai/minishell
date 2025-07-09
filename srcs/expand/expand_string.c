@@ -104,5 +104,7 @@ char	*expand_string(char *str, t_shell *sh, \
 	if (!process_expansion_loop(&exp, env, out_type, error_char))
 		return (NULL);
 	result = finalize_expansion_result(&exp, out_type, error_char);
+	if (!result)
+		return (NULL);
 	return (result);
 }
