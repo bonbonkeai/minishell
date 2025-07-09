@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/05 14:58:08 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/05 15:12:34 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:42:54 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ int	exec_wait_pid(pid_t pid)
 	{
 		if (WTERMSIG(status) == 3)
 			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
-		// else if (WTERMSIG(status) == 2)
-		// 	ft_putendl_fd("\n", STDERR_FILENO);
 		status = 128 + WTERMSIG(status);
 	}
 	else if (WIFEXITED(status))

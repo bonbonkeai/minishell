@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:45:18 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 15:31:21 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:24:29 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ static int	process_cmd_heredocs(t_cmd *cmd, t_shell *sh, \
 // 	return (0);
 // }
 
-int	expand_heredoc_in_cmd_list(t_shell *sh, t_suffix_type *out_type, char *error_char)
+int	expand_heredoc_in_cmd_list(t_shell *sh, \
+		t_suffix_type *out_type, char *error_char)
 {
 	t_cmd	*curr;
 

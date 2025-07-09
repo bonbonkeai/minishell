@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:45:07 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/03 16:10:39 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:35:09 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ void	recover_io_and_close(int storage[2])
 		storage[1] = -1;
 	}
 	if (!res)
-		// perror("restore error:");
 		return ;
 }
 
@@ -103,10 +102,8 @@ int	exec_builtin_main(t_shell *sh, t_cmd *curr_cmd)
 	sh->curr_cmd = curr_cmd;
 	storage[0] = -1;
 	storage[1] = -1;
-
 	if (!touch_all_output_files(curr_cmd))
 		safe_exit_with_io_close(sh, storage, 1);
-
 	ret = apply_store_and_red(sh, storage);
 	if (ret != 0)
 	{

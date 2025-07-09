@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:45:05 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:26:04 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:33:35 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,37 +53,6 @@ bool	touch_all_output_files(t_cmd *cmd)
 	return (true);
 }
 
-/*bool	touch_all_output_files(t_cmd *cmd)
-{
-	int	fd;
-	int	i;
-
-	if (!cmd || !cmd->red)
-		return (true);
-	i = 0;
-	while (cmd->red[i])
-	{
-		if (ft_strcmp(cmd->red[i], ">") == 0 \
-		|| ft_strcmp(cmd->red[i], ">>") == 0)
-		{
-			if (cmd->red[i + 1])
-			{
-				fd = open(cmd->red[i + 1], O_WRONLY | O_CREAT, 0644);
-				if (fd < 0)
-				{
-					perror(cmd->red[i + 1]);
-					return (false);
-				}
-				else
-					close(fd);
-				i++;
-			}
-		}
-		i++;
-	}
-	return (true);
-}*/
-
 int	count_redirs(char **red)
 {
 	int	len;
@@ -94,7 +63,7 @@ int	count_redirs(char **red)
 	return (len);
 }
 
-void safe_exit_with_io_close(t_shell *sh, int *storage, int code)
+void	safe_exit_with_io_close(t_shell *sh, int *storage, int code)
 {
 	if (storage)
 		recover_io_and_close(storage);

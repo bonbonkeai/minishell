@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 19:46:41 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/03 18:01:04 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:27:49 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int	builtin_exit(t_shell *sh, char **argv)
 		sh->status = 1;
 		return (1);
 	}
-	else 
+	else
 	{
 		if (!str_to_int(argv[1], &code))
 		{

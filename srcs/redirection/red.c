@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:44:57 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 21:26:16 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:32:32 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	handle_output_redir(t_cmd *cmd, char *op, char *file)
 
 void	process_input_redir(t_shell *sh, char *op, char *file, int *storage)
 {
-	t_cmd *cmd;
-	
+	t_cmd	*cmd;
+
 	cmd = sh->curr_cmd;
 	if (!ft_strcmp(op, "<") && cmd->heredoc_fd != 1)
 	{
@@ -72,10 +72,6 @@ void	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)
 			perror("dup2 heredoc_fd");
 			safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
 		}
-		// ft_printf("HERE fd: %d\n", cmd->heredoc_fd);
-		// close_all_heredoc_fd(sh->cmd);
-		// close(cmd->heredoc_fd);
-		// cmd->heredoc_fd = -1;
 	}
 }
 // void	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)
@@ -135,18 +131,15 @@ void	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)
 // 	apply_output_red(sh, storage);
 // }
 
-
 void	resolve_redir(t_shell *sh, t_cmd *cmd, int *storage)
 {
 	int		i;
 	char	*op;
 	char	*file;
-	
+
 	if (!cmd || !cmd->red)
 		return ;
-	//
 	sh->curr_cmd = cmd;
-	//
 	i = 0;
 	while (cmd->red[i] && cmd->red[i + 1])
 	{

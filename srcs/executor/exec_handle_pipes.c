@@ -6,16 +6,17 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:39:29 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/06/05 20:52:00 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:36:14 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, t_pipe *old_pipe, int last)
+void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
+		t_pipe *old_pipe, int last)
 {
-	t_cmd *cmd;
-	
+	t_cmd	*cmd;
+
 	cmd = sh->curr_cmd;
 	if (cmd && cmd->heredoc_fd != -1)
 	{
@@ -55,7 +56,6 @@ void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, t_pipe *old_pipe, int last)
 	if (new_pipe->fd[1] != -1)
 		close(new_pipe->fd[1]);
 }
-
 
 // void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
 // {

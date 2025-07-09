@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:28:20 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 20:28:10 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:22:36 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ static bool	handle_input_line(t_shell *shell, char *line)
 	if (!line)
 	{
 		write(1, "exit\n", 5);
+		clear_history();
 		return (false);
 	}
 	if (line[0])
@@ -45,7 +46,7 @@ void	minishell_loop(t_shell *shell)
 	char	*line;
 	char	*prompt;
 
-	// rl_bind_key('\t', rl_insert);
+	rl_bind_key('\t', rl_insert);
 	while (1)
 	{
 		signal_handle();

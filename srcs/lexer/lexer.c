@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:43:58 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 20:33:02 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:20:19 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,5 @@ int	lexer(t_shell *shell)
 		shell->status = 2;
 		return (FALSE);
 	}
-	// if (is_specific_case(shell))
-	// 	return (FALSE);
 	return (TRUE);
 }

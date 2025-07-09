@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 21:13:50 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/01 21:27:13 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:29:58 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ void	apply_output_red(t_shell *sh, int *storage)
 
 	if (!sh->curr_cmd->outfile)
 		return ;
-	// ft_printf("No return\n");
 	flags = O_WRONLY | O_CREAT;
 	if (sh->curr_cmd->append)
 		flags |= O_APPEND;

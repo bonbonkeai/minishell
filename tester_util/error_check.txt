@@ -2,6 +2,10 @@
        
         ls
         pwd
+        "pwd"
+        pwd jwoefjow
+        pwd -i
+    	
         /bin/ls 
         /bin/ls -l
         cd .
@@ -41,7 +45,8 @@
         echo "a" "b" "c" | cat -e                      a b c$
         echo hello world | wc -w                       2
         echo a | grep b | wc -l | sort > res.txt       0
-        >hello<world echo  (从文件 world 中读取标准输入，把 echo 命令的输出重定向写入到 hello 文件中。)                  空行
+        >hello<world echo  (从文件 world 中读取标准输入，把 echo 命令的输出重定向写入到 hello 文件中。)    bash: world: No such file or directory
+                
         < testfile cat               wewtfgvefwerfwe\\\
 
 
@@ -187,6 +192,7 @@
         unset HOME
         cd ~
         cd cd
+	env -i
 
 
 //expansion heredoc
@@ -272,6 +278,11 @@
         ctrl D, 你正在输入过程中不会打断，但是进入新的>且没有输入时，ctrl d会退出heredoc, 回到一个新的prompt里并打印-bash: warning: here-document at line 11 delimited by end-of-file (wanted 
 `OK')
 
+		sleep 4 | sleep 10 ctrl \
+		sleep 10- | sleep 4 ctrl \
+		echo $?不同
+		
+		测返回玛：ls, echo hello, cat Makefile, export, env, exit, heredoc正常推出，heredoc ctrl c, ctrl d,打断， 正常情况ctrl c ctrl d ctrl \打断；拨错后的返回玛， /bin/ls not, cat not; pwd -i, pwd, env -i, 
 
         //
         //builtin 
@@ -391,10 +402,20 @@
     
     
 
+ cat << "'EOF'"
 
+   
+        cat << ok | grep "a" > "a.txt" | cat -e
+> owjeo
+> ajaeow
+> jofjao
+> ojfoemvmogrp
+> ok
 
-       
-        
+cat a.txt 
+ajaeow
+jofjao
+
 
 
         

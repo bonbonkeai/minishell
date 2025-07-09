@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:28:32 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/05 13:08:24 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:40:42 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,10 @@ int	exec_simple_pipe(t_shell *sh)
 	curr = sh->curr_cmd;
 	handle_check(sh, curr);
 	status = check_exec_if_builtin(sh, curr);
-	// resolve_redir(sh, curr, NULL);
 	if (status != -1)
 	{
 		free_shell(sh);
 		exit(status);
-		// safe_exit_with_io_close(sh, NULL, EXIT_FAILURE);
 	}
 	exec_child(sh, curr, status);
 	return (status);
@@ -80,10 +78,9 @@ int	exec_simple_pipe(t_shell *sh)
 // 			cmd_name = curr->cmd;
 // 		else
 // 			cmd_name = "(null)";
-// 		printf("Applying heredoc_fd for command [%s]: fd=%d\n", cmd_name, curr->heredoc_fd);
 // 	}
 // 	apply_input_red(sh);
-//     apply_output_red(sh);
-//     status = execve_bin(sh);
-//     exit(status);
+// 	apply_output_red(sh);
+// 	status = execve_bin(sh);
+// 	exit(status);
 // }

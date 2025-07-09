@@ -6,15 +6,14 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 18:44:52 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 20:52:31 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:27:07 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 // int	builtin_env(t_shell *sh)
 // {
-// 	t_env	*cur;
-	
+// 	t_env	*cur;	
 // 	if (sh->cmd->args[1])
 // 		return (ft_putstr_fd("This input is not accecpted\n", 2), 127);
 // 	cur = sh->env;
@@ -31,7 +30,7 @@
 // 	}
 // 	return (0);
 // }
-static void print_env_null_terminated(t_shell *sh)
+static void	print_env_null_terminated(t_shell *sh)
 {
 	t_env	*cur;
 

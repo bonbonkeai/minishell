@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:51:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/03 20:25:41 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:46:06 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,8 @@
 line 1 delimited by end-of-file (wanted `ok')\n"
 # define ERR_PWD "minishell: pwd: %s: invalid option \npwd: usage: pwd [-LP]\n"
 # define ERR_ENV_I "This input is not accecpted\n"
-# define ERR_ENV "env: invalid option `%s'\nTry 'env --help' for more information.\n"
+# define ERR_ENV "env: invalid option `%s'\nTry \
+'env --help' for more information.\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -265,9 +266,11 @@ int				append_op_and_target(char **new_red, int len, \
 char			**init_new_redir_array(t_cmd *cmd, int len);
 int				count_redirs(char **red);
 void			safe_exit_with_io_close(t_shell *sh, int *storage, int code);
-void			process_input_redir(t_shell *sh, char *op, char *file, int *storage);
+void			process_input_redir(t_shell *sh, char *op, \
+			char *file, int *storage);
 void			apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage);
-void			process_single_redirection(t_shell *sh, char *op, char *file, int *storage);
+void			process_single_redirection(t_shell *sh, char *op, \
+			char *file, int *storage);
 void			close_all_heredoc_fd(t_cmd *cmd_list);
 
 //expander
@@ -305,7 +308,8 @@ char			*process_heredoc_content(char *delimiter, t_shell *sh);
 char			*merge_quoted_string(const char *limiter);
 char			*get_heredoc_content(char *target, char *lim, t_shell *sh);
 char			*set_should_expand(t_shell *sh, char *target);
-int				expand_heredoc_in_cmd_list(t_shell *sh, t_suffix_type *out_type, char *error_char);
+int				expand_heredoc_in_cmd_list(t_shell *sh, \
+				t_suffix_type *out_type, char *error_char);
 char			*expand_var_here(char *input, t_shell *sh);
 int				expand_var_here_check(char *input, \
 				t_expansion *exp, t_shell *sh);
@@ -353,8 +357,8 @@ int				exec_wait_pid(pid_t pid);
 int				exec_simple(t_shell *sh);
 int				execve_bin(t_shell *sh);
 int				exec_pipe(t_shell *sh);
-// void			pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last);
-void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, t_pipe *old_pipe, int last);
+void			pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
+			t_pipe *old_pipe, int last);
 void			pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe);
 void			safe_close_all_pipes(t_shell *shell);
 int				allocate_builtin(t_shell *shell);

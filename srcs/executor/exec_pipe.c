@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:46:13 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 18:09:31 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:38:35 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static int	prepare_pipe_command(t_shell *sh, t_cmd *curr)
 			return (-1);
 		}
 	}
-	// ft_printf("IN fd: %d\nOUT fd: %d\n", sh->new_pipe.fd[0], sh->new_pipe.fd[1]);
 	return (0);
 }
 
@@ -101,17 +100,13 @@ static int	prepare_pipe_command(t_shell *sh, t_cmd *curr)
 
 void	close_all_heredoc_fd(t_cmd *cmd_list)
 {
-	t_cmd *curr;
-	// int count = 0;
-	// int count2 = 0;
-	
+	t_cmd	*curr;
+
 	curr = cmd_list;
 	while (curr)
 	{
-		// ft_printf("NUMBER %d HEREDOC_FD %d\n", count++, curr->heredoc_fd);
 		if (curr->heredoc_fd != -1)
 		{
-			// ft_printf("NUMBER CLOSE %d\n", count2++);
 			close(curr->heredoc_fd);
 			curr->heredoc_fd = -1;
 		}
@@ -123,7 +118,6 @@ static void	iteration_pipe(t_shell *sh)
 {
 	if (!sh->curr_cmd)
 		return ;
-	//resolve_redir(sh->curr_cmd);
 	if ((if_cmd_start(sh->curr_cmd)) == 1 || (if_cmd_simple(sh->curr_cmd)) != 2)
 	{
 		if (if_cmd_start(sh->curr_cmd) == 1)
@@ -135,7 +129,6 @@ static void	iteration_pipe(t_shell *sh)
 		return ;
 	safe_close_all_pipes(sh);
 }
-
 
 int	exec_pipe(t_shell *sh)
 {
@@ -156,7 +149,6 @@ int	exec_pipe(t_shell *sh)
 			return (-1);
 		if (last_cmd && if_cmd_builtin(sh))
 		{
-			// status = exec_builtin_main(sh);
 			status = exec_builtin_main(sh, curr);
 			break ;
 		}
@@ -166,7 +158,7 @@ int	exec_pipe(t_shell *sh)
 			perror("fork failed");
 			return (1);
 		}
-		else if (pid == 0) 
+		else if (pid == 0)
 		{
 			pipe_fork_child(sh, &sh->new_pipe, &sh->old_pipe, last_cmd);
 			iteration_pipe(sh);

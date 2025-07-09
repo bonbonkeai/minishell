@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:29:10 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 20:30:31 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/09 14:21:36 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,10 +75,16 @@ static bool	tokenize_and_parse(t_shell *sh)
 static bool	expand_and_check(t_shell *sh, t_suffix_type *illegal_type, \
 				char *error_char)
 {
+	int	status;
+
 	if (g_signal == SIGINT || !expand_all(sh, illegal_type, error_char))
 	{
 		has_illegal_expansion(*illegal_type, *error_char);
-		cleanup_and_exit(sh, 2);
+		if (*illegal_type == SUFFIX_OK && *error_char == 0)
+			status = 0;
+		else
+			status = 2;
+		cleanup_and_exit(sh, status);
 		return (false);
 	}
 	return (true);
@@ -138,9 +144,6 @@ void	process_input(t_shell *sh, char *input)
 	sh->cmd = cmd;
 	if (!expand_and_check(sh, &illegal_type, &error_char))
 		return ;
-	//
-	// print_cmd_list(sh->cmd);
-	//
 	sh->curr_cmd = sh->cmd;
 	if (sh->cmd && g_signal != SIGINT)
 		sh->status = executor(sh);

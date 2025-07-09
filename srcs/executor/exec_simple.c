@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:52:08 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/03 20:22:36 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:42:01 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,16 @@ int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 {
 	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
 		return (0);
-
 	if (!curr->cmd || curr->cmd[0] == '\0')
 	{
 		print_cmd_error(curr->cmd, "command not found");
 		return (127);
 	}
-
 	if (is_empty_command(sh->trimmed_prompt))
 	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");
 		return (127);
 	}
-
 	if (is_directory(curr->cmd))
 	{
 		print_cmd_error(curr->cmd, "Is a directory");
@@ -36,7 +33,6 @@ int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 	}
 	return (-1);
 }
-
 
 // int	check_exec_if_builtin(t_shell *sh, t_cmd *curr)
 // {
@@ -63,21 +59,17 @@ int	check_exec_if_builtin(t_shell *sh, t_cmd *curr)
 	int	status;
 
 	status = -1;
-	// (void)curr;
 	if (if_cmd_builtin(sh) == 1)
 	{
-		// status = exec_builtin_main(sh);
 		status = exec_builtin_main(sh, curr);
 		return (status);
 	}
 	return (status);
 }
 
-
 void	exec_child(t_shell *sh, t_cmd *curr, int status)
 {
 	resolve_redir(sh, curr, NULL);
-	// ft_printf("SHELL CMD %s\n", sh->cmd->cmd);
 	close_all_heredoc_fd(sh->cmd);
 	signal_default();
 	status = execve_bin(sh);
