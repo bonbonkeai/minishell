@@ -85,48 +85,9 @@ void	minishell_loop(t_shell *shell)
 		}
 		if (!prompt)
 			break ;
-		line = readline(prompt);
+		line = (prompt);
 		free(prompt);
 		if (!handle_input_line(shell, line))
 			break ;
 	}
 }
-
-// static char	*read_line_opt(char *line, char *prompt)
-// {
-// 	if (isatty(STDIN_FILENO))
-// 		line = readline(prompt);
-// 	else
-// 		line = get_next_line(fileno(stdin));
-// 	return (line);
-// }
-
-// void	minishell_loop(t_shell *shell)
-// {
-// 	char	*line;
-// 	char	*prompt;
-
-// 	rl_bind_key('\t', rl_insert);
-// 	while (1)
-// 	{
-// 		signal_inloop();
-// 		if (g_signal != SIGINT)
-// 			prompt = safe_prompt(shell);
-// 		if (!prompt)
-// 		{
-// 			write(2, "Error: failed to allocate prompt\n", 33);
-// 			break ;
-// 		}
-// 		line = read_line_opt(line, prompt);
-// 		if (line == NULL)
-// 		{
-// 			free(prompt);
-// 			if (isatty(STDERR_FILENO))
-// 				ft_putendl_fd("exit", STDERR_FILENO);
-// 			break ;
-// 		}
-// 		free(prompt);
-// 		if (!handle_input_line(shell, line))
-// 			break ;
-// 	}
-// }

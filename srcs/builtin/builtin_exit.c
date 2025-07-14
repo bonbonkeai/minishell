@@ -73,32 +73,6 @@ static void	exit_free(t_shell *sh)
 	rl_clear_history();
 }
 
-// int	builtin_exit(t_shell *sh, char **argv)
-// {
-// 	long	code;
-// 	int		len;
-
-// 	code = 0;
-// 	len = 0;
-// 	while (argv[len])
-// 		len++;
-// 	write(STDOUT_FILENO, "exit\n", 5);
-// 	if (!str_to_int(argv[1], &code))
-// 	{
-// 		put_error("numeric argument required", argv[1]);
-// 		exit_free(sh);
-// 		exit(2);
-// 	}
-// 	if (len > 2)
-// 	{
-// 		write(2, "minishell: exit: too many arguments\n", 37);
-// 		return (1);
-// 	}
-// 	// exit_free(sh);
-// 	rl_clear_history();
-// 	exit((unsigned char)code);
-// }
-
 int	builtin_exit(t_shell *sh, char **argv)
 {
 	long	code;

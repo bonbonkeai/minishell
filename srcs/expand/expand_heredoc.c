@@ -33,22 +33,6 @@ static int	handle_heredoc(t_cmd *cmd, t_shell *sh, char *target)
 	return (0);
 }
 
-// static int	process_cmd_heredocs(t_cmd *cmd, t_shell *sh)
-// {
-// 	int	i;
-// 	i = 0;
-// 	while (cmd->red && cmd->red[i] && cmd->red[i + 1])
-// 	{
-// 		if (!ft_strcmp(cmd->red[i], "<<"))
-// 		{
-// 			if (handle_heredoc(cmd, sh, cmd->red[i + 1]))
-// 				return (1);
-// 		}
-// 		i += 2;
-// 	}
-// 	return (0);
-// }
-
 static int	process_cmd_heredocs(t_cmd *cmd, t_shell *sh, \
 	t_suffix_type *out_type, char *error_char)
 {
@@ -75,20 +59,6 @@ static int	process_cmd_heredocs(t_cmd *cmd, t_shell *sh, \
 	}
 	return (0);
 }
-
-// int	expand_heredoc_in_cmd_list(t_shell *sh)
-// {
-// 	t_cmd	*curr;
-
-// 	curr = sh->cmd;
-// 	while (curr)
-// 	{
-// 		if (process_cmd_heredocs(curr, sh))
-// 			return (1);
-// 		curr = curr->next;
-// 	}
-// 	return (0);
-// }
 
 int	expand_heredoc_in_cmd_list(t_shell *sh, \
 		t_suffix_type *out_type, char *error_char)

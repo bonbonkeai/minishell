@@ -39,22 +39,6 @@ bool	try_open_output_file(char *op, char *filename)
 	return (true);
 }
 
-// static bool	try_open_output_file(char *filename)
-// {
-// 	int	fd;
-
-// 	if (!filename)
-// 		return (true);
-// 	fd = open(filename, O_WRONLY | O_CREAT, 0644);
-// 	if (fd < 0)
-// 	{
-// 		perror(filename);
-// 		return (false);
-// 	}
-// 	close(fd);
-// 	return (true);
-// }
-
 bool	touch_all_output_files(t_cmd *cmd)
 {
 	int	i;
@@ -74,26 +58,6 @@ bool	touch_all_output_files(t_cmd *cmd)
 	}
 	return (true);
 }
-
-// bool	touch_all_output_files(t_cmd *cmd)
-// {
-// 	int	i;
-
-// 	if (!cmd || !cmd->red)
-// 		return (true);
-// 	i = 0;
-// 	while (cmd->red[i])
-// 	{
-// 		if (is_output_redir(cmd->red[i]))
-// 		{
-// 			if (!try_open_output_file(cmd->red[i + 1]))
-// 				return (false);
-// 			i++;
-// 		}
-// 		i++;
-// 	}
-// 	return (true);
-// }
 
 bool	touch_all_output_files_red(t_cmd *cmd, int i)
 {

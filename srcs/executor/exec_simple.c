@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 16:52:08 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/11 20:25:17 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/14 18:07:10 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,34 +82,3 @@ int	exec_simple(t_shell *sh)
 	}
 	return (status);
 }
-
-// int	exec_simple(t_shell *sh)
-// {
-// 	t_cmd	*curr;
-// 	int		status;
-// 	int		pid;
-// 	int		res_parent;
-
-// 	curr = sh->curr_cmd;
-// 	res_parent = handle_check_prexec(sh, curr);
-// 	if (res_parent != -1)
-// 		return (res_parent);
-// 	status = check_exec_if_builtin(sh, curr);
-// 	if (status == -1)
-// 	{
-// 		pid = fork();
-// 		if (pid == 0)
-// 			exec_child(sh, curr, status);
-// 		else if (pid > 0)
-// 		{
-// 			curr->pid = pid;
-// 			return (exec_wait_pid(pid));
-// 		}
-// 		else
-// 		{
-// 			perror("fork failed");
-// 			return (1);
-// 		}
-// 	}
-// 	return (status);
-// }

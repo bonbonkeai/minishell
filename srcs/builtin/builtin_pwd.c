@@ -12,21 +12,6 @@
 
 #include "minishell.h"
 
-// int	builtin_pwd(void)
-// {
-// 	char	*pth;
-
-// 	pth = getcwd(NULL, 0);
-// 	if (!pth)
-// 	{
-// 		perror("pwd:");
-// 		return (EXIT_FAILURE);
-// 	}
-// 	ft_printf("%s\n", pth);
-// 	free(pth);
-// 	return (EXIT_SUCCESS);
-// }
-
 int	builtin_pwd(t_shell *sh)
 {
 	char	*pth;

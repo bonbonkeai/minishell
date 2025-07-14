@@ -12,40 +12,6 @@
 
 #include "minishell.h"
 
-// t_env   *add_new_node(t_env **envp, const char *key, const char *value)
-// {
-//     t_env *new;
-//     t_env *temp;
-
-//     new = malloc(sizeof(t_env));
-//     if (!new)
-//         return (NULL);
-//     if (!envp)
-//         return (free(new), NULL);
-//     new->key = ft_strdup(key);
-//     if (!new->key)
-//         return (free(new), NULL);
-//     if (value)
-//     {    
-//         new->value = ft_strdup(value);
-//         if (!new->value)
-//             return (free(new->key), free(new), NULL);
-//     }
-//     else
-//         new->value = NULL;
-//     new->next = NULL;
-//     if (!*envp)
-//         *envp = new;
-//     else
-//     {
-//         temp = *envp;
-//         while (temp->next)
-//             temp = temp->next;
-//         temp->next = new;
-//     }
-//     return (new);
-// }
-
 static t_env	*create_node(const char *key, const char *value)
 {
 	t_env	*node;

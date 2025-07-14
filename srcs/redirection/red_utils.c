@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:45:05 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 13:26:04 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/14 18:07:45 by jdu              ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,66 +98,3 @@ void	add_redir(t_cmd *cmd, char *op, char *target)
 	free_paths(cmd->red);
 	cmd->red = new_red;
 }
-
-// void    add_redir(t_cmd *cmd, char *op, char *target)
-// {
-//     int len;
-//     char **new_red;
-//     int i;
-//     int j;
-
-//     if (!op || !target)
-//     {
-//         ft_fprintf(2, "minishell: syntax error near unexpected token\n");
-//         return ;
-//     }
-//     len = 0;
-//     while (cmd->red && cmd->red[len])
-//         len++;
-//     new_red = malloc(sizeof(char *) * (len + 3));
-//     if (!new_red)
-//         return ;
-//     i = 0;
-//     while (i < len)
-//     {
-//         new_red[i] = ft_strdup(cmd->red[i]);
-//         if (!new_red[i])
-//         {
-//             while (--i >= 0)
-//                 free(new_red[i]);
-//             free(new_red);
-//             return ;
-//         }
-//         i++;
-//     }
-//     while (i < len)
-//     {
-//         new_red[i] = cmd->red[i];
-//         i++;
-//     }
-//     new_red[len] = ft_strdup(op);
-//     if (!new_red[len])
-//     {
-//         while (--len >= 0)
-//             free(new_red[len]);
-//         free(new_red);
-//         return ;
-//     }
-//     new_red[len + 1] = ft_strdup(target);
-//     if (!new_red[len + 1])
-//     {
-//         while (--len >= 0)
-//             free(new_red[len]);
-//         free(new_red);
-//         return ;
-//     }
-//     new_red[len + 2] = NULL;
-//     if (cmd->red)
-//     {
-//         j = 0;
-//         while (cmd->red[j])
-//             free(cmd->red[j++]);
-//         free(cmd->red);
-//     }
-//     cmd->red = new_red;
-// }

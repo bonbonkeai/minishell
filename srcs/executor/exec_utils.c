@@ -79,21 +79,3 @@ void	close_all_heredoc_fd(t_cmd *cmd_list)
 		curr = curr->next;
 	}
 }
-// int	exec_wait_pid(pid_t pid)
-// {
-// 	int	status;
-
-// 	status = 0;
-// 	waitpid(pid, &status, 0);
-// 	if (WIFSIGNALED(status))
-// 	{
-// 		if (WTERMSIG(status) == 3)
-// 			ft_putendl_fd("Quit (core dumped)", STDERR_FILENO);
-// 		else if (WTERMSIG(status) == 2)
-// 			ft_putendl_fd("\n", STDERR_FILENO);
-// 		status = 128 + WTERMSIG(status);
-// 	}
-// 	else if (WIFEXITED(status))
-// 		status = WEXITSTATUS(status);
-// 	return (status);
-// }

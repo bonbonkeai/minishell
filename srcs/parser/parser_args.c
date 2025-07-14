@@ -83,18 +83,6 @@ char	**duplicate_args(char **old_args, int len, const char *arg)
 	return (new_args);
 }
 
-/*int	is_cmd_valide(t_cmd *cmd)
-{
-	if (!cmd)
-		return (0);
-	if (cmd->cmd && cmd->cmd[0] != '\0' && \
-	cmd->args && cmd->args[0] != NULL)
-		return (1);
-	if (cmd->heredoc_limiter || cmd->infile || cmd->outfile)
-		return (1);
-	return (0);
-}*/
-
 bool	is_cmd_valide(t_cmd *cmd)
 {
 	if (!cmd)
@@ -112,13 +100,3 @@ bool	is_cmd_valide(t_cmd *cmd)
 	}
 	return (false);
 }
-// bool	is_cmd_structurally_valid(t_cmd *cmd)
-// {
-// 	if (!cmd)
-// 		return (false);
-// 	if (cmd->cmd && cmd->cmd[0])
-// 		return (true);
-// 	if (cmd->heredoc_limiter && cmd->heredoc)
-// 		return (true);
-// 	return (false);
-// }

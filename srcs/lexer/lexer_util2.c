@@ -27,20 +27,3 @@ int	is_empty_command(const char *input)
 	}
 	return (TRUE);
 }
-
-/*int	is_specific_case(t_shell *s)
-{
-	int	len;
-
-	if (!s->trimmed_prompt)
-		return (TRUE);
-	len = ft_strlen(s->trimmed_prompt);
-	if ((s->trimmed_prompt[0] == '"' && s->trimmed_prompt[len - 1] == '"') || \
-	(s->trimmed_prompt[0] == '\'' && s->trimmed_prompt[len - 1] == '\''))
-	{
-		s->status = 127;
-		print_cmd_error(s->trimmed_prompt, ERR_COMMAND);
-		return (TRUE);
-	}
-	return (FALSE);
-}*/

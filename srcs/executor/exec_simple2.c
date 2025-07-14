@@ -35,7 +35,7 @@ int	handle_check_prexec(t_shell *sh, t_cmd *curr)
 	if (!curr || (!curr->cmd && !curr->args && curr->heredoc))
 		return (0);
 	if ((!curr->cmd || curr->cmd[0] == '\0') && !curr->red)
-		return (0);
+		return (print_cmd_error(curr->cmd, "command not found"), 0);
 	if (is_empty_command(sh->trimmed_prompt))
 	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");

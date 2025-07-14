@@ -16,6 +16,7 @@ void	handle_check(t_shell *sh, t_cmd *curr)
 {
 	if ((!curr || !curr->cmd || curr->cmd[0] == '\0') && !curr->red)
 	{
+		print_cmd_error(curr->cmd, "command not found");
 		free_shell(sh);
 		exit (0);
 	}

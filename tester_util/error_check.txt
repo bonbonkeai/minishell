@@ -71,6 +71,32 @@
 	< outfile cat > outfile
 	cat > outfile < outfile
 		
+	/bin/ls not
+	echo $?
+	cat not
+	echo $?
+	pwd
+	echo $?
+	exit 
+	echo $?
+	ctrl D 
+	echo $?
+	env owje
+	echo $?
+	env -i
+	echo $?
+	
+	""|""|""
+	./usr/bin | ./bin
+	echo "$" | echo $
+	cat < mis | echo hello
+	$EMPTY
+	echo $?
+	$EMPTY echo hi
+	srcs
+	./srcs
+	echo "$"HOME "$   $$$ ""$HOME"
+	
 
 
 

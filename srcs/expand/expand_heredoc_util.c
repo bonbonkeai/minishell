@@ -42,29 +42,6 @@ char	*strip_outer_quotes(const char *s)
 	return (ft_strdup(s));
 }
 
-// char	*merge_quoted_string(const char *limiter)
-// {
-// 	int		i;
-// 	int		j;
-// 	char	*merged;
-
-// 	i = 0;
-// 	j = 0;
-// 	if (!limiter)
-// 		return (NULL);
-// 	merged = malloc(sizeof(char) * (ft_strlen(limiter) + 1));
-// 	if (!merged)
-// 		return (NULL);
-// 	while (limiter[i])
-// 	{
-// 		if (!is_quote(limiter[i]))
-// 			merged[j++] = limiter[i];
-// 		i++;
-// 	}
-// 	merged[j] = '\0';
-// 	return (merged);
-// }
-
 int	valid_exp(int c)
 {
 	if (c == '?' || c == '{' || ft_isalnum(c) || c == '_')

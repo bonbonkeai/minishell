@@ -100,30 +100,32 @@ static bool	expand_and_check(t_shell *sh, t_suffix_type *illegal_type, \
 // 	}
 // }
 
-void	remove_empty_args(t_cmd *cmd_list)
+char	**remove_empty_args(char **args)
 {
-	t_cmd	*curr;
+	char	**clean;
 	int		i;
+	int		count;
 
-	curr = cmd_list;
-	while (curr)
+	if (!args)
+		return (NULL);
+	i = 0;
+	count = 0;
+	count = ft_strslen(args);
+	if (count == 0)
+		return (NULL);
+	clean = malloc(sizeof(char *) * (count + 1));
+	if (!clean)
+		return (NULL);
+	i = 0;
+	count = 0;
+	while (args[i])
 	{
-		if (curr->args && curr->args[0] && curr->args[0][0] == '\0')
-		{
-			free(curr->args[0]);
-			i = 0;
-			while (curr->args[i + 1])
-			{
-				curr->args[i] = curr->args[i + 1];
-				i++;
-			}
-			curr->args[i] = NULL;
-			if (curr->cmd)
-				free(curr->cmd);
-			curr->cmd = ft_strdup(curr->args[0]);
-		}
-		curr = curr->next;
+		if (args[i][0] != '\0')
+			clean[count++] = ft_strdup(args[i]);
+		i++;
 	}
+	clean[count] = NULL;
+	return (clean);
 }
 
 void	process_input(t_shell *sh, char *input)
@@ -144,7 +146,6 @@ void	process_input(t_shell *sh, char *input)
 	sh->cmd = cmd;
 	if (!expand_and_check(sh, &illegal_type, &error_char))
 		return ;
-	remove_empty_args(sh->cmd);
 	sh->curr_cmd = sh->cmd;
 	if (sh->cmd && g_signal != SIGINT)
 		sh->status = executor(sh);
