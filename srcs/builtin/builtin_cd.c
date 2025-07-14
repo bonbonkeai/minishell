@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/12 19:56:49 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/09 18:21:29 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 19:21:37 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ static void	cd_error(char *msg, char *arg)
 {
 	write(2, "cd: ", 4);
 	if (arg)
+	{
 		write(2, arg, ft_strlen(arg));
-	write(2, ": ", 2);
+		write(2, ": ", 2);
+	}
 	write(2, msg, ft_strlen(msg));
 	write(2, "\n", 1);
 }
@@ -41,24 +43,21 @@ static char	*resolve_cd_special_cases(t_shell *sh, char *arg)
 		home = get_env_var_value(sh, "HOME");
 		if (home)
 			return (ft_strdup(home));
-		else
-			return (NULL);
+		return (NULL);
 	}
 	if (ft_strcmp(arg, "~") == 0)
 	{
 		home = get_env_var_value(sh, "HOME");
 		if (home)
 			return (ft_strdup(home));
-		else
-			return (ft_strdup(sh->default_home));
+		return (ft_strdup(sh->default_home));
 	}
 	else if (ft_strcmp(arg, "-") == 0)
 	{
 		oldpwd = get_env_var_value(sh, "OLDPWD");
 		if (oldpwd)
 			return (ft_strdup(oldpwd));
-		else
-			return (NULL);
+		return (NULL);
 	}
 	return (NULL);
 }
@@ -88,6 +87,8 @@ int	builtin_cd(t_shell *shell, char **argv)
 	char	*target;
 	char	oldpwd[PATH_MAX];
 
+	if (argv[1] && argv[2])
+		return (cd_error("too many arguments", NULL), 1);
 	getcwd(oldpwd, PATH_MAX);
 	if (!getcwd(oldpwd, PATH_MAX))
 	{
@@ -96,17 +97,14 @@ int	builtin_cd(t_shell *shell, char **argv)
 	}
 	target = resolve_cd_target(shell, argv);
 	if (!target)
-	{
-		cd_error("HOME not set", "cd");
-		return (1);
-	}
+		return (cd_error("HOME not set", NULL), 1);
 	if (chdir(target) != 0)
 	{
 		cd_error("No such file or directory", target);
-		free(target);
-		return (1);
+		return (free(target), 1);
 	}
+	if (argv[1] && ft_strcmp(argv[1], "-") == 0)
+		printf("%s\n", target);
 	update_pwd_vars(oldpwd, shell);
-	free(target);
-	return (0);
+	return (free(target), 0);
 }

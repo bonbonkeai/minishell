@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/02 17:51:40 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/09 14:46:06 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/13 19:44:52 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,13 @@
 # define ERR_TOKEN_C "minishell: syntax error near unexpected token `%c'\n"
 # define MES_E "export: usage: export [-fn] [name[=value] ...] or export -p\n"
 # define ERRMAL "export: memory allocation failed"
-# define ERR_SIGNAL "minishell: warning: here-document at \
-line 1 delimited by end-of-file (wanted `ok')\n"
+# define ERR_S "minishell: warning: here-document at \
+line 1 delimited by end-of-file (wanted `%s')\n"
 # define ERR_PWD "minishell: pwd: %s: invalid option \npwd: usage: pwd [-LP]\n"
 # define ERR_ENV_I "This input is not accecpted\n"
 # define ERR_ENV "env: invalid option `%s'\nTry \
 'env --help' for more information.\n"
+# define ERR_STN "minishell: syntax error near unexpected token `%s'\n"
 
 # define OPERATOR "|<>"
 # define TRUE 1
@@ -84,6 +85,12 @@ typedef struct s_pipe
 {
 	int	fd[2];
 }		t_pipe;
+
+typedef struct s_pipe_data
+{
+	pid_t	pid;
+	int		status;
+}	t_pipe_data;
 
 typedef enum e_token_type
 {
@@ -118,6 +125,7 @@ typedef struct s_cmd
 	int				heredoc_expand;
 	int				heredoc_fd;
 	int				pid;
+	bool			is_dummy_cmd;
 	struct s_cmd	*next;
 }			t_cmd;
 
@@ -200,6 +208,7 @@ void			signal_sigint(int sig);
 int				event(void);
 void			signal_handle(void);
 void			signal_default(void);
+void			signal_inloop(void);
 
 //promt
 char			*ft_getcwd(char *buf, size_t size);
@@ -246,7 +255,8 @@ t_cmd			*parser(t_shell *sh);
 int				check_pipe(t_token *tokens);
 t_cmd			*parse_one_command(t_token **token_list);
 void			add_arg(t_cmd *cmd, const char *arg);
-int				is_cmd_valide(t_cmd *cmd);
+// int				is_cmd_valide(t_cmd *cmd);
+bool			is_cmd_valide(t_cmd *cmd);
 t_cmd			*build_cmd_list(t_token *token_list);
 bool			handle_token(t_cmd *cmd, t_token **token_list);
 int				copy_old_args(char **dest, char **src, int len);
@@ -255,23 +265,27 @@ char			**duplicate_args(char **old_args, int len, const char *arg);
 //redirection
 void			handle_input_redir(t_cmd *cmd, char *op, char *file);
 void			handle_output_redir(t_cmd *cmd, char *op, char *file);
-void			resolve_redir(t_shell *sh, t_cmd *cmd, int *storage);
+// void			resolve_redir(t_shell *sh, t_cmd *cmd, int *storage);
+int				resolve_redir(t_shell *sh, t_cmd *cmd, int *storage);
 void			add_redir(t_cmd *cmd, char *op, char *target);
 int				is_red_type(t_token_type type);
-void			apply_input_red(t_shell *sh, int *storage);
-void			apply_output_red(t_shell *sh, int *storage);
+// void			apply_input_red(t_shell *sh, int *storage);
+int				apply_input_red(t_shell *sh, int *storage);
+// void			apply_output_red(t_shell *sh, int *storage);
+int				apply_output_red(t_shell *sh, int *storage);
 bool			touch_all_output_files(t_cmd *cmd);
 int				append_op_and_target(char **new_red, int len, \
 				char *op, char *target);
 char			**init_new_redir_array(t_cmd *cmd, int len);
 int				count_redirs(char **red);
-void			safe_exit_with_io_close(t_shell *sh, int *storage, int code);
-void			process_input_redir(t_shell *sh, char *op, \
-			char *file, int *storage);
-void			apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage);
+void			process_input_redir(t_shell *sh, char *op, char *file);
+// void			apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage);
+int				apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage);
 void			process_single_redirection(t_shell *sh, char *op, \
-			char *file, int *storage);
+				char *file, int *storage);
 void			close_all_heredoc_fd(t_cmd *cmd_list);
+void			safe_close(t_shell *sh, int *storage);
+bool			touch_all_output_files_red(t_cmd *cmd, int i);
 
 //expander
 int				expand_tab(char **tab, t_shell *sh, \
@@ -374,10 +388,17 @@ int				exec_exit_status(int mode, int new_status);
 int				check_exec_if_builtin(t_shell *sh, t_cmd *curr);
 int				wait_for_allpid(pid_t last_pid);
 void			handle_check(t_shell *sh, t_cmd *curr);
+int				prepare_pipe_command(t_shell *sh, t_cmd *curr);
+int				handle_dummy_cmd(t_shell *sh, t_cmd *cmd);
+int				iteration_pipe(t_shell *sh);
+bool			is_last_cmd(t_cmd *cmd);
+int				command_num(t_cmd *cmd);
 
 //utils
 void			ft_perror_export(char *arg);
 void			bubble_sort_env(t_env **arr, int size);
+void			handle_unset_invalid_var(int *status);
+int				unset_op(const char *opt);
 char			**get_args(t_shell *sh);
 char			*get_path(t_shell *sh);
 char			**get_env_variables(t_shell *sh);
@@ -396,5 +417,7 @@ char			*get_env_var_value(t_shell *sh, char *name);
 void			process_input(t_shell *shell, char *input);
 void			minishell_loop(t_shell *shell);
 int				main(int argc, char **argv, char **envp);
+void			cleanup_and_exit(t_shell *sh, int error_status);
+void			print_pipe_state(t_pipe *old_pipe, t_pipe *new_pipe);
 
 #endif

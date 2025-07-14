@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 18:41:13 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/03 20:03:28 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/13 21:13:52 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,26 @@ int	exec_exit_status(int mode, int new_status)
 	return (last_exit_status);
 }
 
+int	handle_dummy_cmd(t_shell *sh, t_cmd *cmd)
+{
+	if (resolve_redir(sh, cmd, NULL) < 0)
+		return (1);
+	free(cmd->cmd);
+	cmd->cmd = NULL;
+	cmd->is_dummy_cmd = 0;
+	return (0);
+}
+
 int	executor(t_shell *shell)
 {
 	int	status;
 
-	if (!shell->cmd)
+	if (!shell || !shell->cmd)
 		return (true);
 	if (!shell->cmd || (!shell->cmd->cmd && !shell->cmd->args && \
 				(shell->cmd->heredoc || \
 				shell->cmd->infile || shell->cmd->outfile)))
-		return (true);
+		return (0);
 	shell->curr_cmd = shell->cmd;
 	if (if_cmd_simple(shell->cmd) == 1)
 		status = exec_simple(shell);
@@ -50,8 +60,18 @@ int	executor(t_shell *shell)
 int	is_directory(const char *path)
 {
 	struct stat	st;
+	int			len;
 
-	if (stat(path, &st) == 0 && S_ISDIR(st.st_mode))
+	if (!path)
+		return (0);
+	if (stat(path, &st) != 0 || !S_ISDIR(st.st_mode))
+		return (0);
+	len = ft_strlen(path);
+	if (path[0] == '/')
+		return (1);
+	if (ft_strncmp(path, "./", 2) == 0)
+		return (1);
+	if (len > 0 && path[len - 1] == '/')
 		return (1);
 	return (0);
 }

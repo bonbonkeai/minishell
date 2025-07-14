@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:28:32 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/09 14:40:42 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/13 19:37:29 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,21 @@
 
 void	handle_check(t_shell *sh, t_cmd *curr)
 {
-	if (!curr || !curr->cmd || curr->cmd[0] == '\0')
+	if ((!curr || !curr->cmd || curr->cmd[0] == '\0') && !curr->red)
 	{
-		print_cmd_error(curr->cmd, "command not found");
-		exit (127);
+		free_shell(sh);
+		exit (0);
 	}
 	if (is_empty_command(sh->trimmed_prompt))
 	{
 		print_cmd_error(sh->trimmed_prompt, "command not found");
-		exit (126);
+		free_shell(sh);
+		exit (127);
 	}
 	if (is_directory(curr->cmd))
 	{
 		print_cmd_error(curr->cmd, "Is a directory");
+		free_shell(sh);
 		exit (126);
 	}
 }
@@ -40,47 +42,46 @@ int	exec_simple_pipe(t_shell *sh)
 	handle_check(sh, curr);
 	status = check_exec_if_builtin(sh, curr);
 	if (status != -1)
-	{
-		free_shell(sh);
-		exit(status);
-	}
+		return (status);
 	exec_child(sh, curr, status);
 	return (status);
 }
 
-//  int	exec_simple_pipe(t_shell *sh)
-// {
-//     t_cmd	*curr = sh->curr_cmd;
-//     int		status;
+int	prepare_pipe_command(t_shell *sh, t_cmd *curr)
+{
+	sh->curr_cmd = curr;
+	sh->new_pipe.fd[0] = -1;
+	sh->new_pipe.fd[1] = -1;
+	if (curr->next)
+	{
+		if (pipe(sh->new_pipe.fd) == -1)
+		{
+			perror("pipe failed");
+			return (-1);
+		}
+	}
+	return (0);
+}
 
-//     if (!curr || !curr->cmd || curr->cmd[0] == '\0')
-//     {
-//         print_cmd_error("", "command not found");
-//         exit(127);
-//     }
-//     if (is_directory(curr->cmd))
-//     {
-//         print_cmd_error(curr->cmd, "Is a directory");
-//         exit(126);
-//     }
-//     if (if_cmd_builtin(sh) == 1)
-//     {
-//         status = exec_builtin_main(sh);
-// 		free_shell(sh);
-//         exit(status);
-//     }
-// 	touch_all_output_files(curr);
-// 	resolve_redir(curr);
-// 	if (curr->heredoc_fd != -1)
-// 	{
-// 		char *cmd_name;
-// 		if (curr->cmd && curr->cmd[0])
-// 			cmd_name = curr->cmd;
-// 		else
-// 			cmd_name = "(null)";
-// 	}
-// 	apply_input_red(sh);
-// 	apply_output_red(sh);
-// 	status = execve_bin(sh);
-// 	exit(status);
-// }
+bool	is_last_cmd(t_cmd *cmd)
+{
+	if (cmd->next == NULL)
+		return (1);
+	else
+		return (0);
+}
+
+int	command_num(t_cmd *cmd)
+{
+	t_cmd		*curr_count;
+	int			command_count;
+
+	curr_count = cmd;
+	command_count = 0;
+	while (curr_count)
+	{
+		command_count++;
+		curr_count = curr_count->next;
+	}
+	return (command_count);
+}

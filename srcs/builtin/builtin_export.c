@@ -75,7 +75,7 @@ int	builtin_export(char **argv, t_shell *sh)
 	int	i;
 	int	status;
 
-	i = 0;
+	i = 1;
 	status = EXIT_SUCCESS;
 	if (!argv[1])
 	{

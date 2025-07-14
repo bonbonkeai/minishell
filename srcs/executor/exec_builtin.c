@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 18:45:07 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/09 14:35:09 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 19:27:00 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,20 @@ int	allocate_builtin(t_shell *shell)
 
 int	apply_store_and_red(t_shell *sh, int storage[2])
 {
-	if (ft_strcmp(sh->curr_cmd->cmd, "exit") != 0)
-	{
-		if (!save_std_io(storage))
-		{
-			perror("Failed to save std IO");
-			return (1);
-		}
-		resolve_redir(sh, sh->curr_cmd, storage);
-	}
-	else
+	if (ft_strcmp(sh->curr_cmd->cmd, "exit") == 0)
 	{
 		builtin_exit(sh, sh->curr_cmd->args);
 		return (-1);
+	}
+	if (!save_std_io(storage))
+	{
+		perror("Failed to save std IO");
+		return (1);
+	}
+	if (resolve_redir(sh, sh->curr_cmd, storage) < 0)
+	{
+		safe_close(sh, storage);
+		return (1);
 	}
 	return (0);
 }
@@ -70,27 +71,21 @@ void	recover_io_and_close(int storage[2])
 		return ;
 }
 
-// int	exec_builtin_main(t_shell *sh)
-// {
-// 	int	status;
-// 	int	ret;
-// 	int	storage[2];
+static int	handle_ret_and_status(t_shell *sh, int ret, int storage[2])
+{
+	if (ret == -1)
+	{
+		if (sh->status != 0)
+			return (sh->status);
+	}
+	if (ret != 0)
+	{
+		recover_io_and_close(storage);
+		return (0);
+	}
+	return (-1);
+}
 
-// 	storage[0] = -1;
-// 	storage[1] = -1;
-// 	sh->curr_cmd = sh->cmd;
-// 	if (!touch_all_output_files(sh->curr_cmd))
-// 		safe_exit_with_io_close(sh, storage, 1);
-// 	ret = apply_store_and_red(sh, storage);
-// 	if (ret != 0)
-// 	{
-// 		recover_io_and_close(storage);
-// 		return (0);
-// 	}
-// 	status = allocate_builtin(sh);
-// 	recover_io_and_close(storage);
-// 	return (status);
-// }
 int	exec_builtin_main(t_shell *sh, t_cmd *curr_cmd)
 {
 	int	status;
@@ -103,13 +98,16 @@ int	exec_builtin_main(t_shell *sh, t_cmd *curr_cmd)
 	storage[0] = -1;
 	storage[1] = -1;
 	if (!touch_all_output_files(curr_cmd))
-		safe_exit_with_io_close(sh, storage, 1);
-	ret = apply_store_and_red(sh, storage);
-	if (ret != 0)
 	{
-		recover_io_and_close(storage);
-		return (0);
+		safe_close(sh, storage);
+		return (1);
 	}
+	ret = apply_store_and_red(sh, storage);
+	if (ret == 1)
+		return (1);
+	status = handle_ret_and_status(sh, ret, storage);
+	if (status != -1)
+		return (status);
 	status = allocate_builtin(sh);
 	recover_io_and_close(storage);
 	return (status);

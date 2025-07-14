@@ -75,6 +75,8 @@ int	handle_dollar(char *input, t_expansion *exp, t_env *lst_env)
 	int	r;
 
 	exp->i++;
+	if (input[exp->i] == '\"')
+		return (append_char(exp, '$'), exp->i++, 1);
 	if (input[exp->i] == '?')
 		return (handle_question_mark(exp));
 	if (handle_digit_after_dollar(input, exp))

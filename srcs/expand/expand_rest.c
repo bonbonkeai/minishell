@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:41:47 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/09 14:25:50 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 20:49:35 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,15 @@ int	assign_cmd_names(t_cmd *cmd)
 	return (1);
 }
 
+static void	trim_newline(char *line)
+{
+	size_t	len;
+
+	len = ft_strlen(line);
+	if (len > 0 && line[len - 1] == '\n')
+		line[len - 1] = '\0';
+}
+
 bool	read_heredoc_loop(char **buffer, size_t *buf_len, \
 		char *delimiter, t_shell *sh)
 {
@@ -58,12 +67,14 @@ bool	read_heredoc_loop(char **buffer, size_t *buf_len, \
 
 	while (1)
 	{
-		line = readline("> ");
+		if (isatty(STDIN_FILENO))
+			line = readline("> ");
+		else
+			line = get_next_line(fileno(stdin));
+		if (line && !isatty(STDIN_FILENO))
+			trim_newline(line);
 		if (!line)
-		{
-			ft_fprintf(2, ERR_SIGNAL);
-			return (free(*buffer), NULL);
-		}
+			return (ft_fprintf(2, ERR_S, delimiter), free(*buffer), NULL);
 		if (g_signal == SIGINT || !line || !ft_strcmp(line, delimiter))
 		{
 			free(line);

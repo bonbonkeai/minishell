@@ -3,117 +3,78 @@
 /*                                                        :::      ::::::::   */
 /*   handle_red.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: jdu <marvin@42.fr>                    +#+  +:+       +#+             */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/03 21:13:50 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/09 14:29:58 by jdu              ###   ########.fr       */
+/*   Created: 2025/06/03 21:13:50 by jdu          #+#    #+#             	  */
+/*   Updated: 2025/07/11 20:39:39 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// void	apply_input_red(t_shell *sh)
-// {
-// 	int	fd;
-
-// 	if (!sh->curr_cmd->infile)
-// 		return ;
-// 	fd = open(sh->curr_cmd->infile, O_RDONLY);
-// 	if (fd < 0)
-// 	{
-// 		perror(sh->curr_cmd->infile);
-// 		// free_shell(sh);
-// 		// exit(EXIT_FAILURE);
-// 		safe_exit_with_io_close(sh, NULL, EXIT_FAILURE);
-// 	}
-// 	if (dup2(fd, STDIN_FILENO) == -1)
-// 	{
-// 		perror("dup2 stdin");
-// 		close(fd);
-// 		// exit(EXIT_FAILURE);
-// 		safe_exit_with_io_close(sh, NULL, EXIT_FAILURE);
-// 	}
-// 	close(fd);
-// }
-
-void	apply_input_red(t_shell *sh, int *storage)
+int	apply_input_red(t_shell *sh, int *storage)
 {
 	int	fd;
 
-	if (!sh->curr_cmd->infile)
-		return ;
+	if (!sh || !sh->curr_cmd || !sh->curr_cmd->infile)
+		return (0);
 	fd = open(sh->curr_cmd->infile, O_RDONLY);
+	if (sh->curr_cmd->is_dummy_cmd)
+		return (perror(sh->curr_cmd->infile), safe_close(sh, storage), -1);
 	if (fd < 0)
 	{
 		perror(sh->curr_cmd->infile);
-		safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+		safe_close(sh, storage);
+		return (-1);
 	}
 	if (dup2(fd, STDIN_FILENO) == -1)
 	{
 		perror("dup2 stdin");
 		close(fd);
-		safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+		safe_close(sh, storage);
+		return (-1);
 	}
 	close(fd);
+	return (0);
 }
 
-void	apply_output_red(t_shell *sh, int *storage)
+static int	open_output_file(t_shell *sh)
 {
-	int	fd;
 	int	flags;
 
-	if (!sh->curr_cmd->outfile)
-		return ;
 	flags = O_WRONLY | O_CREAT;
 	if (sh->curr_cmd->append)
 		flags |= O_APPEND;
 	else
 		flags |= O_TRUNC;
-	fd = open(sh->curr_cmd->outfile, flags, 0644);
+	return (open(sh->curr_cmd->outfile, flags, 0644));
+}
+
+int	apply_output_red(t_shell *sh, int *storage)
+{
+	int	fd;
+
+	if (!sh || !sh->curr_cmd || !sh->curr_cmd->outfile)
+		return (0);
+	fd = open_output_file(sh);
+	if (sh->curr_cmd->is_dummy_cmd)
+		return (close(fd), 0);
 	if (fd < 0)
 	{
 		perror(sh->curr_cmd->outfile);
-		safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+		safe_close(sh, storage);
+		return (-1);
 	}
 	if (dup2(fd, STDOUT_FILENO) == -1)
 	{
 		perror("dup2 stdout");
 		close(fd);
-		safe_exit_with_io_close(sh, storage, EXIT_FAILURE);
+		safe_close(sh, storage);
+		return (-1);
 	}
 	close(fd);
+	return (0);
 }
-
-// void	apply_output_red(t_shell *sh)
-// {
-// 	int	fd;
-// 	int	flags;
-
-// 	if (!sh->curr_cmd->outfile)
-// 		return ;
-// 	flags = O_WRONLY | O_CREAT;
-// 	if (sh->curr_cmd->append)
-// 		flags |= O_APPEND;
-// 	else
-// 		flags |= O_TRUNC;
-// 	fd = open(sh->curr_cmd->outfile, flags, 0644);
-// 	if (fd < 0)
-// 	{
-// 		perror(sh->curr_cmd->outfile);
-// 		// free_shell(sh);
-// 		// exit(EXIT_FAILURE);
-// 		safe_exit_with_io_close(sh, NULL, EXIT_FAILURE);
-// 	}
-// 	if (dup2(fd, STDOUT_FILENO) == -1)
-// 	{
-// 		perror("dup2 stdout");
-// 		// free_shell(sh);
-// 		close(fd);
-// 		// exit(EXIT_FAILURE);
-// 		safe_exit_with_io_close(sh, NULL, EXIT_FAILURE);
-// 	}
-// 	close(fd);
-// }
 
 int	is_red_type(t_token_type type)
 {

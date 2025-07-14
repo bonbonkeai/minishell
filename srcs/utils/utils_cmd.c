@@ -64,34 +64,34 @@ static char	*join_key_value(const char *key, const char *value)
 	return (res);
 }
 
-char	*get_path(t_shell *sh)
-{
-	char	*path;
-	char	**bins;
-	char	*pathlist;
+// char	*get_path(t_shell *sh)
+// {
+// 	char	*path;
+// 	char	**bins;
+// 	char	*pathlist;
 
-	path = NULL;
-	if (!sh->curr_cmd || !sh->curr_cmd->cmd)
-		return (NULL);
-	if (!if_cmd_builtin(sh))
-	{
-		if (if_abs_bin_access(sh->curr_cmd->cmd) == 1)
-			path = sh->curr_cmd->cmd;
-		else
-		{
-			pathlist = get_env_var_value(sh, "PATH");
-			if (!pathlist)
-				return (NULL);
-			bins = ft_split(pathlist, ':');
-			if (!bins)
-				return (NULL);
-			if (if_bin_access(bins, sh) == 1)
-				path = sh->curr_cmd->pth;
-			free_paths(bins);
-		}
-	}
-	return (path);
-}
+// 	path = NULL;
+// 	if (!sh->curr_cmd || !sh->curr_cmd->cmd)
+// 		return (NULL);
+// 	if (!if_cmd_builtin(sh))
+// 	{
+// 		if (if_abs_bin_access(sh->curr_cmd->cmd) == 1)
+// 			path = sh->curr_cmd->cmd;
+// 		else
+// 		{
+// 			pathlist = get_env_var_value(sh, "PATH");
+// 			if (!pathlist)
+// 				return (NULL);
+// 			bins = ft_split(pathlist, ':');
+// 			if (!bins)
+// 				return (NULL);
+// 			if (if_bin_access(bins, sh) == 1)
+// 				path = sh->curr_cmd->pth;
+// 			free_paths(bins);
+// 		}
+// 	}
+// 	return (path);
+// }
 
 char	**get_env_variables(t_shell *sh)
 {

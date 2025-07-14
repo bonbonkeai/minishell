@@ -15,7 +15,7 @@ static char	*get_user(t_shell *shell)
 {
 	char	*user_env;
 
-	if (!shell->env || !shell)
+	if (!shell || !shell->env)
 		return (NULL);
 	user_env = ft_strjoin(get_env_var_value(shell, "USER"), "🍭");
 	if (!user_env)
@@ -29,6 +29,8 @@ char	*build_prompt(t_shell *shell)
 	char	*res;
 	char	*styled;
 
+	if (!shell)
+		return (NULL);
 	user = get_user(shell);
 	if (!user)
 		return (NULL);

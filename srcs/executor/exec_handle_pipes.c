@@ -6,18 +6,14 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/29 16:39:29 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/09 14:36:14 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 20:26:30 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
-		t_pipe *old_pipe, int last)
+static void	setup_stdin(t_cmd *cmd, t_pipe *old_pipe)
 {
-	t_cmd	*cmd;
-
-	cmd = sh->curr_cmd;
 	if (cmd && cmd->heredoc_fd != -1)
 	{
 		if (dup2(cmd->heredoc_fd, STDIN_FILENO) == -1)
@@ -34,6 +30,11 @@ void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
 			exit(EXIT_FAILURE);
 		}
 	}
+}
+
+static void	setup_stdout_and_close(t_cmd *cmd, t_pipe *old_pipe, \
+	t_pipe *new_pipe, int last)
+{
 	if (!last && new_pipe->fd[1] != -1)
 	{
 		if (dup2(new_pipe->fd[1], STDOUT_FILENO) == -1)
@@ -57,33 +58,22 @@ void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
 		close(new_pipe->fd[1]);
 }
 
-// void	pipe_fork_child(t_pipe *new_pipe, t_pipe *old_pipe, int last)
-// {
-// 	if (old_pipe->fd[0] != -1)
-// 	{
-// 		if (dup2(old_pipe->fd[0], STDIN_FILENO) == -1)
-// 		{
-// 			perror("dup2 old_pipe->fd[0]");
-// 			exit(EXIT_FAILURE);
-// 		}
-// 	}
-// 	if (!last && new_pipe->fd[1] != -1)
-// 	{
-// 		if (dup2(new_pipe->fd[1], STDOUT_FILENO) == -1)
-// 		{
-// 			perror("dup2 new_pipe->fd[1]");
-// 			exit(EXIT_FAILURE);
-// 		}
-// 	}
-// 	if (old_pipe->fd[0] != -1)
-// 		close(old_pipe->fd[0]);
-// 	if (old_pipe->fd[1] != -1)
-// 		close(old_pipe->fd[1]);
-// 	if (new_pipe->fd[0] != -1)
-// 		close(new_pipe->fd[0]);
-// 	if (new_pipe->fd[1] != -1)
-// 		close(new_pipe->fd[1]);
-// }
+void	pipe_fork_child(t_shell *sh, t_pipe *new_pipe, \
+		t_pipe *old_pipe, int last)
+{
+	t_cmd	*cmd;
+
+	cmd = sh->curr_cmd;
+	setup_stdin(cmd, old_pipe);
+	setup_stdout_and_close(cmd, old_pipe, new_pipe, last);
+	if (resolve_redir(sh, cmd, NULL) < 0)
+	{
+		free_shell(sh);
+		exit(1);
+	}
+	iteration_pipe(sh);
+	exit(EXIT_FAILURE);
+}
 
 void	pipe_for_parent(t_pipe *new_pipe, t_pipe *old_pipe)
 {

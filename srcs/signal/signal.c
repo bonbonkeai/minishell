@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 19:36:14 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/02 15:21:37 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 21:21:39 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,10 @@ void	signal_default(void)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
+}
+
+void	signal_inloop(void)
+{
+	signal_handle();
+	signal_showing();
 }

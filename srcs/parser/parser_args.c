@@ -6,7 +6,7 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 13:53:45 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/01 21:23:34 by jdu              ###   ########.fr       */
+/*   Updated: 2025/07/11 20:27:43 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char	**duplicate_args(char **old_args, int len, const char *arg)
 	return (new_args);
 }
 
-int	is_cmd_valide(t_cmd *cmd)
+/*int	is_cmd_valide(t_cmd *cmd)
 {
 	if (!cmd)
 		return (0);
@@ -93,4 +93,32 @@ int	is_cmd_valide(t_cmd *cmd)
 	if (cmd->heredoc_limiter || cmd->infile || cmd->outfile)
 		return (1);
 	return (0);
+}*/
+
+bool	is_cmd_valide(t_cmd *cmd)
+{
+	if (!cmd)
+		return (false);
+	if (cmd->cmd && cmd->cmd[0])
+		return (true);
+	if (cmd->heredoc_limiter && cmd->heredoc)
+		return (true);
+	if (cmd->red && cmd->red[0] && cmd->red[1])
+	{
+		if (!cmd->cmd)
+			cmd->cmd = ft_strdup("");
+		cmd->is_dummy_cmd = 1;
+		return (true);
+	}
+	return (false);
 }
+// bool	is_cmd_structurally_valid(t_cmd *cmd)
+// {
+// 	if (!cmd)
+// 		return (false);
+// 	if (cmd->cmd && cmd->cmd[0])
+// 		return (true);
+// 	if (cmd->heredoc_limiter && cmd->heredoc)
+// 		return (true);
+// 	return (false);
+// }

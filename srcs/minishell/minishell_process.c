@@ -12,32 +12,6 @@
 
 #include "minishell.h"
 
-static void	cleanup_and_exit(t_shell *sh, int error_status)
-{
-	if (sh->token_list)
-	{
-		free_tokens(sh->token_list);
-		sh->token_list = NULL;
-	}
-	if (sh->cmd)
-	{
-		free_cmd_list(sh->cmd);
-		sh->cmd = NULL;
-	}
-	sh->curr_cmd = NULL;
-	if (sh->trimmed_prompt)
-	{
-		free(sh->trimmed_prompt);
-		sh->trimmed_prompt = NULL;
-	}
-	if (g_signal == SIGINT)
-	{
-		sh->status = 130;
-	}
-	else
-		sh->status = error_status;
-}
-
 static bool	lexer_input(t_shell *sh, char *input)
 {
 	sh->trimmed_prompt = ft_strtrim(input, " \t\n");
@@ -126,6 +100,32 @@ static bool	expand_and_check(t_shell *sh, t_suffix_type *illegal_type, \
 // 	}
 // }
 
+void	remove_empty_args(t_cmd *cmd_list)
+{
+	t_cmd	*curr;
+	int		i;
+
+	curr = cmd_list;
+	while (curr)
+	{
+		if (curr->args && curr->args[0] && curr->args[0][0] == '\0')
+		{
+			free(curr->args[0]);
+			i = 0;
+			while (curr->args[i + 1])
+			{
+				curr->args[i] = curr->args[i + 1];
+				i++;
+			}
+			curr->args[i] = NULL;
+			if (curr->cmd)
+				free(curr->cmd);
+			curr->cmd = ft_strdup(curr->args[0]);
+		}
+		curr = curr->next;
+	}
+}
+
 void	process_input(t_shell *sh, char *input)
 {
 	t_suffix_type	illegal_type;
@@ -144,6 +144,7 @@ void	process_input(t_shell *sh, char *input)
 	sh->cmd = cmd;
 	if (!expand_and_check(sh, &illegal_type, &error_char))
 		return ;
+	remove_empty_args(sh->cmd);
 	sh->curr_cmd = sh->cmd;
 	if (sh->cmd && g_signal != SIGINT)
 		sh->status = executor(sh);

@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 17:51:09 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 21:01:03 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:22:44 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,18 @@ static void	env_unset_var(char *var, t_shell *sh)
 	}
 }
 
+static int	print_unset_err(const char *opt)
+{
+	char	err[3];
+
+	err[0] = opt[0];
+	err[1] = opt[1];
+	err[2] = '\0';
+	ft_printf("bash: unset: %s: invalid option\n", err);
+	ft_printf("unset: usage: unset [-f] [-v] [-n] [name ...]\n");
+	return (2);
+}
+
 int	builtin_unset(t_shell *sh, char **argv)
 {
 	int		i;
@@ -82,13 +94,18 @@ int	builtin_unset(t_shell *sh, char **argv)
 	while (argv[i])
 	{
 		var = argv[i];
-		if (!is_valid_var_name(var))
+		if ((var[0] == '-' && var[1] != '\0'))
 		{
-			perror("unset: ");
-			status = EXIT_FAILURE;
+			if (!unset_op(var))
+				return (print_unset_err(var));
 		}
 		else
-			env_unset_var(var, sh);
+		{
+			if (!is_valid_var_name(var))
+				status = 0;
+			else
+				env_unset_var(var, sh);
+		}
 		i++;
 	}
 	return (status);

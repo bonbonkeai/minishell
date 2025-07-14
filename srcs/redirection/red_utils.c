@@ -56,7 +56,10 @@ int	append_op_and_target(char **new_red, int len, char *op, char *target)
 		return (0);
 	new_red[len + 1] = ft_strdup(target);
 	if (!new_red[len + 1])
+	{
+		free(new_red[len]);
 		return (0);
+	}
 	new_red[len + 2] = NULL;
 	return (1);
 }

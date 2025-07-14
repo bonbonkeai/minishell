@@ -6,7 +6,7 @@
 /*   By: jinhuang <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 15:39:30 by jinhuang          #+#    #+#             */
-/*   Updated: 2025/07/02 16:40:53 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:32:02 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,18 @@ void	ft_perror_export(char *arg)
 	write(2, "minishell: export: `", 20);
 	ft_putstr_fd(arg, 2);
 	write(2, "': not a valid identifier\n", 26);
+}
+
+int	unset_op(const char *opt)
+{
+	if (strcmp(opt, "-f") == 0 || strcmp(opt, "-v") == 0 || \
+			strcmp(opt, "-n") == 0)
+		return (1);
+	return (0);
+}
+
+void	handle_unset_invalid_var(int *status)
+{
+	perror("unset: ");
+	*status = EXIT_FAILURE;
 }

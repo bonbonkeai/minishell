@@ -22,6 +22,7 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/redirection/red.c \
 		./srcs/redirection/red_utils.c \
 		./srcs/redirection/red_util2.c \
+		./srcs/redirection/red_util3.c \
 		./srcs/redirection/handle_red.c \
 		./srcs/parser/parser.c \
 		./srcs/parser/parser_args.c \
@@ -51,12 +52,14 @@ SRCS = ./srcs/initialization/init_cmd.c \
 		./srcs/builtin/builtin_unset.c \
 		./srcs/executor/executor.c \
 		./srcs/executor/exec_simple.c \
+		./srcs/executor/exec_simple2.c \
 		./srcs/executor/exec_utils.c \
 		./srcs/executor/exec_handle_pipes.c \
 		./srcs/executor/exec_pipe.c \
 		./srcs/executor/exec_builtin.c \
 		./srcs/utils/utils_builtin.c \
 		./srcs/utils/utils_cmd.c \
+		./srcs/utils/utils_path.c \
 		./srcs/utils/utils_env_print.c \
 		./srcs/utils/utils_env.c \
 		./srcs/utils/utils_export.c \

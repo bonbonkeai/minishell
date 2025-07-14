@@ -63,6 +63,22 @@ void	exec_simple_exit(t_shell *sh)
 	if (sh->cmd)
 		free_cmd_list(sh->cmd);
 }
+
+void	close_all_heredoc_fd(t_cmd *cmd_list)
+{
+	t_cmd	*curr;
+
+	curr = cmd_list;
+	while (curr)
+	{
+		if (curr->heredoc_fd != -1)
+		{
+			close(curr->heredoc_fd);
+			curr->heredoc_fd = -1;
+		}
+		curr = curr->next;
+	}
+}
 // int	exec_wait_pid(pid_t pid)
 // {
 // 	int	status;

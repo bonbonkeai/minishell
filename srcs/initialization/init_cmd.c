@@ -34,6 +34,7 @@ t_cmd	*init_cmd(void)
 	cmd->red = NULL;
 	cmd->next = NULL;
 	cmd->pid = 0;
+	cmd->is_dummy_cmd = 0;
 	return (cmd);
 }
 
