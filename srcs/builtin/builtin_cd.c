@@ -104,7 +104,7 @@ int	builtin_cd(t_shell *shell, char **argv)
 		return (free(target), 1);
 	}
 	if (argv[1] && ft_strcmp(argv[1], "-") == 0)
-		printf("%s\n", target);
+		ft_printf("%s\n", target);
 	update_pwd_vars(oldpwd, shell);
 	return (free(target), 0);
 }

@@ -85,17 +85,17 @@ int	builtin_exit(t_shell *sh, char **argv)
 	write(STDOUT_FILENO, "exit\n", 5);
 	if (len == 1)
 		code = exec_exit_status(0, 0);
-	else if (len > 2)
-	{
-		write(2, "minishell: exit: too many arguments\n", 37);
-		sh->status = 1;
-		return (1);
-	}
 	else if (!str_to_int(argv[1], &code))
 	{
 		put_error("numeric argument required", argv[1]);
 		exit_free(sh);
 		exit(2);
+	}
+	else if (len > 2)
+	{
+		write(2, "minishell: exit: too many arguments\n", 37);
+		sh->status = 1;
+		return (1);
 	}
 	exit_free(sh);
 	exit((unsigned char)code);

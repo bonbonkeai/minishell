@@ -60,7 +60,6 @@ static int	process_export_arg(t_shell *sh, char *arg)
 	{
 		if (!env_has_var(key, sh))
 			env_set_value(sh, key, value, append);
-		env_set_exported(sh, key, 0);
 	}
 	else
 	{

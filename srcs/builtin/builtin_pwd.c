@@ -15,21 +15,9 @@
 int	builtin_pwd(t_shell *sh)
 {
 	char	*pth;
-	int		i;
-	char	err[2];
 
-	while (sh->cmd->args[1])
-	{
-		i = 0;
-		if (sh->cmd->args[1] && sh->cmd->args[1][i] == '-')
-		{
-			err[0] = sh->cmd->args[1][0];
-			err[1] = sh->cmd->args[1][1];
-			return (ft_fprintf(2, ERR_PWD, err), 2);
-		}
-		else
-			break ;
-	}
+	if (sh->cmd->args[1] && sh->cmd->args[1][0] == '-')
+		return (ft_printf(ERR_PWD), 2);
 	pth = getcwd(NULL, 0);
 	if (!pth)
 	{

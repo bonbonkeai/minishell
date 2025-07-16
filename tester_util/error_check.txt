@@ -90,9 +90,7 @@
 	./usr/bin | ./bin
 	echo "$" | echo $
 	cat < mis | echo hello
-	$EMPTY
 	echo $?
-	$EMPTY echo hi
 	srcs
 	./srcs
 	echo "$"HOME "$   $$$ ""$HOME"

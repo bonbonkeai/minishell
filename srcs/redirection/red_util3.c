@@ -6,33 +6,46 @@
 /*   By: jdu <marvin@42.fr>                         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/19 13:45:05 by jdu               #+#    #+#             */
-/*   Updated: 2025/07/11 20:42:24 by jinhuang         ###   ########.fr       */
+/*   Updated: 2025/07/16 14:13:05 by jinhuang         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	handle_input_redir(t_cmd *cmd, char *op, char *file)
+int	handle_input_redir(t_cmd *cmd, char *op, char *file)
 {
 	if (!op || !file || !cmd)
-		return ;
+		return (-1);
 	if (!ft_strcmp(op, "<"))
 	{
-		if (cmd->infile)
-			free(cmd->infile);
-		cmd->infile = ft_strdup(file);
+		if (access(file, F_OK) != 0 || access(file, R_OK) != 0)
+		{
+			perror(file);
+			return (-1);
+		}
+		cmd->heredoc = 0;
 	}
+	else if (!ft_strcmp(op, "<<"))
+		cmd->heredoc = 1;
+	else
+		return (0);
+	if (cmd->infile)
+		free(cmd->infile);
+	cmd->infile = ft_strdup(file);
+	if (!cmd->infile)
+		return (-1);
+	return (0);
 }
 
-void	handle_output_redir(t_cmd *cmd, char *op, char *file)
+int	handle_output_redir(t_cmd *cmd, char *op, char *file)
 {
 	char	*tmp;
 
 	if (!cmd || !op || !file)
-		return ;
+		return (-1);
 	tmp = ft_strdup(file);
 	if (!tmp)
-		return ;
+		return (-1);
 	if (!ft_strcmp(op, ">"))
 	{
 		if (cmd->outfile)
@@ -47,15 +60,27 @@ void	handle_output_redir(t_cmd *cmd, char *op, char *file)
 		cmd->outfile = tmp;
 		cmd->append = 1;
 	}
+	else
+		return (0);
+	return (0);
 }
 
-void	process_input_redir(t_shell *sh, char *op, char *file)
+int	input_red(t_shell *sh, t_cmd *cmd, int *storage)
 {
-	t_cmd	*cmd;
-
-	cmd = sh->curr_cmd;
-	if (!ft_strcmp(op, "<"))
-		handle_input_redir(cmd, op, file);
+	if (cmd->infile)
+	{
+		if (cmd->heredoc)
+		{
+			if (apply_heredoc_fd(sh, cmd, storage) < 0)
+				return (-1);
+		}
+		else
+		{
+			if (apply_input_red(sh, storage) < 0)
+				return (-1);
+		}
+	}
+	return (0);
 }
 
 int	apply_heredoc_fd(t_shell *sh, t_cmd *cmd, int *storage)

@@ -64,42 +64,6 @@ static bool	expand_and_check(t_shell *sh, t_suffix_type *illegal_type, \
 	return (true);
 }
 
-// void	print_cmd_list(t_cmd *cmd_list)
-// {
-// 	t_cmd *curr = cmd_list;
-// 	int i;
-// 	while (curr)
-// 	{
-// 		printf("cmd: ");
-// 		if (curr->cmd)
-// 			printf("%s\n", curr->cmd);
-// 		else
-// 			printf("(null)\n");
-
-// 		if (curr->args)
-// 		{
-// 			i = 0;
-// 			while (curr->args[i])
-// 			{
-// 				printf("  args[%d]: %s\n", i, curr->args[i]);
-// 				i++;
-// 			}
-// 		}
-// 		else
-// 			printf("  args: (null)\n");
-// 		printf("  redirs: ");
-// 		if (curr->red)
-// 		{
-// 			for (i = 0; curr->red[i]; i++)
-// 				printf("%s ", curr->red[i]);
-// 			printf("\n");
-// 		}
-// 		else
-// 			printf("(none)\n");
-// 		curr = curr->next;
-// 	}
-// }
-
 char	**remove_empty_args(char **args)
 {
 	char	**clean;

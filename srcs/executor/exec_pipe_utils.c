@@ -18,7 +18,7 @@ void	handle_check(t_shell *sh, t_cmd *curr)
 	{
 		print_cmd_error(curr->cmd, "command not found");
 		free_shell(sh);
-		exit (0);
+		exit (127);
 	}
 	if (is_empty_command(sh->trimmed_prompt))
 	{

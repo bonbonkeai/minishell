@@ -20,7 +20,7 @@ int	apply_input_red(t_shell *sh, int *storage)
 		return (0);
 	fd = open(sh->curr_cmd->infile, O_RDONLY);
 	if (sh->curr_cmd->is_dummy_cmd)
-		return (perror(sh->curr_cmd->infile), safe_close(sh, storage), -1);
+		return (safe_close(sh, storage), -1);
 	if (fd < 0)
 	{
 		perror(sh->curr_cmd->infile);

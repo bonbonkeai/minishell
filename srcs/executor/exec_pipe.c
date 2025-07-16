@@ -60,11 +60,11 @@ static int	handle_pipe(t_shell *sh, t_cmd *curr, int last_cmd, pid_t *pid)
 	return (0);
 }
 
-static int	wait_for_child(pid_t last_pid)
+static int	wait_for_child(t_pipe_data *data)
 {
 	int	status;
 
-	status = wait_for_allpid(last_pid);
+	status = wait_for_allpid(data);
 	exec_exit_status(1, status);
 	return (status);
 }
@@ -96,6 +96,7 @@ int	exec_pipe(t_shell *sh)
 
 	curr = sh->cmd;
 	data.status = 0;
+	data.newline = 0;
 	while (curr)
 	{
 		last_cmd = is_last_cmd(curr);
@@ -112,5 +113,5 @@ int	exec_pipe(t_shell *sh)
 	}
 	if (ret == 1)
 		return (data.status);
-	return (wait_for_child(data.pid));
+	return (wait_for_child(&data));
 }

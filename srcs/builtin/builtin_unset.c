@@ -71,18 +71,6 @@ static void	env_unset_var(char *var, t_shell *sh)
 	}
 }
 
-static int	print_unset_err(const char *opt)
-{
-	char	err[3];
-
-	err[0] = opt[0];
-	err[1] = opt[1];
-	err[2] = '\0';
-	ft_printf("bash: unset: %s: invalid option\n", err);
-	ft_printf("unset: usage: unset [-f] [-v] [-n] [name ...]\n");
-	return (2);
-}
-
 int	builtin_unset(t_shell *sh, char **argv)
 {
 	int		i;
@@ -95,10 +83,7 @@ int	builtin_unset(t_shell *sh, char **argv)
 	{
 		var = argv[i];
 		if ((var[0] == '-' && var[1] != '\0'))
-		{
-			if (!unset_op(var))
-				return (print_unset_err(var));
-		}
+			return (ft_printf(ERR_UNS), 2);
 		else
 		{
 			if (!is_valid_var_name(var))

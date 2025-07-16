@@ -43,10 +43,10 @@ void	ft_perror_export(char *arg)
 	write(2, "': not a valid identifier\n", 26);
 }
 
-int	unset_op(const char *opt)
+int	unset_op(char *opt)
 {
-	if (strcmp(opt, "-f") == 0 || strcmp(opt, "-v") == 0 || \
-			strcmp(opt, "-n") == 0)
+	if (ft_strcmp(opt, "-f") == 0 || ft_strcmp(opt, "-v") == 0 || \
+			ft_strcmp(opt, "-n") == 0)
 		return (1);
 	return (0);
 }
